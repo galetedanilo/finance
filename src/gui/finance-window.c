@@ -39,12 +39,50 @@ struct _FinanceWindow
 
 G_DEFINE_TYPE (FinanceWindow, finance_window, GTK_TYPE_APPLICATION_WINDOW)
 
+static gboolean
+on_window_state_event (GtkWidget  *widget,
+                       GdkEvent   *event,
+                       gpointer   user_data)
+{
+  FinanceWindow *self = FINANCE_WINDOW (widget);
+
+  GdkEventWindowState *state;
+  (void)user_data;
+
+  state	= (GdkEventWindowState*) event;
+
+  self->maximized = state->new_window_state & GDK_WINDOW_STATE_MAXIMIZED;
+
+  return FALSE;
+}
+
+static gboolean
+finance_window_configure_event (GtkWidget         *widget,
+                                GdkEventConfigure *event)
+{
+  FinanceWindow *self = FINANCE_WINDOW (widget);
+
+  gboolean resp;
+
+  gtk_window_get_size (GTK_WINDOW (self),
+                       &self->width,
+                       &self->height);
+
+  gtk_window_get_position (GTK_WINDOW (self),
+                           &self->pos_x,
+                           &self->pos_y);
+
+  resp = GTK_WIDGET_CLASS (finance_window_parent_class)->configure_event (widget, event);
+
+  return resp;
+}
+
 static void
 finance_window_constructed (GObject *object)
 {
   FinanceWindow *self = FINANCE_WINDOW (object);
 
-  GSettings     *settings;
+  GSettings *settings;
 
   settings = g_settings_new ("org.gnome.Finance");
 
@@ -80,7 +118,7 @@ finance_window_finalize (GObject *object)
 {
   FinanceWindow *self = FINANCE_WINDOW (object);
 
-  GSettings     *settings;
+  GSettings *settings;
 
   settings = g_settings_new ("org.gnome.Finance");
 
@@ -106,12 +144,19 @@ finance_window_class_init (FinanceWindowClass *klass)
 {
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
+  widget_class->configure_event       = finance_window_configure_event;
+
   G_OBJECT_CLASS (klass)->constructed = finance_window_constructed;
   G_OBJECT_CLASS (klass)->finalize    = finance_window_finalize;
   G_OBJECT_CLASS (klass)->dispose     = finance_window_dispose;
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/Finance/gui/finance-window.ui");
+
+  /* The Widgets */
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, header_bar);
+
+  /* The CallBacks */
+  gtk_widget_class_bind_template_callback (widget_class, on_window_state_event);
 
 }
 
