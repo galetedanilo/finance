@@ -16,7 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <glib/gi18n.h>
 #include "finance-config.h"
+
 #include "finance-window.h"
 
 struct _FinanceWindow
