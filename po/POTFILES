@@ -1,7 +1,7 @@
 data/org.gnome.Finance.desktop.in
 data/org.gnome.Finance.appdata.xml.in
 data/org.gnome.Finance.gschema.xml
-src/finance-window.ui
 src/main.c
-src/finance-window.c
+src/gui/finance-window.ui
+src/gui/finance-window.c
 
