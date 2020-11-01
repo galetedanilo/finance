@@ -86,6 +86,7 @@
     <property name="can_focus">False</property>
     <property name="default_width">600</property>
     <property name="default_height">300</property>
+    <signal name="window-state-event" handler="on_window_state_event" swapped="no"/>
     <child>
       <placeholder/>
     </child>
