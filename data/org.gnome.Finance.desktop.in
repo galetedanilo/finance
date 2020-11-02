@@ -3,5 +3,5 @@ Name=finance
 Exec=finance
 Terminal=false
 Type=Application
-Categories=GTK;
+Categories=GNOME;GTK;Office;
 StartupNotify=true
