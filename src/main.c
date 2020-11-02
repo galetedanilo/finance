@@ -25,30 +25,14 @@ int
 main (int   argc,
       char *argv[])
 {
-	g_autoptr(FinanceApplication) app = NULL;
+  g_autoptr(FinanceApplication) app = NULL;
 
-	/* Set up gettext translations */
-	bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
-	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
-	textdomain (GETTEXT_PACKAGE);
+  /* Set up gettext translations */
+  bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
+  bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+  textdomain (GETTEXT_PACKAGE);
 
-	/*
-	 * Create a new FinanceApplication. The application manages our main loop,
-	 * application windows, integration with the window manager/compositor, and
-	 * desktop features such as file opening and single-instance applications.
-	 */
-	app = finance_application_new ();
+  app = finance_application_new ();
 
-
-	/*
-	 * Run the application. This function will block until the applicaiton
-	 * exits. Upon return, we have our exit code to return to the shell. (This
-	 * is the code you see when you do `echo $?` after running a command in a
-	 * terminal.
-	 *
-	 * Since FinanceApplication inherits from GApplication, we use the parent class
-	 * method "run". But we need to cast, which is what the "G_APPLICATION()"
-	 * macro does.
-	 */
-	return g_application_run (G_APPLICATION (app), argc, argv);
+  return g_application_run (G_APPLICATION (app), argc, argv);
 }
