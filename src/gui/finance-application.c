@@ -89,14 +89,6 @@ finance_application_set_property (GObject      *object,
 }
 
 static void
-finance_application_preferences (GSimpleAction *aciton,
-                                 GParameter    *parameter,
-                                 gpointer       user_data)
-{
-
-}
-
-static void
 on_about_dialog_response (GtkAboutDialog  *dialog,
                           gint            response,
                           gpointer        user_data)
@@ -105,6 +97,31 @@ on_about_dialog_response (GtkAboutDialog  *dialog,
 
   if (response == GTK_RESPONSE_CANCEL)
     gtk_widget_destroy (GTK_WIDGET (dialog));
+}
+
+
+static void
+finance_application_preferences (GSimpleAction  *aciton,
+                                 GVariant       *parameter,
+                                 gpointer       user_data)
+{
+
+}
+
+static void
+finance_application_shortcuts (GSimpleAction  *action,
+                               GVariant       *parameter,
+                               gpointer       user_data)
+{
+
+}
+
+static void
+finance_application_help (GSimpleAction *action,
+                          GVariant      *parameter,
+                          gpointer      user_data)
+{
+
 }
 
 static void
@@ -193,16 +210,39 @@ static void
 finance_application_startup (GApplication *app)
 {
   static const GActionEntry entries[] = {
-    { "preferences", finance_application_preferences, NULL, NULL, NULL },
-    { "about", finance_application_about, NULL, NULL, NULL },
-    { "quit", finance_application_quit, NULL, NULL, NULL },
+    { "preferences", finance_application_preferences },
+    { "shortcuts", finance_application_shortcuts },
+    { "help", finance_application_help },
+    { "about", finance_application_about },
+    { "quit", finance_application_quit },
 
   };
+
+  const gchar *preferences_accels[2]  = { "F2", NULL};
+  const gchar *shortcuts_accels[2]    = { "F3", NULL};
+  const gchar *help_accels[2]         = { "F1", NULL};
+  const gchar *quit_accels[2]         = { "<Ctrl>Q", NULL};
 
   g_action_map_add_action_entries (G_ACTION_MAP (app),
                                    entries,
                                    G_N_ELEMENTS (entries),
                                    app);
+
+  gtk_application_set_accels_for_action (GTK_APPLICATION (app),
+                                         "app.preferences",
+                                         preferences_accels);
+
+  gtk_application_set_accels_for_action (GTK_APPLICATION (app),
+                                         "app.shortcups",
+                                         shortcuts_accels);
+
+  gtk_application_set_accels_for_action (GTK_APPLICATION (app),
+                                         "app.help",
+                                         help_accels);
+
+  gtk_application_set_accels_for_action (GTK_APPLICATION (app),
+                                         "app.quit",
+                                         quit_accels);
 
   G_APPLICATION_CLASS (finance_application_parent_class)->startup (app);
 }
@@ -222,4 +262,5 @@ finance_application_class_init (FinanceApplicationClass *klass)
 static void
 finance_application_init (FinanceApplication *self)
 {
+  g_set_application_name (_("Finance"));
 }
