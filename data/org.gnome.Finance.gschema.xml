@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist gettext-domain="finance">
-	<schema id="org.gnome.Finance" path="/org/gnome/Finance/">
-	  <key name="maximized" type="b">
-	    <default>false</default>
-	    <summary>Window maximized</summary>
-	    <description>Window maximized state</description>
-	  </key>
-	  <key name="width" type="i">
-	    <default>768</default>
-	    <summary>Window width</summary>
-	    <description>Window size width</description>
-	  </key>
-	  <key name="height" type="i">
-	    <default>600</default>
-	    <summary>Window height</summary>
-	    <description>Window size height</description>
-	  </key>
-	  <key name="pos-x" type="i">
-	    <default>10</default>
-	    <summary>Window position</summary>
-	    <description>The Window position X</description>
-	  </key>
-	  <key name="pos-y" type="i">
-	    <default>10</default>
-	    <summary>Window position</summary>
-	    <description>The Window position Y</description>
-	  </key>
-	</schema>
+  <schema id="org.gnome.Finance" path="/org/gnome/Finance/">
+    <key name="maximized" type="b">
+      <default>false</default>
+      <summary>Window maximized</summary>
+      <description>Window maximized state</description>
+    </key>
+    <key name="width" type="i">
+      <default>768</default>
+      <summary>Window width</summary>
+      <description>Window size width</description>
+    </key>
+    <key name="height" type="i">
+      <default>600</default>
+      <summary>Window height</summary>
+      <description>Window size height</description>
+    </key>
+    <key name="pos-x" type="i">
+      <default>10</default>
+      <summary>Window position</summary>
+      <description>The Window position X</description>
+    </key>
+    <key name="pos-y" type="i">
+      <default>10</default>
+      <summary>Window position</summary>
+      <description>The Window position Y</description>
+    </key>
+  </schema>
 </schemalist>
