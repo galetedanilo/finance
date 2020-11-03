@@ -113,7 +113,19 @@ finance_application_shortcuts (GSimpleAction  *action,
                                GVariant       *parameter,
                                gpointer       user_data)
 {
+  FinanceApplication *self = FINANCE_APPLICATION (user_data);
 
+  GtkWidget *shortcuts_window;
+
+  shortcuts_window = g_object_new (FINANCE_TYPE_SHORTCUTS_WINDOW,
+                                   "application", G_APPLICATION (self),
+                                   "transient-for", GTK_WINDOW (self->window),
+                                   "modal", TRUE,
+                                   "destroy-with-parent", TRUE,
+                                   "window-position", GTK_WIN_POS_CENTER_ON_PARENT,
+                                   NULL);
+
+  gtk_window_present (GTK_WINDOW (shortcuts_window));
 }
 
 static void
