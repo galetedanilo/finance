@@ -218,8 +218,8 @@ finance_application_startup (GApplication *app)
 
   };
 
-  const gchar *preferences_accels[2]  = { "F2", NULL};
-  const gchar *shortcuts_accels[2]    = { "F3", NULL};
+  const gchar *preferences_accels[2]  = { "F3", NULL};
+  const gchar *shortcuts_accels[2]    = { "F2", NULL};
   const gchar *help_accels[2]         = { "F1", NULL};
   const gchar *quit_accels[2]         = { "<Ctrl>Q", NULL};
 
@@ -233,7 +233,7 @@ finance_application_startup (GApplication *app)
                                          preferences_accels);
 
   gtk_application_set_accels_for_action (GTK_APPLICATION (app),
-                                         "app.shortcups",
+                                         "app.shortcuts",
                                          shortcuts_accels);
 
   gtk_application_set_accels_for_action (GTK_APPLICATION (app),
