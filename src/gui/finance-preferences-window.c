@@ -27,12 +27,6 @@ struct _FinancePreferencesWindow
 
 G_DEFINE_TYPE (FinancePreferencesWindow, finance_preferences_window, GTK_TYPE_DIALOG)
 
-FinancePreferencesWindow*
-finance_preferences_window_new ()
-{
-  return g_object_new (FINANCE_TYPE_PREFERENCES_WINDOW, NULL);
-}
-
 static void
 finance_preferences_window_class_init (FinancePreferencesWindowClass *klass)
 {
