@@ -5,6 +5,7 @@ inc_dirs = [
 finance_sources = [
   'main.c',
   'gui/finance-application.c',
+  'gui/finance-preferences-window.c',
   'gui/finance-shortcuts-window.c',
   'gui/finance-window.c',
 ]
