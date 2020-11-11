@@ -22,6 +22,8 @@
 #include "finance-config.h"
 
 #include "finance-application.h"
+#include "finance-preferences-window.h"
+#include "finance-shortcuts-window.h"
 #include "finance-window.h"
 
 struct _FinanceApplication
@@ -105,7 +107,20 @@ finance_application_preferences (GSimpleAction  *aciton,
                                  GVariant       *parameter,
                                  gpointer       user_data)
 {
+  FinanceApplication *self = FINANCE_APPLICATION (user_data);
 
+  GtkWidget *window;
+
+  window = g_object_new (FINANCE_TYPE_PREFERENCES_WINDOW,
+                         "transient-for", GTK_WINDOW (self->window),
+                         "use-header-bar", TRUE,
+                         "modal", TRUE,
+                         "destroy-with-parent", TRUE,
+                         "window-position", GTK_WIN_POS_CENTER_ON_PARENT,
+                         NULL);
+
+
+  gtk_window_present (GTK_WINDOW (window));
 }
 
 static void
@@ -115,17 +130,18 @@ finance_application_shortcuts (GSimpleAction  *action,
 {
   FinanceApplication *self = FINANCE_APPLICATION (user_data);
 
-  GtkWidget *shortcuts_window;
+  GtkWidget *window;
 
-  shortcuts_window = g_object_new (FINANCE_TYPE_SHORTCUTS_WINDOW,
-                                   "application", G_APPLICATION (self),
-                                   "transient-for", GTK_WINDOW (self->window),
-                                   "modal", TRUE,
-                                   "destroy-with-parent", TRUE,
-                                   "window-position", GTK_WIN_POS_CENTER_ON_PARENT,
-                                   NULL);
+  window = g_object_new (FINANCE_TYPE_SHORTCUTS_WINDOW,
+                         "application", G_APPLICATION (self),
+                         "transient-for", GTK_WINDOW (self->window),
+                         "modal", TRUE,
+                         "destroy-with-parent", TRUE,
+                         "window-position", GTK_WIN_POS_CENTER_ON_PARENT,
+                         NULL);
 
-  gtk_window_present (GTK_WINDOW (shortcuts_window));
+
+  gtk_window_present (GTK_WINDOW (window));
 }
 
 static void
