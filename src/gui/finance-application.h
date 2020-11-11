@@ -29,7 +29,7 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (FinanceApplication, finance_application, FINANCE, APPLICATION, GtkApplication)
 
-FinanceApplication *      finance_application_new         (void);
+FinanceApplication*       finance_application_new         (void);
 
 G_END_DECLS
 
