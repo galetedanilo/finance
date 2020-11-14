@@ -28,9 +28,9 @@
 
 struct _FinanceApplication
 {
-  GtkApplication      parent_instance;
+  GtkApplication  parent_instance;
 
-  GtkWidget           *window;
+  GtkWidget       *window;
 };
 
 G_DEFINE_TYPE (FinanceApplication, finance_application, GTK_TYPE_APPLICATION)
@@ -278,7 +278,7 @@ finance_application_startup (GApplication *app)
 static void
 finance_application_class_init (FinanceApplicationClass *klass)
 {
-  G_OBJECT_CLASS (klass)->finalize = finance_application_finalize;
+  G_OBJECT_CLASS (klass)->finalize     = finance_application_finalize;
   G_OBJECT_CLASS (klass)->get_property = finance_application_get_property;
   G_OBJECT_CLASS (klass)->set_property = finance_application_set_property;
 
