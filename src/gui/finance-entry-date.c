@@ -32,26 +32,47 @@ struct _FinanceEntryDate
 
 G_DEFINE_TYPE (FinanceEntryDate, finance_entry_date, GTK_TYPE_ENTRY)
 
-static void
-on_entry_date_move_focus (GtkWidget *widget,
+static gboolean
+on_entry_focus_out_event (GtkWidget *widget,
                           GdkEvent  *event,
                           gpointer  user_data)
 {
-  FinanceEntryDate *self = FINANCE_ENTRY_DATE (user_data);
-
-  (void)widget;
   (void)event;
+  (void)user_data;
 
-  GDate parse_date;
+  GDateTime *datetime;
+  GDate     *date;
+  gint      year, month, day;
+  gchar     *str;
 
-  g_date_clear (&parse_date, 1);
+  date = g_date_new ();
 
-  g_date_set_parse (&parse_date,
-                    gtk_entry_get_text (GTK_ENTRY (self)));
+  g_date_set_parse (date, gtk_entry_get_text (GTK_ENTRY (widget)));
 
-  /* if the date is not valid reset the entry to empty */
-  if (!g_date_valid (&parse_date))
-    gtk_entry_set_text (GTK_ENTRY (self), "");
+  if (!g_date_valid (date))
+    {
+      gtk_entry_set_text (GTK_ENTRY (widget), "");
+
+      g_date_free (date);
+
+      return FALSE;
+    }
+
+  year  = g_date_get_year (date);
+  month = g_date_get_month (date);
+  day   = g_date_get_day (date);
+
+  datetime = g_date_time_new_local (year, month, day, 1, 1, 1);
+
+  str = g_date_time_format (datetime, "%x");
+
+  gtk_entry_set_text (GTK_ENTRY (widget), str);
+
+  g_free (str);
+  g_date_time_unref (datetime);
+  g_date_free (date);
+
+  return FALSE;
 }
 
 static void
@@ -65,7 +86,7 @@ on_entry_date_icon_press (GtkEntry              *entry,
   (void)event;
 
   GdkRectangle  icon;
-  GDateTime     *time;
+  GDateTime     *date;
   gint          day, month, year;
 
   gtk_entry_get_icon_area (entry, position, &icon);
@@ -76,12 +97,9 @@ on_entry_date_icon_press (GtkEntry              *entry,
   gtk_popover_set_pointing_to (GTK_POPOVER (self->popover),
                                &icon);
 
-  time = g_date_time_new_now_local ();
+  date = g_date_time_new_now_local ();
 
-  g_date_time_get_ymd (time,
-                       &year,
-                       &month,
-                       &day);
+  g_date_time_get_ymd (date, &year, &month, &day);
 
   gtk_calendar_select_month (GTK_CALENDAR (self->calendar),
                              (month - 1),
@@ -92,7 +110,7 @@ on_entry_date_icon_press (GtkEntry              *entry,
 
   gtk_popover_popup (GTK_POPOVER (self->popover));
 
-  g_date_time_unref (time);
+  g_date_time_unref (date);
 }
 
 
@@ -102,24 +120,21 @@ on_calendar_day_selected (GtkCalendar *calendar,
 {
   FinanceEntryDate *self = FINANCE_ENTRY_DATE (user_data);
 
-  (void)calendar;
+  GDateTime *date;
+  guint day, month, year;
+  gchar *format_date;
 
-  GDateTime *time;
-  guint     day, month, year;
+  gtk_calendar_get_date (calendar, &year, &month, &day);
 
-  gtk_calendar_get_date (calendar,
-                         &year,
-                         &month,
-                         &day);
+  date = g_date_time_new_local (year, month + 1, day, 1, 1, 1);
 
-  time = g_date_time_new_local (year,
-                                month + 1,
-                                day, 1, 1, 1);
+  format_date = g_date_time_format (date, "%x");
 
-  gtk_entry_set_text (GTK_ENTRY (self),
-                      g_date_time_format (time, "%x"));
+  gtk_entry_set_text (GTK_ENTRY (self), format_date);
 
-  g_date_time_unref (time);
+  g_free (format_date);
+
+  g_date_time_unref (date);
 }
 
 static void
@@ -153,7 +168,7 @@ finance_entry_date_class_init (FinanceEntryDateClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, on_calendar_day_selected);
   gtk_widget_class_bind_template_callback (widget_class, on_calendar_day_selected_double_click);
   gtk_widget_class_bind_template_callback (widget_class, on_entry_date_icon_press);
-  gtk_widget_class_bind_template_callback (widget_class, on_entry_date_move_focus);
+  gtk_widget_class_bind_template_callback (widget_class, on_entry_focus_out_event);
 }
 
 static void
