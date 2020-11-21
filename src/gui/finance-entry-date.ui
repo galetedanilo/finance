@@ -8,9 +8,8 @@
     <property name="shadow-type">none</property>
     <property name="secondary-icon-name">pan-down-symbolic</property>
     <property name="input-purpose">digits</property>
-    <signal name="focus-out-event" handler="on_entry_date_move_focus" swapped="no"/>
     <signal name="icon-press" handler="on_entry_date_icon_press" swapped="no"/>
-    <signal name="insert-text" handler="on_format_date" swapped="no"/>
+    <signal name="state-flags-changed" handler="on_entry_state_flags_changed" swapped="no"/>
   </template>
   <object class="GtkPopover" id="popover">
     <property name="width-request">300</property>
