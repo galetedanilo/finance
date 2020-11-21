@@ -34,7 +34,7 @@ G_DEFINE_TYPE (FinanceEntryDate, finance_entry_date, GTK_TYPE_ENTRY)
 
 static void
 on_entry_state_flags_changed (GtkWidget     *widget,
-                              GtkStateFlags flag,
+                              GtkStateFlags flags,
                               gpointer      user_data)
 {
   (void)user_data;
@@ -44,7 +44,7 @@ on_entry_state_flags_changed (GtkWidget     *widget,
   gint      year, month, day;
   gchar     *str;
 
-  if (flag & (GTK_STATE_FLAG_DIR_LTR | GTK_STATE_FLAG_FOCUSED))
+  if (flags & (GTK_STATE_FLAG_DIR_LTR | GTK_STATE_FLAG_FOCUSED))
     {
       date = g_date_new ();
 
