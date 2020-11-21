@@ -103,15 +103,15 @@ on_entry_date_icon_press (GtkEntry              *entry,
       date = g_date_new ();
 
       g_date_set_parse (date, gtk_entry_get_text (entry));
-
-	    year	= g_date_get_year (date);
-	    month	= g_date_get_month (date);
-	    day		= g_date_get_day (date);
-
-	    gtk_calendar_select_month (GTK_CALENDAR (self->calendar),
+      
+      year	= g_date_get_year (date);
+      month	= g_date_get_month (date);
+      day		= g_date_get_day (date);
+      
+      gtk_calendar_select_month (GTK_CALENDAR (self->calendar),
                                  (month - 1),
                                  year);
-
+                                 
       gtk_calendar_select_day (GTK_CALENDAR (self->calendar),
                                day);
 
