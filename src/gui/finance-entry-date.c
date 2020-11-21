@@ -32,12 +32,11 @@ struct _FinanceEntryDate
 
 G_DEFINE_TYPE (FinanceEntryDate, finance_entry_date, GTK_TYPE_ENTRY)
 
-static gboolean
-on_entry_focus_out_event (GtkWidget *widget,
-                          GdkEvent  *event,
-                          gpointer  user_data)
+static void
+on_entry_state_flags_changed (GtkWidget     *widget,
+                              GtkStateFlags flag,
+                              gpointer      user_data)
 {
-  (void)event;
   (void)user_data;
 
   GDateTime *datetime;
@@ -45,34 +44,35 @@ on_entry_focus_out_event (GtkWidget *widget,
   gint      year, month, day;
   gchar     *str;
 
-  date = g_date_new ();
-
-  g_date_set_parse (date, gtk_entry_get_text (GTK_ENTRY (widget)));
-
-  if (!g_date_valid (date))
+  if (flag & (GTK_STATE_FLAG_DIR_LTR | GTK_STATE_FLAG_FOCUSED))
     {
-      gtk_entry_set_text (GTK_ENTRY (widget), "");
+      date = g_date_new ();
 
+      g_date_set_parse (date, gtk_entry_get_text (GTK_ENTRY (widget)));
+
+      if (!g_date_valid (date))
+        {
+          gtk_entry_set_text (GTK_ENTRY (widget), "");
+
+          g_date_free (date);
+
+          return;
+        }
+
+      year  = g_date_get_year (date);
+      month = g_date_get_month (date);
+      day   = g_date_get_day (date);
+
+      datetime = g_date_time_new_local (year, month, day, 1, 1, 1);
+
+      str = g_date_time_format (datetime, "%x");
+
+      gtk_entry_set_text (GTK_ENTRY (widget), str);
+
+      g_free (str);
+      g_date_time_unref (datetime);
       g_date_free (date);
-
-      return FALSE;
     }
-
-  year  = g_date_get_year (date);
-  month = g_date_get_month (date);
-  day   = g_date_get_day (date);
-
-  datetime = g_date_time_new_local (year, month, day, 1, 1, 1);
-
-  str = g_date_time_format (datetime, "%x");
-
-  gtk_entry_set_text (GTK_ENTRY (widget), str);
-
-  g_free (str);
-  g_date_time_unref (datetime);
-  g_date_free (date);
-
-  return FALSE;
 }
 
 static void
@@ -86,7 +86,8 @@ on_entry_date_icon_press (GtkEntry              *entry,
   (void)event;
 
   GdkRectangle  icon;
-  GDateTime     *date;
+  GDateTime     *datetime;
+  GDate					*date;
   gint          day, month, year;
 
   gtk_entry_get_icon_area (entry, position, &icon);
@@ -97,9 +98,33 @@ on_entry_date_icon_press (GtkEntry              *entry,
   gtk_popover_set_pointing_to (GTK_POPOVER (self->popover),
                                &icon);
 
-  date = g_date_time_new_now_local ();
+  if (gtk_entry_get_text_length (entry))
+    {
+      date = g_date_new ();
 
-  g_date_time_get_ymd (date, &year, &month, &day);
+      g_date_set_parse (date, gtk_entry_get_text (entry));
+
+	    year	= g_date_get_year (date);
+	    month	= g_date_get_month (date);
+	    day		= g_date_get_day (date);
+
+	    gtk_calendar_select_month (GTK_CALENDAR (self->calendar),
+                                 (month - 1),
+                                 year);
+
+      gtk_calendar_select_day (GTK_CALENDAR (self->calendar),
+                               day);
+
+      gtk_popover_popup (GTK_POPOVER (self->popover));
+
+      g_date_free (date);
+
+      return;
+    }
+
+	datetime = g_date_time_new_now_local ();
+
+  g_date_time_get_ymd (datetime, &year, &month, &day);
 
   gtk_calendar_select_month (GTK_CALENDAR (self->calendar),
                              (month - 1),
@@ -110,9 +135,8 @@ on_entry_date_icon_press (GtkEntry              *entry,
 
   gtk_popover_popup (GTK_POPOVER (self->popover));
 
-  g_date_time_unref (date);
+  g_date_time_unref (datetime);
 }
-
 
 static void
 on_calendar_day_selected (GtkCalendar *calendar,
@@ -168,7 +192,7 @@ finance_entry_date_class_init (FinanceEntryDateClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, on_calendar_day_selected);
   gtk_widget_class_bind_template_callback (widget_class, on_calendar_day_selected_double_click);
   gtk_widget_class_bind_template_callback (widget_class, on_entry_date_icon_press);
-  gtk_widget_class_bind_template_callback (widget_class, on_entry_focus_out_event);
+  gtk_widget_class_bind_template_callback (widget_class, on_entry_state_flags_changed);
 }
 
 static void
