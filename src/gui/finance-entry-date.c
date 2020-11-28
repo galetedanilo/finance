@@ -166,7 +166,7 @@ on_entry_date_icon_press (GtkEntry              *entry,
 
   GdkRectangle  icon;
   GDateTime     *datetime;
-  GDate					*date;
+  GDate         *date;
   gint          day, month, year;
 
   gtk_entry_get_icon_area (entry, position, &icon);
@@ -206,7 +206,7 @@ on_entry_date_icon_press (GtkEntry              *entry,
 
       year	= g_date_get_year (date);
       month	= g_date_get_month (date);
-      day		= g_date_get_day (date);
+      day   = g_date_get_day (date);
 
       gtk_calendar_select_month (GTK_CALENDAR (self->calendar),
                                  (month - 1),
