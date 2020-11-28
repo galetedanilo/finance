@@ -29,7 +29,12 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (FinanceEntryDate, finance_entry_date, FINANCE, ENTRY_DATE, GtkEntry)
 
-GtkWidget*        finance_entry_date_new          (void);
+GtkWidget*        finance_entry_date_new              (void);
+
+void              finance_entry_date_set_format_date  (FinanceEntryDate *self,
+                                                       gboolean         format);
+
+gboolean          finance_entry_date_is_format_date   (FinanceEntryDate *self);
 
 G_END_DECLS
 
