@@ -28,9 +28,88 @@ struct _FinanceEntryDate
 
   GtkWidget   *calendar;
   GtkWidget   *popover;
+
+  gboolean    format_date;
 };
 
 G_DEFINE_TYPE (FinanceEntryDate, finance_entry_date, GTK_TYPE_ENTRY)
+
+enum {
+  PROP_0,
+  PROP_FORMAT_DATE,
+  N_PROPS,
+};
+
+static GParamSpec *properties[N_PROPS] = { NULL, };
+
+static void
+on_format_date (GtkEditable *editable,
+                const gchar *text,
+                gint        length,
+                gint        *position,
+                gpointer    user_data)
+{
+  if (gtk_entry_get_text_length (GTK_ENTRY (user_data)) > 9)
+    {
+      g_signal_stop_emission_by_name (editable, "insert_text");
+
+      return;
+    }
+
+  if (g_unichar_isdigit (g_utf8_get_char (text)))
+    {
+      g_signal_handlers_block_by_func (editable,
+                                       (gpointer) on_format_date,
+                                       user_data);
+
+      if ((*position == 2) || (*position == 5))
+        {
+          gtk_editable_insert_text (editable, "//", length, position);
+        }
+
+      gtk_editable_insert_text (editable,
+                                text,
+                                length,
+                                position);
+
+      g_signal_handlers_unblock_by_func (editable,
+                                         (gpointer) on_format_date,
+                                         user_data);
+    }
+  else if ((g_strcmp0 (text, "/") == 0) && ((*position == 2) || (*position == 5)))
+    {
+      g_signal_handlers_block_by_func (editable,
+                                       (gpointer) on_format_date,
+                                       user_data);
+
+      gtk_editable_insert_text (editable,
+                                text,
+                                length,
+                                position);
+
+      g_signal_handlers_unblock_by_func (editable,
+                                         (gpointer) on_format_date,
+                                         user_data);
+    }
+
+  g_signal_stop_emission_by_name (editable, "insert_text");
+}
+
+static void
+set_format_date (FinanceEntryDate *self,
+                 gboolean         format)
+{
+  self->format_date = format;
+
+  if (self->format_date)
+    {
+      g_signal_connect (self,
+                        "insert-text",
+                        G_CALLBACK (on_format_date),
+                        self);
+    }
+
+}
 
 static void
 on_entry_state_flags_changed (GtkWidget     *widget,
@@ -103,15 +182,36 @@ on_entry_date_icon_press (GtkEntry              *entry,
       date = g_date_new ();
 
       g_date_set_parse (date, gtk_entry_get_text (entry));
-      
-      year  = g_date_get_year (date);
-      month = g_date_get_month (date);
-      day   = g_date_get_day (date);
-      
+
+      if (!g_date_valid (date))
+        {
+          datetime = g_date_time_new_now_local ();
+
+          g_date_time_get_ymd (datetime, &year, &month, &day);
+
+          gtk_calendar_select_month (GTK_CALENDAR (self->calendar),
+                                     (month - 1),
+                                     year);
+
+          gtk_calendar_select_day (GTK_CALENDAR (self->calendar),
+                                   day);
+
+          gtk_popover_popup (GTK_POPOVER (self->popover));
+
+          g_date_time_unref (datetime);
+          g_date_free (date);
+
+          return;
+        }
+
+      year	= g_date_get_year (date);
+      month	= g_date_get_month (date);
+      day		= g_date_get_day (date);
+
       gtk_calendar_select_month (GTK_CALENDAR (self->calendar),
                                  (month - 1),
                                  year);
-                                 
+
       gtk_calendar_select_day (GTK_CALENDAR (self->calendar),
                                day);
 
@@ -122,7 +222,7 @@ on_entry_date_icon_press (GtkEntry              *entry,
       return;
     }
 
-	datetime = g_date_time_new_now_local ();
+  datetime = g_date_time_new_now_local ();
 
   g_date_time_get_ymd (datetime, &year, &month, &day);
 
@@ -172,6 +272,48 @@ on_calendar_day_selected_double_click (GtkCalendar  *calendar,
   gtk_popover_popdown (GTK_POPOVER (self->popover));
 }
 
+static void
+finance_entry_date_get_property (GObject    *object,
+                                 guint      prop_id,
+                                 GValue     *value,
+                                 GParamSpec *pspec)
+{
+  FinanceEntryDate *self = FINANCE_ENTRY_DATE (object);
+
+  switch (prop_id)
+    {
+    case PROP_FORMAT_DATE:
+      g_value_set_boolean (value, self->format_date);
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+
+    }
+}
+
+static void
+finance_entry_date_set_property (GObject      *object,
+                                 guint        prop_id,
+                                 const GValue *value,
+                                 GParamSpec   *pspec)
+{
+  FinanceEntryDate *self = FINANCE_ENTRY_DATE (object);
+
+  switch (prop_id)
+    {
+    case PROP_FORMAT_DATE:
+      set_format_date (self, g_value_get_boolean (value));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+
+    }
+}
+
 GtkWidget *
 finance_entry_date_new (void)
 {
@@ -181,7 +323,24 @@ finance_entry_date_new (void)
 static void
 finance_entry_date_class_init (FinanceEntryDateClass *klass)
 {
+  GObjectClass    *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass  *widget_class = GTK_WIDGET_CLASS (klass);
+
+  object_class->get_property = finance_entry_date_get_property;
+  object_class->set_property = finance_entry_date_set_property;
+
+  /**
+   * FinanceEntryDate::formate-date:
+   *
+   * Enable date formatting
+   */
+  properties[PROP_FORMAT_DATE] = g_param_spec_boolean ("format-date",
+                                                       "Enable date formatting",
+                                                       "Enable date formatting",
+                                                       FALSE,
+                                                       G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
+  g_object_class_install_properties (object_class, N_PROPS, properties);
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/Finance/gui/finance-entry-date.ui");
 
@@ -198,5 +357,24 @@ finance_entry_date_class_init (FinanceEntryDateClass *klass)
 static void
 finance_entry_date_init (FinanceEntryDate *self)
 {
+  self->format_date = FALSE;
+
   gtk_widget_init_template (GTK_WIDGET (self));
+}
+
+void
+finance_entry_date_set_format_date (FinanceEntryDate  *self,
+                                    gboolean          format)
+{
+  g_return_if_fail (FINANCE_IS_ENTRY_DATE (self));
+
+  set_format_date (self, format);
+}
+
+gboolean
+finance_entry_date_is_format_date (FinanceEntryDate *self)
+{
+  g_return_val_if_fail (FINANCE_IS_ENTRY_DATE (self), FALSE);
+
+  return self->format_date;
 }
