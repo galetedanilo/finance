@@ -82,10 +82,15 @@ on_format_date (GtkEditable *editable,
                                        (gpointer) on_format_date,
                                        user_data);
 
-      gtk_editable_insert_text (editable,
-                                text,
-                                length,
-                                position);
+      gchar *check = gtk_editable_get_chars (editable, *position, *position + 1);
+
+      if (!(g_strcmp0 (check, "/") == 0))
+        gtk_editable_insert_text (editable,
+                                  text,
+                                  length,
+                                  position);
+      
+      g_free (check);
 
       g_signal_handlers_unblock_by_func (editable,
                                          (gpointer) on_format_date,
