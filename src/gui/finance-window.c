@@ -27,6 +27,11 @@ struct _FinanceWindow
 
   /* Template widgets */
   GtkHeaderBar        *header_bar;
+  GtkWidget           *toggle_button_panel;
+
+  GtkWidget           *entry_date;
+  GtkWidget           *entry_amount;
+  GtkWidget           *revealer_panel;
 
   /* Window State */
   gint                width;
@@ -38,6 +43,34 @@ struct _FinanceWindow
 };
 
 G_DEFINE_TYPE (FinanceWindow, finance_window, GTK_TYPE_APPLICATION_WINDOW)
+
+static void
+on_show_panel_action_activated (GSimpleAction *action,
+                                GVariant      *parameter,
+                                gpointer      user_data)
+{
+  FinanceWindow *self = FINANCE_WINDOW (user_data);
+
+  (void)action;
+  (void)parameter;
+
+  gboolean status = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (self->toggle_button_panel));
+
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (self->toggle_button_panel), !status);
+
+}
+
+static void
+on_toggle_button_panel_toggled (GtkToggleButton *toggle_button,
+                                gpointer        user_data)
+{
+  FinanceWindow *self = FINANCE_WINDOW (user_data);
+
+  gboolean status = gtk_toggle_button_get_active (toggle_button);
+
+  gtk_revealer_set_reveal_child (GTK_REVEALER (self->revealer_panel), status);
+
+}
 
 static gboolean
 on_window_state_event (GtkWidget  *widget,
@@ -144,6 +177,9 @@ finance_window_class_init (FinanceWindowClass *klass)
 {
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
+  g_type_ensure (FINANCE_TYPE_ENTRY_DATE);
+  g_type_ensure (FINANCE_TYPE_ENTRY_MONETARY);
+
   widget_class->configure_event       = finance_window_configure_event;
 
   G_OBJECT_CLASS (klass)->constructed = finance_window_constructed;
@@ -154,8 +190,14 @@ finance_window_class_init (FinanceWindowClass *klass)
 
   /* The Widgets */
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, header_bar);
+  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, toggle_button_panel);
+
+  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, entry_date);
+  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, entry_amount);
+  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, revealer_panel);
 
   /* The CallBacks */
+  gtk_widget_class_bind_template_callback (widget_class, on_toggle_button_panel_toggled);
   gtk_widget_class_bind_template_callback (widget_class, on_window_state_event);
 
 }
@@ -163,5 +205,23 @@ finance_window_class_init (FinanceWindowClass *klass)
 static void
 finance_window_init (FinanceWindow *self)
 {
+  GApplication *app = g_application_get_default ();
+
+  static const GActionEntry entries[] = {
+    { "show-panel", on_show_panel_action_activated }
+
+  };
+
+  const gchar *show_panel[] = { "<CTRL>R", NULL};
+
+  g_action_map_add_action_entries (G_ACTION_MAP (self),
+                                   entries,
+                                   G_N_ELEMENTS (entries),
+                                   self);
+
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  gtk_application_set_accels_for_action (GTK_APPLICATION (app),
+                                         "win.show-panel",
+                                         show_panel);
 }
