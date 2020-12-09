@@ -39,15 +39,16 @@ struct _FinanceWindow
   gint                pos_x;
   gint                pos_y;
   gboolean            maximized;
+  gboolean            left_panel;
 
 };
 
 G_DEFINE_TYPE (FinanceWindow, finance_window, GTK_TYPE_APPLICATION_WINDOW)
 
 static void
-on_show_panel_action_activated (GSimpleAction *action,
-                                GVariant      *parameter,
-                                gpointer      user_data)
+on_left_panel_show_action_activated (GSimpleAction  *action,
+                                     GVariant       *parameter,
+                                     gpointer       user_data)
 {
   FinanceWindow *self = FINANCE_WINDOW (user_data);
 
@@ -61,8 +62,8 @@ on_show_panel_action_activated (GSimpleAction *action,
 }
 
 static void
-on_toggle_button_panel_toggled (GtkToggleButton *toggle_button,
-                                gpointer        user_data)
+on_left_panel_show_toggled (GtkToggleButton *toggle_button,
+                            gpointer        user_data)
 {
   FinanceWindow *self = FINANCE_WINDOW (user_data);
 
@@ -70,6 +71,7 @@ on_toggle_button_panel_toggled (GtkToggleButton *toggle_button,
 
   gtk_revealer_set_reveal_child (GTK_REVEALER (self->revealer_panel), status);
 
+  self->left_panel = status;
 }
 
 static gboolean
@@ -119,12 +121,8 @@ finance_window_constructed (GObject *object)
 
   settings = g_settings_new ("org.gnome.Finance");
 
-  self->maximized = g_settings_get_boolean (settings, "maximized");
-
-  g_settings_get (settings, "width", "i", &self->width);
-  g_settings_get (settings, "height", "i", &self->height);
-  g_settings_get (settings, "pos-x", "i", &self->pos_x);
-  g_settings_get (settings, "pos-y", "i", &self->pos_y);
+  self->maximized   = g_settings_get_boolean (settings, "maximized");
+  self->left_panel  = g_settings_get_boolean (settings, "left-panel");
 
   if (self->maximized)
     {
@@ -133,6 +131,11 @@ finance_window_constructed (GObject *object)
     }
   else
     {
+      g_settings_get (settings, "width", "i", &self->width);
+      g_settings_get (settings, "height", "i", &self->height);
+      g_settings_get (settings, "pos-x", "i", &self->pos_x);
+      g_settings_get (settings, "pos-y", "i", &self->pos_y);
+
       gtk_window_set_default_size (GTK_WINDOW (self),
                                    self->width,
                                    self->height);
@@ -142,6 +145,9 @@ finance_window_constructed (GObject *object)
                        self->pos_y);
 
     }
+
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (self->toggle_button_panel),
+                                self->left_panel);
 
   G_OBJECT_CLASS (finance_window_parent_class)->constructed (object);
 }
@@ -156,6 +162,7 @@ finance_window_finalize (GObject *object)
   settings = g_settings_new ("org.gnome.Finance");
 
   g_settings_set_boolean (settings, "maximized", self->maximized);
+  g_settings_set_boolean (settings, "left-panel", self->left_panel);
 
   g_settings_set (settings, "width", "i", self->width);
   g_settings_set (settings, "height", "i", self->height);
@@ -197,7 +204,7 @@ finance_window_class_init (FinanceWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, revealer_panel);
 
   /* The CallBacks */
-  gtk_widget_class_bind_template_callback (widget_class, on_toggle_button_panel_toggled);
+  gtk_widget_class_bind_template_callback (widget_class, on_left_panel_show_toggled);
   gtk_widget_class_bind_template_callback (widget_class, on_window_state_event);
 
 }
@@ -208,7 +215,7 @@ finance_window_init (FinanceWindow *self)
   GApplication *app = g_application_get_default ();
 
   static const GActionEntry entries[] = {
-    { "show-panel", on_show_panel_action_activated }
+    { "show-panel", on_left_panel_show_action_activated }
 
   };
 
