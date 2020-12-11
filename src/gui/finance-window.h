@@ -16,7 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef __FINANCE_WINDOW_H__
+#define __FINANCE_WINDOW_H__
 
 #include <gtk/gtk.h>
 
@@ -29,3 +30,5 @@ G_BEGIN_DECLS
 G_DECLARE_FINAL_TYPE (FinanceWindow, finance_window, FINANCE, WINDOW, GtkApplicationWindow)
 
 G_END_DECLS
+
+#endif /* __FINANCE_WINDOW_H__ */
