@@ -18,7 +18,6 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include <glib/gi18n.h>
 #include "finance-config.h"
 
 #include "finance-preferences-window.h"
