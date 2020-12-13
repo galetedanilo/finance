@@ -1,4 +1,4 @@
-/* finance-transaction.h
+/* finance-enums.h
  *
  * Copyright 2020 galetedanilo <galetedanilo@gmail.com>
  *
@@ -18,26 +18,17 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef __FINANCE_TRANSACTION_H__
-#define __FINANCE_TRANSACTION_H__
-
-#include <gtk/gtk.h>
-
-#include "finance-enums.h"
-
-#include "finance-entry-date.h"
-#include "finance-entry-monetary.h"
-
-G_BEGIN_DECLS
-
-#define FINANCE_TYPE_TRANSACTION (finance_transaction_get_type())
-
-G_DECLARE_FINAL_TYPE (FinanceTransaction, finance_transaction, FINANCE, TRANSACTION, GtkBox)
-
-GtkWidget*  finance_transaction_new                 (void);
-
-void        finance_transaction_preferences_update  (FinanceTransaction *self);
-
-G_END_DECLS
-
-#endif /* __FINANCE_TRANSACTION_H__ */
+/**
+ * FinanceFrequency:
+ * @FOREVER:
+ * @N_OCCURRENCES:
+ * @UNTIL_DATE:
+ *
+ * Specifying the frequency of transactions
+ */
+typedef enum
+{
+  FOREVER,
+  N_OCCURRENCES,
+  UNTIL_DATE,
+}FinanceFrequency;

@@ -91,36 +91,27 @@ finance_application_set_property (GObject      *object,
 }
 
 static void
-on_about_dialog_response (GtkAboutDialog  *dialog,
-                          gint            response,
-                          gpointer        user_data)
-{
-  (void)user_data;
-
-  if (response == GTK_RESPONSE_CANCEL)
-    gtk_widget_destroy (GTK_WIDGET (dialog));
-}
-
-
-static void
 finance_application_preferences (GSimpleAction  *aciton,
                                  GVariant       *parameter,
                                  gpointer       user_data)
 {
   FinanceApplication *self = FINANCE_APPLICATION (user_data);
 
-  GtkWidget *window;
+  GtkWidget *preferences;
 
-  window = g_object_new (FINANCE_TYPE_PREFERENCES_WINDOW,
-                         "transient-for", GTK_WINDOW (self->window),
-                         "use-header-bar", TRUE,
-                         "modal", TRUE,
-                         "destroy-with-parent", TRUE,
-                         "window-position", GTK_WIN_POS_CENTER_ON_PARENT,
-                         NULL);
+  preferences = g_object_new (FINANCE_TYPE_PREFERENCES_WINDOW,
+                              "transient-for", GTK_WINDOW (self->window),
+                              "use-header-bar", TRUE,
+                              "destroy-with-parent", TRUE,
+                              "window-position", GTK_WIN_POS_CENTER_ON_PARENT,
+                              NULL);
 
 
-  gtk_window_present (GTK_WINDOW (window));
+  gtk_dialog_run (GTK_DIALOG (preferences));
+
+  gtk_widget_destroy (preferences);
+
+  finance_window_preferences_update (FINANCE_WINDOW (self->window));
 }
 
 static void
@@ -190,11 +181,6 @@ finance_application_about (GSimpleAction  *action,
                                "artists", artists,
                                "translator-credits", _("translator-credits"),/* The Translators Name */
                                NULL);
-
-  g_signal_connect (about_dialog,
-                    "response",
-                    G_CALLBACK (on_about_dialog_response),
-                    NULL);
 
   gtk_widget_show (about_dialog);
 }

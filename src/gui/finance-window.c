@@ -1,6 +1,6 @@
 /* finance-window.c
  *
- * Copyright 2020 galetedanilo <galetedanilo@gmail.com>
+ * Copyright 2020 galetedanilo
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <glib/gi18n.h>
 #include "finance-config.h"
 
 #include "finance-window.h"
@@ -29,9 +28,8 @@ struct _FinanceWindow
   GtkHeaderBar        *header_bar;
   GtkWidget           *toggle_button_panel;
 
-  GtkWidget           *entry_date;
-  GtkWidget           *entry_amount;
   GtkWidget           *revealer_panel;
+  GtkWidget           *transaction;
 
   /* Window State */
   gint                width;
@@ -40,7 +38,6 @@ struct _FinanceWindow
   gint                pos_y;
   gboolean            maximized;
   gboolean            left_panel;
-
 };
 
 G_DEFINE_TYPE (FinanceWindow, finance_window, GTK_TYPE_APPLICATION_WINDOW)
@@ -184,8 +181,7 @@ finance_window_class_init (FinanceWindowClass *klass)
 {
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  g_type_ensure (FINANCE_TYPE_ENTRY_DATE);
-  g_type_ensure (FINANCE_TYPE_ENTRY_MONETARY);
+  g_type_ensure (FINANCE_TYPE_TRANSACTION);
 
   widget_class->configure_event       = finance_window_configure_event;
 
@@ -199,8 +195,7 @@ finance_window_class_init (FinanceWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, header_bar);
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, toggle_button_panel);
 
-  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, entry_date);
-  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, entry_amount);
+  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, transaction);
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, revealer_panel);
 
   /* The CallBacks */
@@ -231,4 +226,12 @@ finance_window_init (FinanceWindow *self)
   gtk_application_set_accels_for_action (GTK_APPLICATION (app),
                                          "win.show-panel",
                                          show_panel);
+}
+
+void
+finance_window_preferences_update (FinanceWindow *self)
+{
+  g_return_if_fail (FINANCE_IS_WINDOW (self));
+
+  finance_transaction_preferences_update (FINANCE_TRANSACTION (self->transaction));
 }

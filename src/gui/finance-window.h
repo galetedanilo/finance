@@ -29,6 +29,8 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (FinanceWindow, finance_window, FINANCE, WINDOW, GtkApplicationWindow)
 
+void    finance_window_preferences_update   (FinanceWindow *self);
+
 G_END_DECLS
 
 #endif /* __FINANCE_WINDOW_H__ */
