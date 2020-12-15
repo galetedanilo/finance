@@ -29,41 +29,27 @@ struct _FinancePreferencesWindow
   GtkWidget   *combo_box_date;
 
   GSettings   *settings;
-
-  gboolean    date_formatting;
 };
 
 G_DEFINE_TYPE (FinancePreferencesWindow, finance_preferences_window, GTK_TYPE_DIALOG)
-
-static void
-on_combo_box_date_changed (GtkComboBox  *widget,
-                           gpointer     user_data)
-{
-  FinancePreferencesWindow *self = FINANCE_PREFERENCES_WINDOW (user_data);
-
-  self->date_formatting = gtk_combo_box_get_active (widget);
-}
 
 static void
 finance_preferences_window_constructed (GObject *object)
 {
   FinancePreferencesWindow *self = FINANCE_PREFERENCES_WINDOW (object);
 
-  self->date_formatting = g_settings_get_boolean (self->settings, "date-formatting");
-
-  gtk_combo_box_set_active (GTK_COMBO_BOX (self->combo_box_date), self->date_formatting);
 
   G_OBJECT_CLASS (finance_preferences_window_parent_class)->constructed (object);
 }
 
 static void
-finance_preferences_window_finalize (GObject *object)
+finance_preferences_window_dispose (GObject *object)
 {
   FinancePreferencesWindow *self = FINANCE_PREFERENCES_WINDOW (object);
 
-  g_settings_set_boolean (self->settings, "date-formatting", self->date_formatting);
+  g_clear_object (&self->settings);
 
-  G_OBJECT_CLASS (finance_preferences_window_parent_class)->finalize (object);
+  G_OBJECT_CLASS (finance_preferences_window_parent_class)->dispose (object);
 }
 
 static void
@@ -72,20 +58,22 @@ finance_preferences_window_class_init (FinancePreferencesWindowClass *klass)
   GtkWidgetClass  *widget_class = GTK_WIDGET_CLASS (klass);
 
   G_OBJECT_CLASS (klass)->constructed = finance_preferences_window_constructed;
-  G_OBJECT_CLASS (klass)->finalize    = finance_preferences_window_finalize;
+  G_OBJECT_CLASS (klass)->dispose     = finance_preferences_window_dispose;
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/Finance/gui/finance-preferences-window.ui");
 
   gtk_widget_class_bind_template_child (widget_class, FinancePreferencesWindow, combo_box_date);
-
-  /* All Signals */
-  gtk_widget_class_bind_template_callback (widget_class, on_combo_box_date_changed);
 }
 
 static void
 finance_preferences_window_init (FinancePreferencesWindow *self)
 {
+  gtk_widget_init_template (GTK_WIDGET (self));
+
   self->settings = g_settings_new ("org.gnome.Finance");
 
-  gtk_widget_init_template (GTK_WIDGET (self));
+  g_settings_bind (self->settings, "date-formatting",
+                   self->combo_box_date, "active-id",
+                   G_SETTINGS_BIND_DEFAULT);
+
 }
