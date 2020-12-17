@@ -44,7 +44,7 @@ void          finance_pref_row_switch_set_text          (FinancePrefRowSwitch *s
 gboolean      finance_pref_row_switch_get_active        (FinancePrefRowSwitch *self);
 
 void          finance_pref_row_switch_set_active        (FinancePrefRowSwitch *self,
-                                                         gboolean             active);
+                                                         gboolean             is_active);
 G_END_DECLS
 
 #endif /* __FINANCE_PREF_ROW_SWITCH_H__ */
