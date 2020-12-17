@@ -39,7 +39,7 @@ void          finance_pref_row_switch_set_title         (FinancePrefRowSwitch *s
 const gchar*  finance_pref_row_switch_get_text          (FinancePrefRowSwitch *self);
 
 void          finance_pref_row_switch_set_text          (FinancePrefRowSwitch *self,
-                                                         const gchar          *title);
+                                                         const gchar          *text);
 
 gboolean      finance_pref_row_switch_get_active        (FinancePrefRowSwitch *self);
 
