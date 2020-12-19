@@ -27,7 +27,7 @@ struct _FinancePrefRowSwitch
   /* The Widgets */
   GtkWidget     *title;
   GtkWidget     *text;
-  GtkWidget     *active;
+  GtkWidget     *pref_switch;
 };
 
 G_DEFINE_TYPE (FinancePrefRowSwitch, finance_pref_row_switch, GTK_TYPE_LIST_BOX_ROW)
@@ -41,6 +41,17 @@ enum {
 };
 
 static GParamSpec *properties [N_PROPS] = { NULL, };
+
+static void
+on_pref_switch_activate (GObject    *object,
+                         GParamSpec *pspec,
+                         gpointer   user_data)
+{
+  (void)object;
+  (void)pspec;
+
+  g_object_notify_by_pspec (G_OBJECT(user_data), properties[PROP_ACTIVE]);
+}
 
 GtkWidget *
 finance_pref_row_switch_new (void)
@@ -142,7 +153,7 @@ finance_pref_row_switch_class_init (FinancePrefRowSwitchClass *klass)
                                                   "Active",
                                                   "Activate the preference row",
                                                   FALSE,
-                                                  G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_EXPLICIT_NOTIFY);
+                                                  G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
@@ -150,8 +161,9 @@ finance_pref_row_switch_class_init (FinancePrefRowSwitchClass *klass)
 
   gtk_widget_class_bind_template_child (widget_class, FinancePrefRowSwitch, title);
   gtk_widget_class_bind_template_child (widget_class, FinancePrefRowSwitch, text);
-  gtk_widget_class_bind_template_child (widget_class, FinancePrefRowSwitch, active);
+  gtk_widget_class_bind_template_child (widget_class, FinancePrefRowSwitch, pref_switch);
 
+  gtk_widget_class_bind_template_callback (widget_class, on_pref_switch_activate);
 }
 
 static void
@@ -233,7 +245,7 @@ finance_pref_row_switch_set_text (FinancePrefRowSwitch  *self,
 {
   g_return_if_fail (FINANCE_IS_PREF_ROW_SWITCH (self));
 
-  gtk_label_set_text (GTK_LABEL (self->title), text);
+  gtk_label_set_text (GTK_LABEL (self->text), text);
 }
 
 /**
@@ -251,7 +263,7 @@ finance_pref_row_switch_get_active (FinancePrefRowSwitch *self)
 {
   g_return_val_if_fail (FINANCE_IS_PREF_ROW_SWITCH (self), FALSE);
 
-  return gtk_switch_get_active (GTK_SWITCH (self->active));
+  return gtk_switch_get_active (GTK_SWITCH (self->pref_switch));
 }
 
 /**
@@ -267,6 +279,6 @@ void
 finance_pref_row_switch_set_active (FinancePrefRowSwitch  *self,
                                     gboolean              is_active)
 {
-  gtk_switch_set_active (GTK_SWITCH (self->active), is_active);
+  gtk_switch_set_active (GTK_SWITCH (self->pref_switch), is_active);
 }
 
