@@ -26,28 +26,29 @@ struct _FinanceEntryDate
 {
   GtkEntry    parent_instance;
 
+  /* The Widgets */
   GtkWidget   *calendar;
   GtkWidget   *popover;
 
-  gboolean    format_date;
+  gboolean    is_formatting;
 };
 
 G_DEFINE_TYPE (FinanceEntryDate, finance_entry_date, GTK_TYPE_ENTRY)
 
 enum {
   PROP_0,
-  PROP_FORMAT_DATE,
+  PROP_FORMATTING,
   N_PROPS,
 };
 
 static GParamSpec *properties[N_PROPS] = { NULL, };
 
 static void
-on_format_date (GtkEditable *editable,
-                const gchar *text,
-                gint        length,
-                gint        *position,
-                gpointer    user_data)
+on_automatic_date_formatting (GtkEditable *editable,
+                              const gchar *text,
+                              gint        length,
+                              gint        *position,
+                              gpointer    user_data)
 {
   if (gtk_entry_get_text_length (GTK_ENTRY (user_data)) > 9)
     {
@@ -59,7 +60,7 @@ on_format_date (GtkEditable *editable,
   if (g_unichar_isdigit (g_utf8_get_char (text)))
     {
       g_signal_handlers_block_by_func (editable,
-                                       (gpointer) on_format_date,
+                                       (gpointer) on_automatic_date_formatting,
                                        user_data);
 
       if ((*position == 2) || (*position == 5))
@@ -73,13 +74,13 @@ on_format_date (GtkEditable *editable,
                                 position);
 
       g_signal_handlers_unblock_by_func (editable,
-                                         (gpointer) on_format_date,
+                                         (gpointer) on_automatic_date_formatting,
                                          user_data);
     }
   else if ((g_strcmp0 (text, "/") == 0) && ((*position == 2) || (*position == 5)))
     {
       g_signal_handlers_block_by_func (editable,
-                                       (gpointer) on_format_date,
+                                       (gpointer) on_automatic_date_formatting,
                                        user_data);
 
       gchar *check = gtk_editable_get_chars (editable, *position, *position + 1);
@@ -89,31 +90,16 @@ on_format_date (GtkEditable *editable,
                                   text,
                                   length,
                                   position);
-      
-      g_free (check);
+
+      if (check)
+        g_free (check);
 
       g_signal_handlers_unblock_by_func (editable,
-                                         (gpointer) on_format_date,
+                                         (gpointer) on_automatic_date_formatting,
                                          user_data);
     }
 
   g_signal_stop_emission_by_name (editable, "insert_text");
-}
-
-static void
-set_format_date (FinanceEntryDate *self,
-                 gboolean         format)
-{
-  self->format_date = format;
-
-  if (self->format_date)
-    {
-      g_signal_connect (self,
-                        "insert-text",
-                        G_CALLBACK (on_format_date),
-                        self);
-    }
-
 }
 
 static void
@@ -287,14 +273,13 @@ finance_entry_date_get_property (GObject    *object,
 
   switch (prop_id)
     {
-    case PROP_FORMAT_DATE:
-      g_value_set_boolean (value, self->format_date);
+    case PROP_FORMATTING:
+      g_value_set_boolean (value, finance_entry_date_get_formatting (self));
       break;
 
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
-
     }
 }
 
@@ -308,14 +293,13 @@ finance_entry_date_set_property (GObject      *object,
 
   switch (prop_id)
     {
-    case PROP_FORMAT_DATE:
-      set_format_date (self, g_value_get_boolean (value));
+    case PROP_FORMATTING:
+      finance_entry_date_set_formatting (self, g_value_get_boolean (value));
       break;
 
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
-
     }
 }
 
@@ -335,13 +319,13 @@ finance_entry_date_class_init (FinanceEntryDateClass *klass)
   object_class->set_property = finance_entry_date_set_property;
 
   /**
-   * FinanceEntryDate::formate-date:
+   * FinanceEntryDate::formatting:
    *
-   * Enable date formatting
+   * Enable automatic date formatting
    */
-  properties[PROP_FORMAT_DATE] = g_param_spec_boolean ("format-date",
-                                                       "Enable date formatting",
-                                                       "Enable date formatting",
+  properties[PROP_FORMATTING] = g_param_spec_boolean ("formatting",
+                                                       "Enable automatic date formatting",
+                                                       "Enable automatic date formatting",
                                                        FALSE,
                                                        G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
@@ -357,29 +341,58 @@ finance_entry_date_class_init (FinanceEntryDateClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, on_calendar_day_selected_double_click);
   gtk_widget_class_bind_template_callback (widget_class, on_entry_date_icon_press);
   gtk_widget_class_bind_template_callback (widget_class, on_entry_state_flags_changed);
+  gtk_widget_class_bind_template_callback (widget_class, on_automatic_date_formatting);
 }
 
 static void
 finance_entry_date_init (FinanceEntryDate *self)
 {
-  self->format_date = FALSE;
+  self->is_formatting = TRUE;
 
   gtk_widget_init_template (GTK_WIDGET (self));
 }
 
-void
-finance_entry_date_set_format_date (FinanceEntryDate  *self,
-                                    gboolean          format)
-{
-  g_return_if_fail (FINANCE_IS_ENTRY_DATE (self));
-
-  set_format_date (self, format);
-}
-
+/**
+ * finance_entry_date_get_formatting:
+ * @self: a #FinanceEntryDate instance.
+ *
+ * Gets whether the formatting is in its “on” or “off” state.
+ *
+ * Since: 1.0
+ */
 gboolean
-finance_entry_date_is_format_date (FinanceEntryDate *self)
+finance_entry_date_get_formatting (FinanceEntryDate *self)
 {
   g_return_val_if_fail (FINANCE_IS_ENTRY_DATE (self), FALSE);
 
-  return self->format_date;
+  return self->is_formatting;
 }
+
+/**
+ * finance_entry_date_set_formatting:
+ * @self: a #FinanceEntryDate object.
+ * @is_formatting: %TRUE if formatting should be active, and %FALSE otherwise.
+ *
+ * Change automatic date formatting states.
+ *
+ * Since: 1.0
+ */
+void
+finance_entry_date_set_formatting (FinanceEntryDate *self,
+                                   gboolean         is_formatting)
+{
+  g_return_if_fail (FINANCE_IS_ENTRY_DATE (self));
+
+  if (self->is_formatting == is_formatting)
+    return;
+
+  self->is_formatting = is_formatting;
+
+  if (self->is_formatting)
+    g_signal_handlers_unblock_by_func (self, on_automatic_date_formatting, self);
+  else
+    g_signal_handlers_block_by_func (self, on_automatic_date_formatting, self);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_FORMATTING]);
+}
+
