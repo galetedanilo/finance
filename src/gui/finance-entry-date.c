@@ -263,6 +263,12 @@ on_calendar_day_selected_double_click (GtkCalendar  *calendar,
   gtk_popover_popdown (GTK_POPOVER (self->popover));
 }
 
+GtkWidget *
+finance_entry_date_new (void)
+{
+  return g_object_new (FINANCE_TYPE_ENTRY_DATE, NULL);
+}
+
 static void
 finance_entry_date_get_property (GObject    *object,
                                  guint      prop_id,
@@ -301,12 +307,6 @@ finance_entry_date_set_property (GObject      *object,
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
     }
-}
-
-GtkWidget *
-finance_entry_date_new (void)
-{
-  return g_object_new (FINANCE_TYPE_ENTRY_DATE, NULL);
 }
 
 static void
