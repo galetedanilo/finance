@@ -279,6 +279,8 @@ void
 finance_pref_row_switch_set_active (FinancePrefRowSwitch  *self,
                                     gboolean              is_active)
 {
+  g_return_if_fail (FINANCE_IS_PREF_ROW_SWITCH (self));
+
   gtk_switch_set_active (GTK_SWITCH (self->pref_switch), is_active);
 }
 
