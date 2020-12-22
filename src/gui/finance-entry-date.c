@@ -324,10 +324,10 @@ finance_entry_date_class_init (FinanceEntryDateClass *klass)
    * Enable automatic date formatting
    */
   properties[PROP_FORMATTING] = g_param_spec_boolean ("formatting",
-                                                       "Enable automatic date formatting",
-                                                       "Enable automatic date formatting",
-                                                       FALSE,
-                                                       G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+                                                      "Enable automatic date formatting",
+                                                      "Enable automatic date formatting",
+                                                      FALSE,
+                                                      G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
@@ -358,6 +358,8 @@ finance_entry_date_init (FinanceEntryDate *self)
  *
  * Gets whether the formatting is in its “on” or “off” state.
  *
+ * Returns: %TRUE if the automatic date formatting is active, and %FALSE otherwise.
+ *
  * Since: 1.0
  */
 gboolean
@@ -373,7 +375,7 @@ finance_entry_date_get_formatting (FinanceEntryDate *self)
  * @self: a #FinanceEntryDate object.
  * @is_formatting: %TRUE if formatting should be active, and %FALSE otherwise.
  *
- * Change automatic date formatting states.
+ * Change automatic date formatting states. %TRUE if formatting should be active, and %FALSE otherwise.
  *
  * Since: 1.0
  */
