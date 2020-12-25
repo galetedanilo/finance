@@ -157,7 +157,7 @@ finance_pref_row_switch_class_init (FinancePrefRowSwitchClass *klass)
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/Finance/gui/finance-pref-row-switch.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/gui/finance-pref-row-switch.ui");
 
   gtk_widget_class_bind_template_child (widget_class, FinancePrefRowSwitch, title);
   gtk_widget_class_bind_template_child (widget_class, FinancePrefRowSwitch, text);
