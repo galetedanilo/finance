@@ -114,7 +114,7 @@ on_entry_state_flags_changed (GtkWidget     *widget,
   gint      year, month, day;
   gchar     *str;
 
-  if (flags & (GTK_STATE_FLAG_DIR_LTR | GTK_STATE_FLAG_FOCUSED))
+  if (flags & GTK_STATE_FLAG_FOCUSED)
     {
       date = g_date_new ();
 
