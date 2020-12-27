@@ -101,7 +101,7 @@ on_automatic_date_formatting (GtkEditable *editable,
 
       if ((*position == 2) || (*position == 5))
         {
-          gtk_editable_insert_text (editable, "//", length, position);
+          gtk_editable_insert_text (editable, "/", 1, position);
         }
 
       gtk_editable_insert_text (editable,
