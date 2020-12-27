@@ -68,14 +68,14 @@ finance_entry_monetary_focus_in_event (GtkWidget      *widget,
 
   gchar *value;
 
-  if (!gtk_entry_get_text_length (GTK_ENTRY (widget)))
-    return GTK_WIDGET_CLASS (finance_entry_monetary_parent_class)->focus_out_event (widget, event);
+  if (gtk_entry_get_text_length (GTK_ENTRY (widget)))
+    {
+      value = g_strdup_printf ("%.2f", self->amount);
 
-  value = g_strdup_printf ("%.2f", self->amount);
+      gtk_entry_set_text (GTK_ENTRY (widget), value);
 
-  gtk_entry_set_text (GTK_ENTRY (widget), value);
-
-  g_free (value);
+      g_free (value);
+    }
 
   return GTK_WIDGET_CLASS (finance_entry_monetary_parent_class)->focus_in_event (widget, event);
 }
@@ -88,17 +88,17 @@ finance_entry_monetary_focus_out_event (GtkWidget     *widget,
 
   gchar money[20];
 
-  if (!gtk_entry_get_text_length (GTK_ENTRY (widget)))
-    return GTK_WIDGET_CLASS (finance_entry_monetary_parent_class)->focus_out_event (widget, event);
+  if (gtk_entry_get_text_length (GTK_ENTRY (widget)))
+    {
+      self->amount = g_strtod (gtk_entry_get_text (GTK_ENTRY (widget)), NULL);
 
-  self->amount = g_strtod (gtk_entry_get_text (GTK_ENTRY (widget)), NULL);
+      if (self->is_currency_symbol)
+        strfmon (money, 20, "%n", self->amount);
+      else
+        strfmon (money, 20, "%!n", self->amount);
 
-  if (self->is_currency_symbol)
-    strfmon (money, 20, "%n", self->amount);
-  else
-    strfmon (money, 20, "%!n", self->amount);
-
-  gtk_entry_set_text (GTK_ENTRY (widget), money);
+      gtk_entry_set_text (GTK_ENTRY (widget), money);
+    }
 
   return GTK_WIDGET_CLASS (finance_entry_monetary_parent_class)->focus_out_event (widget, event);
 }
