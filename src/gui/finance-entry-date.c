@@ -113,27 +113,6 @@ on_automatic_date_formatting (GtkEditable *editable,
                                          (gpointer) on_automatic_date_formatting,
                                          user_data);
     }
-  else if ((g_strcmp0 (text, "/") == 0) && ((*position == 2) || (*position == 5)))
-    {
-      g_signal_handlers_block_by_func (editable,
-                                       (gpointer) on_automatic_date_formatting,
-                                       user_data);
-
-      gchar *check = gtk_editable_get_chars (editable, *position, *position + 1);
-
-      if (!(g_strcmp0 (check, "/") == 0))
-        gtk_editable_insert_text (editable,
-                                  text,
-                                  length,
-                                  position);
-
-      if (check)
-        g_free (check);
-
-      g_signal_handlers_unblock_by_func (editable,
-                                         (gpointer) on_automatic_date_formatting,
-                                         user_data);
-    }
 
   g_signal_stop_emission_by_name (editable, "insert_text");
 }
@@ -181,7 +160,15 @@ on_calendar_day_selected (GtkCalendar *calendar,
 
   format_date = g_date_time_format (self->date_time, "%x");
 
+  g_signal_handlers_block_by_func (self,
+                                   on_automatic_date_formatting,
+                                   self);
+
   gtk_entry_set_text (GTK_ENTRY (self), format_date);
+
+  g_signal_handlers_unblock_by_func (self,
+                                     on_automatic_date_formatting,
+                                     self);
 
   g_free (format_date);
 }
