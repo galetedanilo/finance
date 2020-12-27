@@ -31,6 +31,11 @@ G_DECLARE_FINAL_TYPE (FinanceEntryDate, finance_entry_date, FINANCE, ENTRY_DATE,
 
 GtkWidget*        finance_entry_date_new              (void);
 
+GDateTime*        finance_entry_date_get_date         (FinanceEntryDate *self);
+
+void              finance_entry_date_set_date         (FinanceEntryDate *self,
+                                                       GDateTime        *date);
+
 gboolean          finance_entry_date_get_formatting   (FinanceEntryDate *self);
 
 void              finance_entry_date_set_formatting   (FinanceEntryDate *self,
