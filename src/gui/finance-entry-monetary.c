@@ -354,3 +354,18 @@ finance_entry_monetary_set_currency_symbol (FinanceEntryMonetary  *self,
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_CURRENCY_SYMBOL]);
 }
 
+/**
+ * finance_entry_monetary_clear_entry:
+ * @self: a #FinanceEntryMonetary object.
+ *
+ * Sets the financial amount entry as empty.
+ *
+ * Since: 1.0
+ */
+void
+finance_entry_monetary_clear_entry (FinanceEntryMonetary *self)
+{
+  g_return_if_fail (FINANCE_IS_ENTRY_MONETARY (self));
+
+  gtk_entry_set_text (GTK_ENTRY (self), "");
+}

@@ -47,6 +47,8 @@ gboolean      finance_entry_monetary_get_currency_symbol  (FinanceEntryMonetary 
 void          finance_entry_monetary_set_currency_symbol  (FinanceEntryMonetary *self,
                                                            gboolean             is_currency_symbol);
 
+void          finance_entry_monetary_clear_entry          (FinanceEntryMonetary *self);
+
 G_END_DECLS
 
 #endif /* __FINANCE_ENTRY_MONETARY_H__ */
