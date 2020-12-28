@@ -48,8 +48,9 @@ on_pref_switch_state_set (GtkWidget *widget,
                           gpointer  user_data)
 {
   (void)widget;
+  (void)state;
 
-  finance_pref_row_switch_set_active (FINANCE_PREF_ROW_SWITCH (user_data), state);
+  g_object_notify_by_pspec (G_OBJECT (user_data), properties[PROP_ACTIVE]);
 }
 
 GtkWidget *
