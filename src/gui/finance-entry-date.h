@@ -25,13 +25,13 @@
 
 G_BEGIN_DECLS
 
-#define FINANCE_TYPE_ENTRY_DATE (finance_entry_date_get_type())
+#define FINANCE_TYPE_ENTRY_DATE (finance_entry_date_get_type ())
 
 G_DECLARE_FINAL_TYPE (FinanceEntryDate, finance_entry_date, FINANCE, ENTRY_DATE, GtkEntry)
 
-GtkWidget*        finance_entry_date_new              (void);
+GtkWidget *       finance_entry_date_new              (void);
 
-GDateTime*        finance_entry_date_get_date         (FinanceEntryDate *self);
+GDateTime *       finance_entry_date_get_date         (FinanceEntryDate *self);
 
 void              finance_entry_date_set_date         (FinanceEntryDate *self,
                                                        GDateTime        *date);
