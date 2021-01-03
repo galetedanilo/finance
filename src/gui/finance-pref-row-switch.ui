@@ -25,7 +25,7 @@
                 <property name="label" translatable="yes">none</property>
                 <property name="xalign">0</property>
                 <style>
-                  <class name="primary-title"/>
+                  <class name="secondary-title"/>
                 </style>
               </object>
               <packing>
@@ -41,7 +41,7 @@
                 <property name="label" translatable="yes">none</property>
                 <property name="xalign">0</property>
                 <style>
-                  <class name="primary-text"/>
+                  <class name="secondary-text"/>
                 </style>
               </object>
               <packing>
