@@ -18,7 +18,10 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+#include "finance-config.h"
+
 #include "finance-pref-row-switch.h"
+#include "finance-pref-row.h"
 
 struct _FinancePrefRowSwitch
 {
@@ -28,35 +31,143 @@ struct _FinancePrefRowSwitch
   GtkWidget     *title;
   GtkWidget     *text;
   GtkWidget     *pref_switch;
-};
 
-G_DEFINE_TYPE (FinancePrefRowSwitch, finance_pref_row_switch, GTK_TYPE_LIST_BOX_ROW)
+  GSettings     *settings;
+
+  gchar         *key;
+  gboolean      is_active;
+};
 
 enum {
   PROP_0,
   PROP_TITLE,
   PROP_TEXT,
+  PROP_KEY,
   PROP_ACTIVE,
   N_PROPS
 };
 
-static GParamSpec *properties [N_PROPS] = { NULL, };
+static GParamSpec *properties[N_PROPS];
+
+static void   finance_pref_row_interface_init     (FinancePrefRowInterface *iface);
+
+G_DEFINE_TYPE_WITH_CODE (FinancePrefRowSwitch, finance_pref_row_switch, GTK_TYPE_LIST_BOX_ROW,
+                         G_IMPLEMENT_INTERFACE (FINANCE_TYPE_PREF_ROW, finance_pref_row_interface_init))
+
+static const gchar *
+finance_pref_row_switch_get_title (FinancePrefRowSwitch *self)
+{
+  return gtk_label_get_text (GTK_LABEL (self->title));
+}
 
 static void
+finance_pref_row_switch_set_title (FinancePrefRowSwitch *self,
+                                   const gchar          *title)
+{
+  gtk_label_set_text (GTK_LABEL (self->title), title);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_TITLE]);
+}
+
+static const gchar *
+finance_pref_row_switch_get_text (FinancePrefRowSwitch *self)
+{
+  return gtk_label_get_text (GTK_LABEL (self->text));
+}
+
+static void
+finance_pref_row_switch_set_text (FinancePrefRowSwitch  *self,
+                                  const gchar           *text)
+{
+  gtk_label_set_text (GTK_LABEL (self->text), text);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_TEXT]);
+}
+
+static const gchar *
+finance_pref_row_switch_get_key (FinancePrefRowSwitch *self)
+{
+  return self->key;
+}
+
+static void
+finance_pref_row_switch_set_key (FinancePrefRowSwitch *self,
+                                 const gchar          *key)
+{
+  g_free (self->key);
+
+  self->key = g_strdup (key);
+
+  if (self->settings)
+    g_settings_bind (self->settings, self->key,
+                     self, "active",
+                     G_SETTINGS_BIND_DEFAULT);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_KEY]);
+}
+
+static gboolean
+finance_pref_row_switch_get_active (FinancePrefRowSwitch *self)
+{
+  return self->is_active;
+}
+
+static void
+finance_pref_row_switch_set_active (FinancePrefRowSwitch  *self,
+                                    gboolean              is_active)
+{
+  if (self->is_active == is_active)
+    return;
+
+  self->is_active = is_active;
+
+  gtk_switch_set_state (GTK_SWITCH (self->pref_switch), is_active);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_ACTIVE]);
+}
+
+void
+finance_pref_row_switch_set_settings (FinancePrefRowSwitch *self,
+                                      GSettings            *settings)
+{
+  g_assert (G_IS_SETTINGS (settings));
+
+  self->settings = g_object_ref (settings);
+
+  g_settings_bind (self->settings, self->key,
+                   self, "active",
+                   G_SETTINGS_BIND_DEFAULT);
+}
+
+static gboolean
 on_pref_switch_state_set (GtkWidget *widget,
                           gboolean  state,
                           gpointer  user_data)
 {
-  (void)widget;
-  (void)state;
+  FinancePrefRowSwitch *self = FINANCE_PREF_ROW_SWITCH (user_data);
 
-  g_object_notify_by_pspec (G_OBJECT (user_data), properties[PROP_ACTIVE]);
+  (void)widget;
+
+  finance_pref_row_switch_set_active (self, state);
+
+  return TRUE;
 }
 
 GtkWidget *
 finance_pref_row_switch_new (void)
 {
   return g_object_new (FINANCE_TYPE_PREF_ROW_SWITCH, NULL);
+}
+
+static void
+finance_pref_row_switch_finalize (GObject *object)
+{
+  FinancePrefRowSwitch *self = (FinancePrefRowSwitch *)object;
+
+  g_clear_pointer (&self->key, g_free);
+  g_clear_object (&self->settings);
+
+  G_OBJECT_CLASS (finance_pref_row_switch_parent_class)->finalize (object);
 }
 
 static void
@@ -75,6 +186,10 @@ finance_pref_row_switch_get_property (GObject    *object,
 
     case PROP_TEXT:
       g_value_set_string (value, finance_pref_row_switch_get_text (self));
+      break;
+
+    case PROP_KEY:
+      g_value_set_string (value, finance_pref_row_switch_get_key (self));
       break;
 
     case PROP_ACTIVE:
@@ -104,6 +219,10 @@ finance_pref_row_switch_set_property (GObject      *object,
       finance_pref_row_switch_set_text (self, g_value_get_string (value));
       break;
 
+    case PROP_KEY:
+      finance_pref_row_switch_set_key (self, g_value_get_string (value));
+      break;
+
     case PROP_ACTIVE:
       finance_pref_row_switch_set_active (self, g_value_get_boolean (value));
       break;
@@ -114,11 +233,26 @@ finance_pref_row_switch_set_property (GObject      *object,
 }
 
 static void
+finance_pref_row_interface_init (FinancePrefRowInterface *iface)
+{
+  iface->get_title    = finance_pref_row_switch_get_title;
+  iface->set_title    = finance_pref_row_switch_set_title;
+  iface->get_text     = finance_pref_row_switch_get_text;
+  iface->set_text     = finance_pref_row_switch_set_text;
+  iface->get_key      = finance_pref_row_switch_get_key;
+  iface->set_key      = finance_pref_row_switch_set_key;
+  iface->get_active   = finance_pref_row_switch_get_active;
+  iface->set_active   = finance_pref_row_switch_set_active;
+  iface->set_settings = finance_pref_row_switch_set_settings;
+}
+
+static void
 finance_pref_row_switch_class_init (FinancePrefRowSwitchClass *klass)
 {
   GObjectClass    *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass  *widget_class = GTK_WIDGET_CLASS (klass);
 
+  object_class->finalize      = finance_pref_row_switch_finalize;
   object_class->get_property  = finance_pref_row_switch_get_property;
   object_class->set_property  = finance_pref_row_switch_set_property;
 
@@ -145,6 +279,17 @@ finance_pref_row_switch_class_init (FinancePrefRowSwitchClass *klass)
                                                G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
+   * FinancePrefRowSwitch::text:
+   *
+   * The key of the preference row
+   */
+  properties[PROP_KEY] = g_param_spec_string ("key",
+                                              "Key",
+                                              "The key of the preference row",
+                                              NULL,
+                                              G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
+  /**
    * FinancePrefRowSwitch::active:
    *
    * Activate the preference row
@@ -169,128 +314,9 @@ finance_pref_row_switch_class_init (FinancePrefRowSwitchClass *klass)
 static void
 finance_pref_row_switch_init (FinancePrefRowSwitch *self)
 {
-  self->title       = NULL;
-  self->text        = NULL;
-  self->pref_switch = FALSE;
+  self->key         = NULL;
+  self->is_active   = FALSE;
 
   gtk_widget_init_template (GTK_WIDGET (self));
-}
-
-/**
- * finance_pref_row_switch_get_title:
- * @self: a #FinancePrefRowSwitch instance.
- *
- * Fetches the title from the label of the row.
- *
- * Returns: The title in the #FinancePrefRowSwitch, or %NULL.
- * This string points to internally allocated storage in the object
- * and must not be freed, modified or stored.
- *
- * Since: 1.0
- */
-const gchar *
-finance_pref_row_switch_get_title (FinancePrefRowSwitch *self)
-{
-  g_return_val_if_fail (FINANCE_IS_PREF_ROW_SWITCH (self), NULL);
-
-  return gtk_label_get_text (GTK_LABEL (self->title));
-}
-
-/**
- * finance_pref_row_switch_set_title:
- * @self: a #FinancePrefRowSwitch object.
- * @title: The title to set.
- *
- * Sets the title within the #FinancePrefRowSwitch, replacing the current contents.
- *
- * Since: 1.0
- */
-void
-finance_pref_row_switch_set_title (FinancePrefRowSwitch *self,
-                                   const gchar          *title)
-{
-  g_return_if_fail (FINANCE_IS_PREF_ROW_SWITCH (self));
-
-  gtk_label_set_text (GTK_LABEL (self->title), title);
-
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_TITLE]);
-}
-
-/**
- * finance_pref_row_switch_get_text:
- * @self: a #FinancePrefRowSwitch instance.
- *
- * Fetches the text from the label of the row.
- *
- * Returns: The text in the #FinancePrefRowSwitch, or %NULL.
- * This string points to internally allocated storage in the object
- * and must not be freed, modified or stored.
- *
- * Since: 1.0
- */
-const gchar*
-finance_pref_row_switch_get_text (FinancePrefRowSwitch *self)
-{
-  g_return_val_if_fail (FINANCE_IS_PREF_ROW_SWITCH (self), NULL);
-
-  return gtk_label_get_text (GTK_LABEL (self->text));
-}
-
-/**
- * finance_pref_row_switch_set_text:
- * @self: a #FinancePrefRowSwitch object.
- * @title: The text to set.
- *
- * Sets the text within the #FinancePrefRowSwitch, replacing the current contents.
- *
- * Since: 1.0
- */
-void
-finance_pref_row_switch_set_text (FinancePrefRowSwitch  *self,
-                                  const gchar           *text)
-{
-  g_return_if_fail (FINANCE_IS_PREF_ROW_SWITCH (self));
-
-  gtk_label_set_text (GTK_LABEL (self->text), text);
-
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_TEXT]);
-}
-
-/**
- * finance_pref_row_switch_get_active:
- * @self: a #FinancePrefRowSwitch instance.
- *
- * Gets whether the #FinancePrefRowSwitch is in its “on” or “off” state.
- *
- * Returns: %TRUE if the #FinancePrefRowSwitch is active, and %FALSE otherwise.
- *
- * Since: 1.0
- */
-gboolean
-finance_pref_row_switch_get_active (FinancePrefRowSwitch *self)
-{
-  g_return_val_if_fail (FINANCE_IS_PREF_ROW_SWITCH (self), FALSE);
-
-  return gtk_switch_get_active (GTK_SWITCH (self->pref_switch));
-}
-
-/**
- * finance_pref_row_switch_set_active:
- * @self: a #FinancePrefRowSwitch object.
- * @is_active: %TRUE if preference should be active, and %FALSE otherwise.
- *
- * Changes the state of #FinancePrefRowSwitch to the desired one.
- *
- * Since: 1.0
- */
-void
-finance_pref_row_switch_set_active (FinancePrefRowSwitch  *self,
-                                    gboolean              is_active)
-{
-  g_return_if_fail (FINANCE_IS_PREF_ROW_SWITCH (self));
-
-  gtk_switch_set_active (GTK_SWITCH (self->pref_switch), is_active);
-
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_ACTIVE]);
 }
 

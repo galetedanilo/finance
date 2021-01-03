@@ -25,26 +25,12 @@
 
 G_BEGIN_DECLS
 
-#define FINANCE_TYPE_PREF_ROW_SWITCH (finance_pref_row_switch_get_type())
+#define FINANCE_TYPE_PREF_ROW_SWITCH (finance_pref_row_switch_get_type ())
 
 G_DECLARE_FINAL_TYPE (FinancePrefRowSwitch, finance_pref_row_switch, FINANCE, PREF_ROW_SWITCH, GtkListBoxRow)
 
-GtkWidget*    finance_pref_row_switch_new               (void);
+GtkWidget *   finance_pref_row_switch_new   (void);
 
-const gchar*  finance_pref_row_switch_get_title         (FinancePrefRowSwitch *self);
-
-void          finance_pref_row_switch_set_title         (FinancePrefRowSwitch *self,
-                                                         const gchar          *title);
-
-const gchar*  finance_pref_row_switch_get_text          (FinancePrefRowSwitch *self);
-
-void          finance_pref_row_switch_set_text          (FinancePrefRowSwitch *self,
-                                                         const gchar          *text);
-
-gboolean      finance_pref_row_switch_get_active        (FinancePrefRowSwitch *self);
-
-void          finance_pref_row_switch_set_active        (FinancePrefRowSwitch *self,
-                                                         gboolean             is_active);
 G_END_DECLS
 
 #endif /* __FINANCE_PREF_ROW_SWITCH_H__ */
