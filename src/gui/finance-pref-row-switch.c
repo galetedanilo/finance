@@ -47,7 +47,7 @@ enum {
   N_PROPS
 };
 
-static GParamSpec *properties[N_PROPS];
+static GParamSpec *properties[N_PROPS] = { NULL, };
 
 static void   finance_pref_row_interface_init     (FinancePrefRowInterface *iface);
 
