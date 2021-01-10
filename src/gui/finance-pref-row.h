@@ -33,52 +33,49 @@ struct _FinancePrefRowInterface
 {
   GTypeInterface  parent_iface;
 
-  const gchar *   (*get_title)        (FinancePrefRow *row);
+  const gchar *   (*get_title)                      (FinancePrefRow *row);
 
-  void            (*set_title)        (FinancePrefRow *row,
-                                       const gchar    *title);
+  void            (*set_title)                      (FinancePrefRow *row,
+                                                     const gchar    *title);
 
-  const gchar *   (*get_text)         (FinancePrefRow *row);
+  const gchar *   (*get_text)                       (FinancePrefRow *row);
 
-  void            (*set_text)         (FinancePrefRow *row,
-                                       const gchar    *text);
+  void            (*set_text)                       (FinancePrefRow *row,
+                                                     const gchar    *text);
 
-  const gchar *   (*get_key)          (FinancePrefRow *row);
+  const gchar *   (*get_key)                        (FinancePrefRow *row);
 
-  void            (*set_key)          (FinancePrefRow *row,
-                                       const gchar    *key);
+  void            (*set_key)                        (FinancePrefRow *row,
+                                                     const gchar    *key);
 
-  gboolean        (*get_active)       (FinancePrefRow *row);
+  void            (*change_preference)              (FinancePrefRow *row);
 
-  void            (*set_active)       (FinancePrefRow *row,
-                                       gboolean       is_active);
-
-  void            (*set_settings)     (FinancePrefRow *row,
-                                       GSettings      *settings);
+  void            (*add_settings)                   (FinancePrefRow *row,
+                                                     GSettings      *settings);
 };
 
-const gchar * finance_pref_row_get_title    (FinancePrefRow *row);
 
-void          finance_pref_row_set_title    (FinancePrefRow *row,
-                                             const gchar    *title);
 
-const gchar * finance_pref_row_get_text     (FinancePrefRow *row);
 
-void          finance_pref_row_set_text     (FinancePrefRow *row,
-                                             const gchar    *text);
+const gchar *     finance_pref_row_get_title          (FinancePrefRow *row);
 
-const gchar * finance_pref_row_get_key      (FinancePrefRow *row);
+void              finance_pref_row_set_title          (FinancePrefRow *row,
+                                                       const gchar    *title);
 
-void          finance_pref_row_set_key      (FinancePrefRow *row,
-                                             const gchar    *key);
+const gchar *     finance_pref_row_get_text           (FinancePrefRow *row);
 
-gboolean      finance_pref_row_get_active   (FinancePrefRow *row);
+void              finance_pref_row_set_text           (FinancePrefRow *row,
+                                                       const gchar    *text);
 
-void          finance_pref_row_set_active   (FinancePrefRow *row,
-                                             gboolean        is_active);
+const gchar *     finance_pref_row_get_key            (FinancePrefRow *row);
 
-void          finance_pref_row_set_settings (FinancePrefRow *row,
-                                             GSettings      *settings);
+void              finance_pref_row_set_key            (FinancePrefRow *row,
+                                                       const gchar    *key);
+
+void              finance_pref_row_change_preference  (FinancePrefRow *row);
+
+void              finance_pref_row_add_settings       (FinancePrefRow *row,
+                                                       GSettings      *settings);
 
 G_END_DECLS
 
