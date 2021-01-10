@@ -67,7 +67,7 @@ finance_pref_row_set_title (FinancePrefRow  *row,
   g_return_if_fail (FINANCE_IS_PREF_ROW (row));
   g_return_if_fail (FINANCE_PREF_ROW_GET_IFACE (row)->set_title);
 
-  return FINANCE_PREF_ROW_GET_IFACE (row)->set_title (row, title);
+  FINANCE_PREF_ROW_GET_IFACE (row)->set_title (row, title);
 }
 
 /**
@@ -107,7 +107,7 @@ finance_pref_row_set_text (FinancePrefRow *row,
   g_return_if_fail (FINANCE_IS_PREF_ROW (row));
   g_return_if_fail (FINANCE_PREF_ROW_GET_IFACE (row)->set_text);
 
-  return FINANCE_PREF_ROW_GET_IFACE (row)->set_text (row, text);
+  FINANCE_PREF_ROW_GET_IFACE (row)->set_text (row, text);
 }
 
 /**
@@ -147,49 +147,29 @@ finance_pref_row_set_key (FinancePrefRow  *row,
   g_return_if_fail (FINANCE_IS_PREF_ROW (row));
   g_return_if_fail (FINANCE_PREF_ROW_GET_IFACE (row)->set_key);
 
-  return FINANCE_PREF_ROW_GET_IFACE (row)->set_key (row, key);
+  FINANCE_PREF_ROW_GET_IFACE (row)->set_key (row, key);
 }
 
 /**
- * finance_pref_row_get_active:
+ * finance_pref_row_change_preference:
  * @row: a #FinancePrefRow.
  *
- * Gets whether the #FinancePrefRow is in its “on” or “off” state.
- *
- * Returns: %TRUE if the #FinancePrefRow is active, and %FALSE otherwise.
- *
- * Since: 1.0
- */
-gboolean
-finance_pref_row_get_active (FinancePrefRow *row)
-{
-  g_return_val_if_fail (FINANCE_IS_PREF_ROW (row), FALSE);
-  g_return_val_if_fail (FINANCE_PREF_ROW_GET_IFACE (row)->set_active, FALSE);
-
-  return FINANCE_PREF_ROW_GET_IFACE (row)->get_active (row);
-}
-
-/**
- * finance_pref_row_set_active:
- * @row: a #FinancePrefRow.
- * @is_active: %TRUE if preference should be active, and %FALSE otherwise.
- *
- * Changes the state of #FinancePrefRow to the desired one.
+ * When a new preference is selected in #FinancePrefListBox this method is
+ * responsible for changing the preferences.
  *
  * Since: 1.0
  */
 void
-finance_pref_row_set_active (FinancePrefRow *row,
-                             gboolean       is_active)
+finance_pref_row_change_preference (FinancePrefRow *row)
 {
   g_return_if_fail (FINANCE_IS_PREF_ROW (row));
-  g_return_if_fail (FINANCE_PREF_ROW_GET_IFACE (row)->set_active);
+  g_return_if_fail (FINANCE_PREF_ROW_GET_IFACE (row)->change_preference);
 
-  return FINANCE_PREF_ROW_GET_IFACE (row)->set_active (row, is_active);
+  FINANCE_PREF_ROW_GET_IFACE (row)->change_preference (row);
 }
 
 /**
- * finance_pref_row_set_settings:
+ * finance_pref_row_add_settings:
  * @row: a #FinancePrefRow.
  * @settings: a #GSettings
  *
@@ -198,11 +178,11 @@ finance_pref_row_set_active (FinancePrefRow *row,
  * Since: 1.0
  */
 void
-finance_pref_row_set_settings (FinancePrefRow *row,
+finance_pref_row_add_settings (FinancePrefRow *row,
                                GSettings      *settings)
 {
   g_return_if_fail (FINANCE_IS_PREF_ROW (row));
-  g_return_if_fail (FINANCE_PREF_ROW_GET_IFACE (row)->set_settings);
+  g_return_if_fail (FINANCE_PREF_ROW_GET_IFACE (row)->add_settings);
 
-  return FINANCE_PREF_ROW_GET_IFACE (row)->set_settings (row, settings);
+  FINANCE_PREF_ROW_GET_IFACE (row)->add_settings (row, settings);
 }
