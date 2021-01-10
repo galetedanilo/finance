@@ -30,12 +30,11 @@ struct _FinancePrefRowCheck
   /* The Widgets */
   GtkWidget     *title;
   GtkWidget     *text;
-  GtkWidget     *check;
+  GtkWidget     *pref_check;
 
   GSettings     *settings;
 
   gchar         *key;
-  gboolean      is_active;
 };
 
 enum {
@@ -43,7 +42,6 @@ enum {
   PROP_TITLE,
   PROP_TEXT,
   PROP_KEY,
-  PROP_ACTIVE,
   N_PROPS
 };
 
@@ -100,35 +98,21 @@ finance_pref_row_check_set_key (FinancePrefRowCheck *self,
 
   if (self->settings)
     g_settings_bind (self->settings, self->key,
-                     self, "active",
+                     self->pref_check, "reveal-child",
                      G_SETTINGS_BIND_DEFAULT);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_KEY]);
 }
 
-static gboolean
-finance_pref_row_check_get_active (FinancePrefRowCheck *self)
+static void
+finance_pref_row_check_change_preference (FinancePrefRowCheck *self)
 {
-  return self->is_active;
+  gtk_revealer_set_reveal_child (GTK_REVEALER (self->pref_check),
+                                 !gtk_revealer_get_reveal_child (GTK_REVEALER (self->pref_check)));
 }
 
 static void
-finance_pref_row_check_set_active (FinancePrefRowCheck *self,
-                                   gboolean             is_active)
-{
-  if (self->is_active == is_active)
-    return;
-
-  self->is_active = is_active;
-
-  gtk_widget_set_visible (self->check,
-                          self->is_active);
-
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_ACTIVE]);
-}
-
-void
-finance_pref_row_check_set_settings (FinancePrefRowCheck *self,
+finance_pref_row_check_add_settings (FinancePrefRowCheck *self,
                                      GSettings           *settings)
 {
   g_assert (G_IS_SETTINGS (settings));
@@ -136,7 +120,7 @@ finance_pref_row_check_set_settings (FinancePrefRowCheck *self,
   self->settings = g_object_ref (settings);
 
   g_settings_bind (self->settings, self->key,
-                   self, "active",
+                   self->pref_check, "reveal-child",
                    G_SETTINGS_BIND_DEFAULT);
 }
 
@@ -179,10 +163,6 @@ finance_pref_row_check_get_property (GObject    *object,
       g_value_set_string (value, finance_pref_row_check_get_key (self));
       break;
 
-    case PROP_ACTIVE:
-      g_value_set_boolean (value, finance_pref_row_check_get_active (self));
-      break;
-
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -210,10 +190,6 @@ finance_pref_row_check_set_property (GObject      *object,
       finance_pref_row_check_set_key (self, g_value_get_string (value));
       break;
 
-    case PROP_ACTIVE:
-      finance_pref_row_check_set_active (self, g_value_get_boolean (value));
-      break;
-
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -222,15 +198,14 @@ finance_pref_row_check_set_property (GObject      *object,
 static void
 finance_pref_row_interface_init (FinancePrefRowInterface *iface)
 {
-  iface->get_title    = finance_pref_row_check_get_title;
-  iface->set_title    = finance_pref_row_check_set_title;
-  iface->get_text     = finance_pref_row_check_get_text;
-  iface->set_text     = finance_pref_row_check_set_text;
-  iface->get_key      = finance_pref_row_check_get_key;
-  iface->set_key      = finance_pref_row_check_set_key;
-  iface->get_active   = finance_pref_row_check_get_active;
-  iface->set_active   = finance_pref_row_check_set_active;
-  iface->set_settings = finance_pref_row_check_set_settings;
+  iface->get_title          = finance_pref_row_check_get_title;
+  iface->set_title          = finance_pref_row_check_set_title;
+  iface->get_text           = finance_pref_row_check_get_text;
+  iface->set_text           = finance_pref_row_check_set_text;
+  iface->get_key            = finance_pref_row_check_get_key;
+  iface->set_key            = finance_pref_row_check_set_key;
+  iface->change_preference  = finance_pref_row_check_change_preference;
+  iface->add_settings       = finance_pref_row_check_add_settings;
 }
 
 static void
@@ -276,31 +251,19 @@ finance_pref_row_check_class_init (FinancePrefRowCheckClass *klass)
                                               NULL,
                                               G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
-  /**
-   * FinancePrefRowCheck::active:
-   *
-   * Activate the preference row
-   */
-  properties[PROP_ACTIVE] = g_param_spec_boolean ("active",
-                                                  "Active",
-                                                  "Activate the preference row",
-                                                  FALSE,
-                                                  G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
-
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/gui/finance-pref-row-check.ui");
 
   gtk_widget_class_bind_template_child (widget_class, FinancePrefRowCheck, title);
   gtk_widget_class_bind_template_child (widget_class, FinancePrefRowCheck, text);
-  gtk_widget_class_bind_template_child (widget_class, FinancePrefRowCheck, check);
+  gtk_widget_class_bind_template_child (widget_class, FinancePrefRowCheck, pref_check);
 }
 
 static void
 finance_pref_row_check_init (FinancePrefRowCheck *self)
 {
   self->key         = NULL;
-  self->is_active   = FALSE;
 
   gtk_widget_init_template (GTK_WIDGET (self));
 }
