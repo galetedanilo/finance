@@ -241,7 +241,7 @@ finance_pref_row_check_class_init (FinancePrefRowCheckClass *klass)
                                                G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinancePrefRowCheck::text:
+   * FinancePrefRowCheck::key:
    *
    * The key of the preference row
    */
