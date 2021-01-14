@@ -241,7 +241,7 @@ finance_pref_row_switch_class_init (FinancePrefRowSwitchClass *klass)
                                                G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinancePrefRowSwitch::text:
+   * FinancePrefRowSwitch::key:
    *
    * The key of the preference row
    */
