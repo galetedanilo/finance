@@ -29,7 +29,7 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (FinancePrefRowCheck, finance_pref_row_check, FINANCE, PREF_ROW_CHECK, GtkListBoxRow)
 
-GtkWidget *     finance_pref_check_image_new    (void);
+GtkWidget *     finance_pref_row_check_new    (void);
 
 G_END_DECLS
 
