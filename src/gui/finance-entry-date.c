@@ -397,19 +397,3 @@ finance_entry_date_set_formatting (FinanceEntryDate *self,
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_FORMATTING]);
 }
-
-/**
- * finance_entry_date_clear_entry:
- * @self: a #FinanceEntryDate object.
- *
- * Sets the financial date entry as empty.
- *
- * Since: 1.0
- */
-void
-finance_entry_date_clear_entry (FinanceEntryDate *self)
-{
-  g_return_if_fail (FINANCE_IS_ENTRY_DATE (self));
-
-  gtk_entry_set_text (GTK_ENTRY (self), "");
-}
