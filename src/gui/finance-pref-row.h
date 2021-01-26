@@ -33,49 +33,10 @@ struct _FinancePrefRowInterface
 {
   GTypeInterface  parent_iface;
 
-  const gchar *   (*get_title)                      (FinancePrefRow *row);
-
-  void            (*set_title)                      (FinancePrefRow *row,
-                                                     const gchar    *title);
-
-  const gchar *   (*get_text)                       (FinancePrefRow *row);
-
-  void            (*set_text)                       (FinancePrefRow *row,
-                                                     const gchar    *text);
-
-  const gchar *   (*get_key)                        (FinancePrefRow *row);
-
-  void            (*set_key)                        (FinancePrefRow *row,
-                                                     const gchar    *key);
-
-  void            (*change_preference)              (FinancePrefRow *row);
-
-  void            (*add_settings)                   (FinancePrefRow *row,
-                                                     GSettings      *settings);
+  void            (*change_preference)                  (FinancePrefRow *row);
 };
 
-
-
-
-const gchar *     finance_pref_row_get_title          (FinancePrefRow *row);
-
-void              finance_pref_row_set_title          (FinancePrefRow *row,
-                                                       const gchar    *title);
-
-const gchar *     finance_pref_row_get_text           (FinancePrefRow *row);
-
-void              finance_pref_row_set_text           (FinancePrefRow *row,
-                                                       const gchar    *text);
-
-const gchar *     finance_pref_row_get_key            (FinancePrefRow *row);
-
-void              finance_pref_row_set_key            (FinancePrefRow *row,
-                                                       const gchar    *key);
-
-void              finance_pref_row_change_preference  (FinancePrefRow *row);
-
-void              finance_pref_row_add_settings       (FinancePrefRow *row,
-                                                       GSettings      *settings);
+void              finance_pref_row_change_preference    (FinancePrefRow *row);
 
 G_END_DECLS
 
