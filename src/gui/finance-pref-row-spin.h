@@ -31,6 +31,24 @@ G_DECLARE_FINAL_TYPE (FinancePrefRowSpin, finance_pref_row_spin, FINANCE, PREF_R
 
 GtkWidget *     finance_pref_row_spin_new           (void);
 
+void            finance_pref_row_spin_add_settings  (FinancePrefRowSpin *self,
+                                                     GSettings          *settings);
+
+const gchar *   finance_pref_row_spin_get_title     (FinancePrefRowSpin *self);
+
+void            finance_pref_row_spin_set_title     (FinancePrefRowSpin *self,
+                                                     const gchar        *title);
+
+const gchar *   finance_pref_row_spin_get_text      (FinancePrefRowSpin *self);
+
+void            finance_pref_row_spin_set_text      (FinancePrefRowSpin *self,
+                                                     const gchar        *text);
+
+const gchar *   finance_pref_row_spin_get_key       (FinancePrefRowSpin *self);
+
+void            finance_pref_row_spin_set_key       (FinancePrefRowSpin *self,
+                                                     const gchar        *key);
+
 gdouble         finance_pref_row_spin_get_min_num   (FinancePrefRowSpin *self);
 
 void            finance_pref_row_spin_set_min_num   (FinancePrefRowSpin *self,
