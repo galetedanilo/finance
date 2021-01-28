@@ -58,75 +58,11 @@ static void   finance_pref_row_interface_init       (FinancePrefRowInterface *if
 G_DEFINE_TYPE_WITH_CODE (FinancePrefRowSpin, finance_pref_row_spin, GTK_TYPE_LIST_BOX_ROW,
                          G_IMPLEMENT_INTERFACE (FINANCE_TYPE_PREF_ROW, finance_pref_row_interface_init))
 
-static const gchar *
-finance_pref_row_spin_get_title (FinancePrefRowSpin *self)
-{
-  return gtk_label_get_text (GTK_LABEL (self->title));
-}
-
-static void
-finance_pref_row_spin_set_title (FinancePrefRowSpin *self,
-                                 const gchar         *title)
-{
-  gtk_label_set_text (GTK_LABEL (self->title), title);
-
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_TITLE]);
-}
-
-static const gchar *
-finance_pref_row_spin_get_text (FinancePrefRowSpin *self)
-{
-  return gtk_label_get_text (GTK_LABEL (self->text));
-}
-
-static void
-finance_pref_row_spin_set_text (FinancePrefRowSpin *self,
-                                const gchar        *text)
-{
-  gtk_label_set_text (GTK_LABEL (self->text), text);
-
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_TEXT]);
-}
-
-static const gchar *
-finance_pref_row_spin_get_key (FinancePrefRowSpin *self)
-{
-  return self->key;
-}
-
-static void
-finance_pref_row_spin_set_key (FinancePrefRowSpin *self,
-                               const gchar        *key)
-{
-  g_free (self->key);
-
-  self->key = g_strdup (key);
-
-  if (self->settings)
-    g_settings_bind (self->settings, self->key,
-                     self->pref_spin, "value",
-                     G_SETTINGS_BIND_DEFAULT);
-
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_KEY]);
-}
-
 static void
 finance_pref_row_spin_change_preference (FinancePrefRowSpin *self)
 {
-
-}
-
-static void
-finance_pref_row_spin_add_settings (FinancePrefRowSpin *self,
-                                    GSettings          *settings)
-{
-  g_assert (G_IS_SETTINGS (settings));
-
-  self->settings = g_object_ref (settings);
-
-  g_settings_bind (self->settings, self->key,
-                   self->pref_spin, "value",
-                   G_SETTINGS_BIND_DEFAULT);
+  gtk_spin_button_set_value (GTK_SPIN_BUTTON (self->pref_spin),
+                             gtk_spin_button_get_value (GTK_SPIN_BUTTON (self->pref_spin)) + 1);
 }
 
 GtkWidget *
@@ -235,14 +171,7 @@ finance_pref_row_spin_set_property (GObject      *object,
 static void
 finance_pref_row_interface_init (FinancePrefRowInterface *iface)
 {
-  iface->get_title          = finance_pref_row_spin_get_title;
-  iface->set_title          = finance_pref_row_spin_set_title;
-  iface->get_text           = finance_pref_row_spin_get_text;
-  iface->set_text           = finance_pref_row_spin_set_text;
-  iface->get_key            = finance_pref_row_spin_get_key;
-  iface->set_key            = finance_pref_row_spin_set_key;
   iface->change_preference  = finance_pref_row_spin_change_preference;
-  iface->add_settings       = finance_pref_row_spin_add_settings;
 }
 
 static void
@@ -360,6 +289,157 @@ finance_pref_row_spin_init (FinancePrefRowSpin *self)
 
   gtk_spin_button_set_adjustment (GTK_SPIN_BUTTON (self->pref_spin),
                                   self->adjustment);
+}
+
+/**
+ * finance_pref_row_switch_add_settings:
+ * @row: a #FinancePrefRowSwitch instance.
+ * @settings: a #GSettings
+ *
+ * Sets a #GSetting references in #FinancePrefRowSwitch.
+ *
+ * Since: 1.0
+ */
+void
+finance_pref_row_spin_add_settings (FinancePrefRowSpin *self,
+                                    GSettings          *settings)
+{
+  g_return_if_fail (FINANCE_IS_PREF_ROW_SPIN (self));
+
+  g_assert (G_IS_SETTINGS (settings));
+
+  self->settings = g_object_ref (settings);
+
+  g_settings_bind (self->settings, self->key,
+                   self->pref_spin, "value",
+                   G_SETTINGS_BIND_DEFAULT);
+}
+
+/**
+ * finance_pref_row_spin_get_title:
+ * @self: a #FinancePrefRowSpin object.
+ *
+ * Returns the title from the label of the row.
+ *
+ * Returns: The title in the #FinancePrefRowSpin, or %NULL.
+ * This string points to internally allocated storage in the object
+ * and must not be freed, modified or stored.
+ *
+ * Since: 1.0
+ */
+const gchar *
+finance_pref_row_spin_get_title (FinancePrefRowSpin *self)
+{
+  g_return_val_if_fail (FINANCE_IS_PREF_ROW_SPIN (self), NULL);
+
+  return gtk_label_get_text (GTK_LABEL (self->title));
+}
+
+/**
+ * finance_pref_row_spin_set_title:
+ * @self: a #FinancePrefRowSpin instance.
+ * @title: The title to set.
+ *
+ * Sets the title within the #FinancePrefRowSpin, replacing the current contents.
+ *
+ * Since: 1.0
+ */
+void
+finance_pref_row_spin_set_title (FinancePrefRowSpin *self,
+                                 const gchar        *title)
+{
+  g_return_if_fail (FINANCE_IS_PREF_ROW_SPIN (self));
+
+  gtk_label_set_text (GTK_LABEL (self->title), title);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_TITLE]);
+}
+
+/**
+ * finance_pref_row_spin_get_text:
+ * @self: a #FinancePrefRowSpin object.
+ *
+ * Returns the tex from the label of the row.
+ *
+ * Returns: The text in the #FinancePrefRowSpin, or %NULL.
+ * This string points to internally allocated storage in the object
+ * and must not be freed, modified or stored.
+ *
+ * Since: 1.0
+ */
+const gchar *
+finance_pref_row_spin_get_text (FinancePrefRowSpin *self)
+{
+  g_return_val_if_fail (FINANCE_IS_PREF_ROW_SPIN (self), NULL);
+
+  return gtk_label_get_text (GTK_LABEL (self->text));
+}
+
+/**
+ * finance_pref_row_spin_set_text:
+ * @self: a #FinancePrefRowSwitch instance.
+ * @title: The text to set.
+ *
+ * Sets the text within the #FinancePrefRowSpin, replacing the current contents.
+ *
+ * Since: 1.0
+ */
+void
+finance_pref_row_spin_set_text (FinancePrefRowSpin *self,
+                                const gchar        *text)
+{
+  g_return_if_fail (FINANCE_IS_PREF_ROW_SPIN (self));
+
+  gtk_label_set_text (GTK_LABEL (self->text), text);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_TEXT]);
+}
+
+/**
+ * finance_pref_row_spin_get_key:
+ * @self: a #FinancePrefRowSpin object.
+ *
+ * Returns the key of the row.
+ *
+ * Returns: The key in the #FinancePrefRowSpin, or %NULL.
+ * This string points to internally allocated storage in the object
+ * and must not be freed, modified or stored.
+ *
+ * Since: 1.0
+ */
+const gchar *
+finance_pref_row_spin_get_key (FinancePrefRowSpin *self)
+{
+  g_return_val_if_fail (FINANCE_IS_PREF_ROW_SPIN (self), NULL);
+
+  return self->key;
+}
+
+/**
+ * finance_pref_row_spin_set_key:
+ * @self: a #FinancePrefRowSpin instance.
+ * @key: The key to set.
+ *
+ * Sets the key within the #FinancePrefRowSpin, replacing the current contents.
+ *
+ * Since: 1.0
+ */
+void
+finance_pref_row_spin_set_key (FinancePrefRowSpin *self,
+                               const gchar        *key)
+{
+  g_return_if_fail (FINANCE_IS_PREF_ROW_SPIN (self));
+
+  g_free (self->key);
+
+  self->key = g_strdup (key);
+
+  if (self->settings)
+    g_settings_bind (self->settings, self->key,
+                     self->pref_spin, "value",
+                     G_SETTINGS_BIND_DEFAULT);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_KEY]);
 }
 
 /**
