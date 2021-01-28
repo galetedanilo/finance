@@ -292,8 +292,8 @@ finance_pref_row_spin_init (FinancePrefRowSpin *self)
 }
 
 /**
- * finance_pref_row_switch_add_settings:
- * @row: a #FinancePrefRowSwitch instance.
+ * finance_pref_row_spin_add_settings:
+ * @row: a #FinancePrefRowSpin instance.
  * @settings: a #GSettings
  *
  * Sets a #GSetting references in #FinancePrefRowSwitch.
