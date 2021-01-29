@@ -223,7 +223,7 @@ finance_pref_row_switch_init (FinancePrefRowSwitch *self)
 
 /**
  * finance_pref_row_switch_add_settings:
- * @row: a #FinancePrefRowSwitch instance.
+ * @self: a #FinancePrefRowSwitch instance.
  * @settings: a #GSettings
  *
  * Sets a #GSetting references in #FinancePrefRowSwitch.
