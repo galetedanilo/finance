@@ -191,7 +191,7 @@ finance_pref_row_switch_class_init (FinancePrefRowSwitchClass *klass)
   /**
    * FinancePrefRowSwitch::active:
    *
-   * The key of the preference row
+   * Whether the preference row is in its on or off state
    */
   properties[PROP_ACTIVE] = g_param_spec_boolean ("active",
                                                   "Active",
