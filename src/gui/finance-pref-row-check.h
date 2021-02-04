@@ -29,13 +29,37 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (FinancePrefRowCheck, finance_pref_row_check, FINANCE, PREF_ROW_CHECK, GtkListBoxRow)
 
-GtkWidget *     finance_pref_row_check_new        (void);
+GtkWidget *     finance_pref_row_check_new          (void);
 
-const gchar *   finance_pref_row_check_get_value  (FinancePrefRowCheck *self);
+void            finance_pref_row_check_add_settings (FinancePrefRowCheck  *self,
+                                                     GSettings            *settings);
 
-void            finance_pref_row_check_set_value  (FinancePrefRowCheck *self,
-                                                   const gchar         *value);
+const gchar *   finance_pref_row_check_get_title    (FinancePrefRowCheck  *self);
+
+void            finance_pref_row_check_set_title    (FinancePrefRowCheck  *self,
+                                                     const gchar          *title);
+
+const gchar *   finance_pref_row_check_get_text     (FinancePrefRowCheck  *self);
+
+void            finance_pref_row_check_set_text     (FinancePrefRowCheck  *self,
+                                                     const gchar          *text);
+
+const gchar *   finance_pref_row_check_get_key      (FinancePrefRowCheck  *self);
+
+void            finance_pref_row_check_set_key      (FinancePrefRowCheck  *self,
+                                                     const gchar          *key);
+
+GVariant *      finance_pref_row_check_get_value    (FinancePrefRowCheck  *self);
+
+void            finance_pref_row_check_set_value    (FinancePrefRowCheck  *self,
+                                                     const GValue         *value);
+
+gboolean        finance_pref_row_check_get_active   (FinancePrefRowCheck  *self);
+
+void            finance_pref_row_check_set_active   (FinancePrefRowCheck  *self,
+                                                     gboolean             active);
 
 G_END_DECLS
 
 #endif /* __FINANCE_PREF_ROW_CHECK_H__ */
+
