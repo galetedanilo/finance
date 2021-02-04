@@ -173,18 +173,6 @@ on_calendar_day_selected (GtkCalendar *calendar,
   g_free (format_date);
 }
 
-static void
-finance_entry_date_prepare (FinanceEntryDate  *self,
-                            GDateTime         *date)
-{
-  gint year, month, day;
-
-  g_date_time_get_ymd (date, &year, &month, &day);
-
-  gtk_calendar_select_month (GTK_CALENDAR (self->calendar), month - 1, year);
-  gtk_calendar_select_day (GTK_CALENDAR (self->calendar), day);
-}
-
 GtkWidget *
 finance_entry_date_new (void)
 {
@@ -347,7 +335,12 @@ finance_entry_date_set_date (FinanceEntryDate *self,
 {
   g_return_if_fail (FINANCE_IS_ENTRY_DATE (self));
 
-  finance_entry_date_prepare (self, date);
+  gint year, month, day;
+
+  g_date_time_get_ymd (date, &year, &month, &day);
+
+  gtk_calendar_select_month (GTK_CALENDAR (self->calendar), month - 1, year);
+  gtk_calendar_select_day (GTK_CALENDAR (self->calendar), day);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_DATE]);
 }
