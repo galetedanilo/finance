@@ -233,7 +233,7 @@ change_settings (FinancePrefRowCheck *self)
 static void
 finance_pref_row_check_change_preference (FinancePrefRowCheck *self)
 {
-  finance_pref_row_check_set_active (self, TRUE);
+  gtk_revealer_set_reveal_child (GTK_REVEALER (self->pref_check), TRUE);
 }
 
 GtkWidget *
@@ -412,6 +412,11 @@ finance_pref_row_check_init (FinancePrefRowCheck *self)
   self->active  = FALSE;
 
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  g_object_bind_property (self->pref_check,
+                          "reveal-child",
+                          self, "active",
+                          G_BINDING_DEFAULT);
 }
 
 /**
