@@ -22,7 +22,6 @@
 #define __FINANCE_ENTRY_MONETARY_H__
 
 #include <gtk/gtk.h>
-#include <monetary.h>
 
 G_BEGIN_DECLS
 
@@ -37,6 +36,11 @@ gdouble       finance_entry_monetary_get_amount           (FinanceEntryMonetary 
 void          finance_entry_monetary_set_amount           (FinanceEntryMonetary *self,
                                                            gdouble              amount);
 
+gint          finance_entry_monetary_get_decimal_places   (FinanceEntryMonetary *self);
+
+void          finance_entry_monetary_set_decimal_places   (FinanceEntryMonetary *self,
+                                                           gint                 value);
+
 gboolean      finance_entry_monetary_get_formatting       (FinanceEntryMonetary *self);
 
 void          finance_entry_monetary_set_formatting       (FinanceEntryMonetary *self,
@@ -47,7 +51,10 @@ gboolean      finance_entry_monetary_get_currency_symbol  (FinanceEntryMonetary 
 void          finance_entry_monetary_set_currency_symbol  (FinanceEntryMonetary *self,
                                                            gboolean             is_currency_symbol);
 
-void          finance_entry_monetary_clear_entry          (FinanceEntryMonetary *self);
+gint          finance_entry_monetary_get_symbol_type      (FinanceEntryMonetary *self);
+
+void          finance_entry_monetary_set_symbol_type      (FinanceEntryMonetary *self,
+                                                           gint                 symbol_type);
 
 G_END_DECLS
 
