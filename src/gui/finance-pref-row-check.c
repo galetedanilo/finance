@@ -583,9 +583,9 @@ finance_pref_row_check_set_key (FinancePrefRowCheck *self,
 
       self->handler =  g_signal_connect_object (self->settings,
                                                 signal_detail,
-                                            G_CALLBACK (active_preference),
-                                            self,
-                                            G_CONNECT_SWAPPED);
+                                                G_CALLBACK (active_preference),
+                                                self,
+                                                G_CONNECT_SWAPPED);
 
       g_free (signal_detail);
     }
