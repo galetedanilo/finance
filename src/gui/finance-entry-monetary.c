@@ -19,6 +19,7 @@
  */
 
 #include "finance-config.h"
+#include "finance-enums.h"
 
 #include "finance-entry-monetary.h"
 
@@ -27,9 +28,12 @@ struct _FinanceEntryMonetary
   GtkEntry    parent_class;
 
   gdouble     amount;
+  gint        decimal_value;
 
   gboolean    is_formatting;
   gboolean    is_currency_symbol;
+
+  FinanceSymbolType symbol_type;
 };
 
 G_DEFINE_TYPE (FinanceEntryMonetary, finance_entry_monetary, GTK_TYPE_ENTRY)
@@ -38,11 +42,36 @@ enum {
   PROP_0,
   PROP_AMOUNT,
   PROP_FORMATTING,
+  PROP_DECIMAL_PLACES,
   PROP_CURRENCY_SYMBOL,
+  PROP_SYMBOL_TYPE,
   N_PROPS,
 };
 
 static GParamSpec *properties[N_PROPS] = { NULL, };
+
+static void
+filter_string (FinanceEntryMonetary *self)
+{
+  GString     *aux;
+  const gchar *p;
+
+  aux = g_string_new (NULL);
+
+  p = g_strdup (gtk_entry_get_text (GTK_ENTRY (self)));
+
+  for (; *p != 0x00; p = g_utf8_next_char (p))
+      if (g_unichar_isdigit (g_utf8_get_char (p)))
+        g_string_append_unichar (aux, g_utf8_get_char (p));
+
+  aux = g_string_insert_c (aux, (aux->len - self->decimal_value), '.');
+
+  aux = g_string_append_c (aux, 0x00);
+
+  self->amount = g_strtod (aux->str, NULL);
+
+  g_string_free (aux, TRUE);
+}
 
 static void
 on_automatic_monetary_formatting (GtkEditable *editable,
@@ -51,7 +80,85 @@ on_automatic_monetary_formatting (GtkEditable *editable,
                                   gint        *position,
                                   gpointer    user_data)
 {
+  FinanceEntryMonetary *self = FINANCE_ENTRY_MONETARY (user_data);
 
+  gunichar aux_num = g_utf8_get_char (text);
+
+  if (g_unichar_type (aux_num) == G_UNICODE_DECIMAL_NUMBER)
+    {
+      g_signal_handlers_block_by_func (editable,
+                                       (gpointer) on_automatic_monetary_formatting,
+                                       user_data);
+
+      gtk_editable_insert_text (editable,
+                                text,
+                                length,
+                                position);
+
+      if (gtk_entry_get_text_length (GTK_ENTRY (user_data)) > self->decimal_value)
+        {
+          gchar       format[7];
+          gchar       money[40];
+
+          filter_string (self);
+
+          g_snprintf (format, 7, "%%!.%dn", self->decimal_value);
+          strfmon (money, 40, format, self->amount);
+
+          gtk_entry_set_text (GTK_ENTRY (user_data), "");
+
+          gtk_editable_insert_text (editable,
+                                    money,
+                                    strlen (money),
+                                    position);
+        }
+
+      g_signal_handlers_unblock_by_func (editable,
+                                         (gpointer) on_automatic_monetary_formatting,
+                                         user_data);
+    }
+
+  g_signal_stop_emission_by_name (editable, "insert_text");
+
+}
+
+static void
+on_monetary_formatting (FinanceEntryMonetary *self)
+{
+  gchar money[40];
+  gchar format[7];
+
+  if (!gtk_entry_get_text_length (GTK_ENTRY (self)))
+    return;
+
+  if (self->is_currency_symbol)
+    {
+      if (self->symbol_type == LOCAL_SYMBOL_TYPE)
+        {
+          g_snprintf (format, 7, "%%.%dn", self->decimal_value);
+          strfmon (money, 40, format, self->amount);
+        }
+      else
+        {
+          g_snprintf (format, 7, "%%.%di", self->decimal_value);
+          strfmon (money, 40, format, self->amount);
+        }
+    }
+  else
+    {
+      g_snprintf (format, 7, "%%!.%dn", self->decimal_value);
+      strfmon (money, 40, format, self->amount);
+    }
+
+  g_signal_handlers_block_by_func (self,
+                                   (gpointer) on_automatic_monetary_formatting,
+                                   self);
+
+  gtk_entry_set_text (GTK_ENTRY (self), money);
+
+  g_signal_handlers_unblock_by_func (self,
+                                     (gpointer) on_automatic_monetary_formatting,
+                                     self);
 }
 
 GtkWidget *
@@ -68,13 +175,43 @@ finance_entry_monetary_focus_in_event (GtkWidget      *widget,
 
   gchar *value;
 
-  if (gtk_entry_get_text_length (GTK_ENTRY (widget)))
+  gtk_entry_set_alignment (GTK_ENTRY (self), 1);
+
+  if (self->is_formatting && self->amount == 0.0)
     {
-      value = g_strdup_printf ("%.2f", self->amount);
 
-      gtk_entry_set_text (GTK_ENTRY (widget), value);
+      switch (self->decimal_value)
+        {
+        case 3:
+          gtk_entry_set_text (GTK_ENTRY (self), "0.000");
+          break;
 
-      g_free (value);
+        case 2:
+          gtk_entry_set_text (GTK_ENTRY (self), "0.00");
+          break;
+
+        case 1:
+          gtk_entry_set_text (GTK_ENTRY (self), "0.0");
+          break;
+
+        default:
+          gtk_entry_set_text (GTK_ENTRY (self), "");
+          break;
+        }
+
+    }
+  else
+    {
+      if (self->amount != 0.0)
+        {
+          value = g_strdup_printf ("%.*f",
+                                   self->decimal_value,
+                                   self->amount);
+
+          gtk_entry_set_text (GTK_ENTRY (self), value);
+
+          g_free (value);
+        }
     }
 
   return GTK_WIDGET_CLASS (finance_entry_monetary_parent_class)->focus_in_event (widget, event);
@@ -86,18 +223,24 @@ finance_entry_monetary_focus_out_event (GtkWidget     *widget,
 {
   FinanceEntryMonetary *self = FINANCE_ENTRY_MONETARY (widget);
 
-  gchar money[20];
+  gtk_entry_set_alignment (GTK_ENTRY (self), 0);
 
-  if (gtk_entry_get_text_length (GTK_ENTRY (widget)))
+  if (gtk_entry_get_text_length (GTK_ENTRY (self)))
     {
-      self->amount = g_strtod (gtk_entry_get_text (GTK_ENTRY (widget)), NULL);
-
-      if (self->is_currency_symbol)
-        strfmon (money, 20, "%n", self->amount);
+      if (!self->is_formatting)
+        self->amount = g_strtod (gtk_entry_get_text (GTK_ENTRY (self)), NULL);
       else
-        strfmon (money, 20, "%!n", self->amount);
+        filter_string (self);
 
-      gtk_entry_set_text (GTK_ENTRY (widget), money);
+      if (self->amount != 0.0)
+        on_monetary_formatting (self);
+      else
+        gtk_entry_set_text (GTK_ENTRY (self), "");
+
+    }
+  else
+    {
+      self->amount = 0.0;
     }
 
   return GTK_WIDGET_CLASS (finance_entry_monetary_parent_class)->focus_out_event (widget, event);
@@ -121,8 +264,16 @@ finance_entry_monetary_get_property (GObject    *object,
       g_value_set_boolean (value, finance_entry_monetary_get_formatting (self));
       break;
 
+    case PROP_DECIMAL_PLACES:
+      g_value_set_int (value, finance_entry_monetary_get_decimal_places (self));
+      break;
+
     case PROP_CURRENCY_SYMBOL:
       g_value_set_boolean (value, finance_entry_monetary_get_currency_symbol (self));
+      break;
+
+    case PROP_SYMBOL_TYPE:
+      g_value_set_int (value, finance_entry_monetary_get_symbol_type (self));
       break;
 
     default:
@@ -149,8 +300,16 @@ finance_entry_monetary_set_property (GObject      *object,
       finance_entry_monetary_set_formatting (self, g_value_get_boolean (value));
       break;
 
+    case PROP_DECIMAL_PLACES:
+      finance_entry_monetary_set_decimal_places (self, g_value_get_int (value));
+      break;
+
     case PROP_CURRENCY_SYMBOL:
       finance_entry_monetary_set_currency_symbol (self, g_value_get_boolean (value));
+      break;
+
+    case PROP_SYMBOL_TYPE:
+      finance_entry_monetary_set_symbol_type (self, g_value_get_int (value));
       break;
 
     default:
@@ -191,7 +350,20 @@ finance_entry_monetary_class_init (FinanceEntryMonetaryClass *klass)
   properties[PROP_FORMATTING] = g_param_spec_boolean ("formatting",
                                                       "Enable automatic monetary formatting",
                                                       "Enable automatic monetary formatting",
-                                                      FALSE,
+                                                      TRUE,
+                                                      G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * FinanceEntryMonetary::decimal-places:
+   *
+   * The number of digits to the right of a decimal point
+   */
+  properties[PROP_DECIMAL_PLACES] = g_param_spec_int ("decimal-places",
+                                                      "Decimal places",
+                                                      "The number of digits to the right of a decimal point",
+                                                      G_MININT,
+                                                      G_MAXINT,
+                                                      1,
                                                       G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
@@ -205,6 +377,19 @@ finance_entry_monetary_class_init (FinanceEntryMonetaryClass *klass)
                                                            FALSE,
                                                            G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
+    /**
+   * FinanceEntryMonetary::symbol-type:
+   *
+   * Sets currency symbol is local or international
+   */
+  properties[PROP_SYMBOL_TYPE] = g_param_spec_int ("symbol-type",
+                                                   "Sets currency symbol is local or international",
+                                                   "Sets currency symbol is local or international",
+                                                   G_MININT,
+                                                   G_MAXINT,
+                                                   0,
+                                                   G_PARAM_WRITABLE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/gui/finance-entry-monetary.ui");
@@ -217,8 +402,10 @@ static void
 finance_entry_monetary_init (FinanceEntryMonetary *self)
 {
   self->is_currency_symbol  = FALSE;
-  self->is_formatting       = FALSE;
+  self->is_formatting       = TRUE;
   self->amount              = 0.0;
+  self->decimal_value       = 1;
+  self->symbol_type         = 0;
 
   gtk_widget_init_template (GTK_WIDGET (self));
 }
@@ -256,15 +443,11 @@ finance_entry_monetary_set_amount (FinanceEntryMonetary *self,
 {
   g_return_if_fail (FINANCE_IS_ENTRY_MONETARY (self));
 
-  gchar *format;
-
   self->amount = amount;
 
-  format = g_strdup_printf ("%f", self->amount);
+  on_monetary_formatting (self);
 
-  gtk_entry_set_text (GTK_ENTRY (self), format);
-
-  g_free (format);
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_AMOUNT]);
 }
 
 /**
@@ -314,6 +497,46 @@ finance_entry_monetary_set_formatting (FinanceEntryMonetary *self,
 }
 
 /**
+ * finance_entry_monetary_get_decimal_places:
+ * @self: a #FinanceEntryMonetary instance.
+ *
+ * Returns the current precision of monetary value.
+ *
+ * Returns: The current precision.
+ *
+ * Since: 1.0
+ */
+gint
+finance_entry_monetary_get_decimal_places (FinanceEntryMonetary *self)
+{
+  g_return_val_if_fail (FINANCE_IS_ENTRY_MONETARY (self), FALSE);
+
+  return self->decimal_value;
+}
+
+/**
+ * finance_entry_monetary_set_decimal_places:
+ * @self: a #FinanceEntryMonetary object.
+ * @value: a #gint.
+ *
+ * Sets the number of digits to the right of a decimal point.
+ *
+ * Since: 1.0
+ */
+void
+finance_entry_monetary_set_decimal_places (FinanceEntryMonetary *self,
+                                           gint                  value)
+{
+  g_return_if_fail (FINANCE_IS_ENTRY_MONETARY (self));
+
+  self->decimal_value = value;
+
+  on_monetary_formatting (self);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_DECIMAL_PLACES]);
+}
+
+/**
  * finance_entry_manetary_get_currency_symbol:
  * @self: a #FinanceEntryMonetary instance.
  *
@@ -346,26 +569,48 @@ finance_entry_monetary_set_currency_symbol (FinanceEntryMonetary  *self,
 {
   g_return_if_fail (FINANCE_IS_ENTRY_MONETARY (self));
 
-  if (self->is_currency_symbol == is_currency_symbol)
-    return;
-
   self->is_currency_symbol = is_currency_symbol;
+
+  on_monetary_formatting (self);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_CURRENCY_SYMBOL]);
 }
 
 /**
- * finance_entry_monetary_clear_entry:
- * @self: a #FinanceEntryMonetary object.
+ * finance_entry_monetary_get_symbol_type:
+ * @self: a #FinanceEntryMonetary instance.
  *
- * Sets the financial amount entry as empty.
+ *
+ * Returns: a #gint.
+ *
+ * Since: 1.0
+ */
+gint
+finance_entry_monetary_get_symbol_type (FinanceEntryMonetary *self)
+{
+  g_return_val_if_fail (FINANCE_IS_ENTRY_MONETARY (self), -1);
+
+  return self->symbol_type;
+}
+
+/**
+ * finance_entry_monetary_set_symbol_type:
+ * @self: a #FinanceEntryMonetary object.
+ * @symbol_type: a #gint.
+ *
+ * Sets currency symbol is local or international.
  *
  * Since: 1.0
  */
 void
-finance_entry_monetary_clear_entry (FinanceEntryMonetary *self)
+finance_entry_monetary_set_symbol_type (FinanceEntryMonetary *self,
+                                        gint                 symbol_type)
 {
   g_return_if_fail (FINANCE_IS_ENTRY_MONETARY (self));
 
-  gtk_entry_set_text (GTK_ENTRY (self), "");
+  self->symbol_type = symbol_type;
+
+  on_monetary_formatting (self);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SYMBOL_TYPE]);
 }
