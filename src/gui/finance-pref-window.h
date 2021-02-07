@@ -1,4 +1,4 @@
-/* finance-preferences-window.h
+/* finance-pref-window.h
  *
  * Copyright 2020 galetedanilo <galetedanilo@gmail.com>
  *
@@ -18,17 +18,24 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef __FINANCE_PREFERENCES_WINDOW_H__
-#define __FINANCE_PREFERENCES_WINDOW_H__
+#ifndef __FINANCE_PREF_WINDOW_H__
+#define __FINANCE_PREF_WINDOW_H__
 
 #include <gtk/gtk.h>
 
+#include "finance-pref-box.h"
+#include "finance-pref-list-box.h"
+#include "finance-pref-row.h"
+#include "finance-pref-row-check.h"
+#include "finance-pref-row-spin.h"
+#include "finance-pref-row-switch.h"
+
 G_BEGIN_DECLS
 
-#define FINANCE_TYPE_PREFERENCES_WINDOW (finance_preferences_window_get_type())
+#define FINANCE_TYPE_PREF_WINDOW (finance_pref_window_get_type())
 
-G_DECLARE_FINAL_TYPE (FinancePreferencesWindow, finance_preferences_window, FINANCE, PREFERENCES_WINDOW, GtkDialog)
+G_DECLARE_FINAL_TYPE (FinancePrefWindow, finance_pref_window, FINANCE, PREF_WINDOW, GtkWindow)
 
 G_END_DECLS
 
-#endif /* __FINANCE_PREFERENCES_WINDOW_H__ */
+#endif /* __FINANCE_PREF_WINDOW_H__ */
