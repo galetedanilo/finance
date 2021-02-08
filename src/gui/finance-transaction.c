@@ -20,6 +20,7 @@
 
 #include <glib/gi18n.h>
 #include "finance-config.h"
+#include "finance-enums.h"
 
 #include "finance-transaction.h"
 
@@ -41,16 +42,30 @@ struct _FinanceTransaction
   GtkWidget *frequency_date;
   GtkWidget *notes;
 
+  GSettings *settings;
 };
 
 G_DEFINE_TYPE (FinanceTransaction, finance_transaction, GTK_TYPE_BOX)
 
 enum {
   PROP_0,
+  PROP_ICON,
+  PROP_NAME,
+  PROP_AMOUNT,
+  PROP_DATE,
+  PROP_PAYEE_NAME,
+  PROP_PAYMENT,
+  PROP_PAYMENT_INFO,
+  PROP_CATEGORY,
+  PROP_REPEAT,
+  PROP_FREQUENCY,
+  PROP_FREQUENCY_TYPE,
+  PROP_FREQUENCY_DATE,
+  PROP_NOTES,
   N_PROPS
 };
 
-static GParamSpec *properties [N_PROPS];
+static GParamSpec *properties [N_PROPS] = { NULL, };
 
 
 static void
@@ -93,10 +108,9 @@ on_repeat_changed (GtkComboBox  *widget,
 
   gtk_combo_box_set_active (GTK_COMBO_BOX (self->frequency_type), 0);
 
-  if (gtk_combo_box_get_active (widget) != 0)
-    gtk_widget_set_visible (self->frequency_type, TRUE);
-  else
-    gtk_widget_set_visible (self->frequency, FALSE);
+  gtk_widget_set_visible (self->frequency_type,
+                          gtk_combo_box_get_active (widget));
+
 }
 
 GtkWidget *
@@ -110,7 +124,27 @@ finance_transaction_finalize (GObject *object)
 {
   FinanceTransaction *self = (FinanceTransaction *)object;
 
+  g_clear_object (&self->settings);
+
   G_OBJECT_CLASS (finance_transaction_parent_class)->finalize (object);
+}
+
+static void
+finance_transaction_get_property (GObject    *object,
+                                  guint       prop_id,
+                                  GValue     *value,
+                                  GParamSpec *pspec)
+{
+
+}
+
+static void
+finance_transaction_set_property (GObject      *object,
+                                  guint         prop_id,
+                                  const GValue *value,
+                                  GParamSpec   *pspec)
+{
+
 }
 
 static void
@@ -124,7 +158,7 @@ finance_transaction_class_init (FinanceTransactionClass *klass)
 
   object_class->finalize = finance_transaction_finalize;
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/Finance/gui/finance-transaction.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/gui/finance-transaction.ui");
 
   /* The Widgets */
   gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, icon);
@@ -150,20 +184,147 @@ static void
 finance_transaction_init (FinanceTransaction *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  self->settings = g_settings_new ("org.gnome.Finance");
+
+  g_settings_bind (self->settings, "date",
+                   self->date, "formatting",
+                   G_SETTINGS_BIND_GET);
+
+  g_settings_bind (self->settings, "date",
+                   self->frequency_date, "formatting",
+                   G_SETTINGS_BIND_GET);
+
+  g_settings_bind (self->settings, "amount",
+                   self->amount, "formatting",
+                   G_SETTINGS_BIND_GET);
+
+  g_settings_bind (self->settings, "decimal-places",
+                   self->amount, "decimal-places",
+                   G_SETTINGS_BIND_GET);
+
+  g_settings_bind (self->settings, "currency-symbol",
+                   self->amount, "currency-symbol",
+                   G_SETTINGS_BIND_GET);
+
+  g_settings_bind (self->settings, "symbol-type",
+                   self->amount, "symbol-type",
+                   G_SETTINGS_BIND_GET);
+
 }
 
+/**
+ * finance_transaction_get_icon:
+ * @self: a #FinanceTransaction object.
+ *
+ * Returns the value from the label icon of the transaction.
+ *
+ * Returns: The icon in the #FinanceTransaction, or %NULL.
+ * This string points to internally allocated storage in the object
+ * and must not be freed, modified or stored.
+ *
+ * Since: 1.0
+ */
+const gchar *
+finance_transaction_get_icon (FinanceTransaction *self)
+{
+  g_return_val_if_fail (FINANCE_IS_TRANSACTION (self), NULL);
+
+  return gtk_label_get_text (GTK_LABEL (self->icon));
+}
+
+/**
+ * finance_transaction_set_icon:
+ * @self: a #FinanceTransaction instance.
+ * @icon: The icon to set, as a string.
+ *
+ * Sets the icon within the #FinanceTransaction, replacing the current contents.
+ *
+ * Since:1.0
+ */
 void
-finance_transaction_preferences_update (FinanceTransaction  *self)
+finance_transaction_set_icon (FinanceTransaction *self,
+                              const gchar        *icon)
 {
   g_return_if_fail (FINANCE_IS_TRANSACTION (self));
 
-  GSettings *settings;
+  gtk_label_set_text (GTK_LABEL (self->icon), icon);
 
-  settings = g_settings_new ("org.gnome.Finance");
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_ICON]);
+}
 
-  finance_entry_date_set_format_date (FINANCE_ENTRY_DATE (self->date),
-                                      g_settings_get_boolean (settings, "date-formatting"));
+/**
+ * finance_transaction_get_name:
+ * @self: a #FinanceTransaction object.
+ *
+ * Returns the name
+ *
+ * Returns: The name in the #FinanceTransaction, or %NULL.
+ * This string points to internally allocated storage in the object
+ * and must not be freed, modified or stored.
+ *
+ * Since: 1.0
+ */
+const gchar *
+finance_transaction_get_name (FinanceTransaction *self)
+{
+  g_return_val_if_fail (FINANCE_IS_TRANSACTION (self), NULL);
 
-  finance_entry_date_set_format_date (FINANCE_ENTRY_DATE (self->frequency_date),
-                                      g_settings_get_boolean (settings, "date-formatting"));
+  return gtk_entry_get_text (GTK_ENTRY (self->name));
+}
+
+/**
+ * finance_transaction_set_name:
+ * @self: a #FinanceTransaction instance.
+ * @name: The name to set, as a string.
+ *
+ * Returns: The name in the #FinanceTransaction, or %NULL.
+ * This string points to internally allocated storage in the object
+ * and must not be freed, modified or stored.
+ *
+ * Since: 1.0
+ */
+void
+finance_transaction_set_name (FinanceTransaction *self,
+                              const gchar        *name)
+{
+  g_return_if_fail (FINANCE_IS_TRANSACTION (self));
+
+  gtk_entry_set_text (GTK_ENTRY (self->name), name);
+}
+
+/**
+ * finance_transaction_get_amount:
+ * @self: a #FinanceTransaction instance.
+ *
+ * Gets the amount value in #FinanceTransaction.
+ *
+ * Returns: a #gdouble.
+ *
+ * Since: 1.0
+ */
+gdouble
+finance_transaction_get_amount (FinanceTransaction *self)
+{
+  g_return_val_if_fail (FINANCE_IS_TRANSACTION (self), 0.0);
+
+  return finance_entry_monetary_get_amount (FINANCE_ENTRY_MONETARY (self->amount));
+}
+
+/**
+ * finance_transaction_set_amount:
+ * @self: a #FinanceTransaction object.
+ * @amount: a #gdouble to set it to.
+ *
+ * Sets amount value in #FinanceTransaction.
+ *
+ * Since: 1.0
+ */
+void
+finance_transaction_set_amount (FinanceTransaction *self,
+                                gdouble            amount)
+{
+  g_return_if_fail (FINANCE_IS_TRANSACTION (self));
+
+  finance_entry_monetary_set_amount (FINANCE_ENTRY_MONETARY (self->amount), amount);
 }
