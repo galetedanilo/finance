@@ -23,8 +23,6 @@
 
 #include <gtk/gtk.h>
 
-#include "finance-enums.h"
-
 #include "finance-entry-date.h"
 #include "finance-entry-monetary.h"
 
@@ -34,9 +32,27 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (FinanceTransaction, finance_transaction, FINANCE, TRANSACTION, GtkBox)
 
-GtkWidget*  finance_transaction_new                 (void);
+GtkWidget *     finance_transaction_new                 (void);
 
-void        finance_transaction_preferences_update  (FinanceTransaction *self);
+const gchar *   finance_transaction_get_icon            (FinanceTransaction *self);
+
+void            finance_transaction_set_icon            (FinanceTransaction *self,
+                                                         const gchar        *icon);
+
+const gchar *   finance_transaction_get_name            (FinanceTransaction *self);
+
+void            finance_transaction_set_name            (FinanceTransaction *self,
+                                                         const gchar        *name);
+
+gdouble         finance_transaction_get_amount          (FinanceTransaction *self);
+
+void            finance_transaction_set_amount          (FinanceTransaction *self,
+                                                         gdouble            amount);
+
+GDateTime *     finance_transaction_get_date            (FinanceTransaction *self);
+
+void            finance_transaction_set_date            (FinanceTransaction *self,
+                                                         GDateTime          *date);
 
 G_END_DECLS
 
