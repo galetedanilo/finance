@@ -135,7 +135,30 @@ finance_transaction_get_property (GObject    *object,
                                   GValue     *value,
                                   GParamSpec *pspec)
 {
+  FinanceTransaction *self = FINANCE_TRANSACTION (object);
 
+  switch (prop_id)
+    {
+    case PROP_ICON:
+      g_value_set_string (value, finance_transaction_get_icon (self));
+      break;
+
+    case PROP_NAME:
+      g_value_set_string (value, finance_transaction_get_name (self));
+      break;
+
+    case PROP_AMOUNT:
+      g_value_set_double (value, finance_transaction_get_amount (self));
+      break;
+
+    case PROP_DATE:
+      g_value_set_boxed (value, finance_transaction_get_date (self));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
 }
 
 static void
@@ -144,7 +167,30 @@ finance_transaction_set_property (GObject      *object,
                                   const GValue *value,
                                   GParamSpec   *pspec)
 {
+  FinanceTransaction *self = FINANCE_TRANSACTION (object);
 
+  switch (prop_id)
+    {
+    case PROP_ICON:
+      finance_transaction_set_icon (self, g_value_get_string (value));
+      break;
+
+    case PROP_NAME:
+      finance_transaction_set_name (self, g_value_get_string (value));
+      break;
+
+    case PROP_AMOUNT:
+      finance_transaction_set_amount (self, g_value_get_double (value));
+      break;
+
+    case PROP_DATE:
+      finance_transaction_set_date (self, g_value_get_boxed (value));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
 }
 
 static void
@@ -210,7 +256,6 @@ finance_transaction_init (FinanceTransaction *self)
   g_settings_bind (self->settings, "symbol-type",
                    self->amount, "symbol-type",
                    G_SETTINGS_BIND_GET);
-
 }
 
 /**
@@ -327,4 +372,40 @@ finance_transaction_set_amount (FinanceTransaction *self,
   g_return_if_fail (FINANCE_IS_TRANSACTION (self));
 
   finance_entry_monetary_set_amount (FINANCE_ENTRY_MONETARY (self->amount), amount);
+}
+
+/**
+ * finance_transaction_get_date:
+ * @self: a #FinanceTransaction instance.
+ *
+ * Get the value of the date.
+ *
+ * Returns: a #GDateTime with the date.
+ *
+ * Since: 1.0
+ */
+GDateTime *
+finance_transaction_get_date (FinanceTransaction *self)
+{
+  g_return_val_if_fail (FINANCE_IS_TRANSACTION (self), NULL);
+
+  return finance_entry_date_get_date (FINANCE_ENTRY_DATE (self->date));
+}
+
+/**
+ * finance_transaction_set_date:
+ * @self: a #FinanceTransaction object.
+ * @date: a valid #GDateTime.
+ *
+ * Set the value of the entry date.
+ *
+ * Since: 1.0
+ */
+void
+finance_transaction_set_date (FinanceTransaction *self,
+                              GDateTime          *date)
+{
+  g_return_if_fail (FINANCE_IS_TRANSACTION (self));
+
+  finance_entry_date_set_date (FINANCE_ENTRY_DATE (self->date), date);
 }
