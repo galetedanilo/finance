@@ -5,8 +5,17 @@ inc_dirs = [
 finance_sources = [
   'main.c',
   'gui/finance-application.c',
-  'gui/finance-preferences-window.c',
+  'gui/finance-entry-monetary.c',
+  'gui/finance-entry-date.c',
+  'gui/finance-pref-box.c',
+  'gui/finance-pref-list-box.c',
+  'gui/finance-pref-row.c',
+  'gui/finance-pref-row-check.c',
+  'gui/finance-pref-row-spin.c',
+  'gui/finance-pref-row-switch.c',
+  'gui/finance-pref-window.c',
   'gui/finance-shortcuts-window.c',
+  'gui/finance-transaction.c',
   'gui/finance-window.c',
 ]
 
