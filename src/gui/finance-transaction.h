@@ -54,6 +54,11 @@ GDateTime *     finance_transaction_get_date            (FinanceTransaction *sel
 void            finance_transaction_set_date            (FinanceTransaction *self,
                                                          GDateTime          *date);
 
+const gchar *   finance_transaction_get_payee_name      (FinanceTransaction *self);
+
+void            finance_transaction_set_payee_name      (FinanceTransaction *self,
+                                                         const gchar        *payee_name);
+
 G_END_DECLS
 
 #endif /* __FINANCE_TRANSACTION_H__ */
