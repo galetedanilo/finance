@@ -262,9 +262,9 @@ finance_transaction_init (FinanceTransaction *self)
  * finance_transaction_get_icon:
  * @self: a #FinanceTransaction object.
  *
- * Returns the value from the label icon of the transaction.
+ * Returns the transaction icon.
  *
- * Returns: The icon in the #FinanceTransaction, or %NULL.
+ * Returns: The transaction icon as a string, or %NULL.
  * This string points to internally allocated storage in the object
  * and must not be freed, modified or stored.
  *
@@ -281,9 +281,9 @@ finance_transaction_get_icon (FinanceTransaction *self)
 /**
  * finance_transaction_set_icon:
  * @self: a #FinanceTransaction instance.
- * @icon: The icon to set, as a string.
+ * @icon: the icon to set, as a string.
  *
- * Sets the icon within the #FinanceTransaction, replacing the current contents.
+ * Sets the icon, replacing the current contents.
  *
  * Since:1.0
  */
@@ -302,9 +302,9 @@ finance_transaction_set_icon (FinanceTransaction *self,
  * finance_transaction_get_name:
  * @self: a #FinanceTransaction object.
  *
- * Returns the name
+ * Returns the transaction name.
  *
- * Returns: The name in the #FinanceTransaction, or %NULL.
+ * Returns: The transaction name as a string, or %NULL.
  * This string points to internally allocated storage in the object
  * and must not be freed, modified or stored.
  *
@@ -321,11 +321,9 @@ finance_transaction_get_name (FinanceTransaction *self)
 /**
  * finance_transaction_set_name:
  * @self: a #FinanceTransaction instance.
- * @name: The name to set, as a string.
+ * @name: the name to set, as a string.
  *
- * Returns: The name in the #FinanceTransaction, or %NULL.
- * This string points to internally allocated storage in the object
- * and must not be freed, modified or stored.
+ * Sets the transaction name, replacing the current contents.
  *
  * Since: 1.0
  */
@@ -342,7 +340,7 @@ finance_transaction_set_name (FinanceTransaction *self,
  * finance_transaction_get_amount:
  * @self: a #FinanceTransaction instance.
  *
- * Gets the amount value in #FinanceTransaction.
+ * Gets the transaction amount.
  *
  * Returns: a #gdouble.
  *
@@ -361,7 +359,7 @@ finance_transaction_get_amount (FinanceTransaction *self)
  * @self: a #FinanceTransaction object.
  * @amount: a #gdouble to set it to.
  *
- * Sets amount value in #FinanceTransaction.
+ * Sets transaction amount.
  *
  * Since: 1.0
  */
@@ -378,9 +376,9 @@ finance_transaction_set_amount (FinanceTransaction *self,
  * finance_transaction_get_date:
  * @self: a #FinanceTransaction instance.
  *
- * Get the value of the date.
+ * Returns the date of the financial transaction.
  *
- * Returns: a #GDateTime with the date.
+ * Returns: a #GDateTime.
  *
  * Since: 1.0
  */
@@ -395,9 +393,9 @@ finance_transaction_get_date (FinanceTransaction *self)
 /**
  * finance_transaction_set_date:
  * @self: a #FinanceTransaction object.
- * @date: a valid #GDateTime.
+ * @date: a valid date, as a #GDateTime.
  *
- * Set the value of the entry date.
+ * Sets the date of the financial transaction.
  *
  * Since: 1.0
  */
@@ -408,4 +406,40 @@ finance_transaction_set_date (FinanceTransaction *self,
   g_return_if_fail (FINANCE_IS_TRANSACTION (self));
 
   finance_entry_date_set_date (FINANCE_ENTRY_DATE (self->date), date);
+}
+
+/**
+ * finance_transaction_get_payee_name:
+ * @self: a #FinanceTransaction instance.
+ *
+ * Returns the transaction payee name.
+ *
+ * Returns: The transaction payee name as a string, or %NULL.
+ * This string points to internally allocated storage in the object
+ * and must not be freed, modified or stored.
+ */
+const gchar *
+finance_transaction_get_payee_name (FinanceTransaction *self)
+{
+  g_return_val_if_fail (FINANCE_IS_TRANSACTION (self), NULL);
+
+  return gtk_entry_get_text (GTK_ENTRY (self->payee_name));
+}
+
+/**
+ * finance_transaction_set_payee_name:
+ * @self: a #FinanceTransaction object.
+ * @payee_name: the payee name to set, as a string.
+ *
+ * Sets the transaction payee name, replacing the current contents.
+ *
+ * Since: 1.0
+ */
+void
+finance_transaction_set_payee_name (FinanceTransaction *self,
+                                    const gchar        *payee_name)
+{
+  g_return_if_fail (FINANCE_IS_TRANSACTION (self));
+
+  gtk_entry_set_text (GTK_ENTRY (self->payee_name), payee_name);
 }
