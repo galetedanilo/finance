@@ -59,6 +59,16 @@ const gchar *   finance_transaction_get_payee_name      (FinanceTransaction *sel
 void            finance_transaction_set_payee_name      (FinanceTransaction *self,
                                                          const gchar        *payee_name);
 
+const gchar *   finance_transaction_get_payment_info    (FinanceTransaction *self);
+
+void            finance_transaction_set_payment_info    (FinanceTransaction *self,
+                                                         const gchar        *payment_info);
+
+GDateTime *     finance_transaction_get_frequency_date  (FinanceTransaction *self);
+
+void            finance_transaction_set_frequency_date  (FinanceTransaction *self,
+                                                         GDateTime          *date);
+
 G_END_DECLS
 
 #endif /* __FINANCE_TRANSACTION_H__ */
