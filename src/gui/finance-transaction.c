@@ -155,6 +155,18 @@ finance_transaction_get_property (GObject    *object,
       g_value_set_boxed (value, finance_transaction_get_date (self));
       break;
 
+    case PROP_PAYEE_NAME:
+      g_value_set_string (value, finance_transaction_get_payee_name (self));
+      break;
+
+    case PROP_PAYMENT_INFO:
+      g_value_set_string (value, finance_transaction_get_payment_info (self));
+      break;
+
+    case PROP_FREQUENCY_DATE:
+      g_value_set_boxed (value,finance_transaction_get_frequency_date (self));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -185,6 +197,18 @@ finance_transaction_set_property (GObject      *object,
 
     case PROP_DATE:
       finance_transaction_set_date (self, g_value_get_boxed (value));
+      break;
+
+    case PROP_PAYEE_NAME:
+      finance_transaction_set_payee_name (self, g_value_get_string (value));
+      break;
+
+    case PROP_PAYMENT_INFO:
+      finance_transaction_set_payment_info (self, g_value_get_string (value));
+      break;
+
+    case PROP_FREQUENCY_DATE:
+      finance_transaction_set_frequency_date (self, g_value_get_boxed (value));
       break;
 
     default:
@@ -442,4 +466,77 @@ finance_transaction_set_payee_name (FinanceTransaction *self,
   g_return_if_fail (FINANCE_IS_TRANSACTION (self));
 
   gtk_entry_set_text (GTK_ENTRY (self->payee_name), payee_name);
+}
+
+/**
+ * finance_transaction_get_payment_info:
+ * @self: a #FinanceTransaciton instance.
+ *
+ * Returns the transaction payment information.
+ *
+ * Returns: The transaction payment information as a string, or %NULL.
+ * This string points to internally allocated storage in the object
+ * and must not be freed, modified or stored.
+ *
+ * Since: 1.0
+ */
+const gchar *
+finance_transaction_get_payment_info (FinanceTransaction *self)
+{
+  g_return_val_if_fail (FINANCE_IS_TRANSACTION (self), NULL);
+
+  return gtk_entry_get_text (GTK_ENTRY (self->payment_info));
+}
+
+/**
+ * finance_transaction_set_payment_info:
+ * @self: a #FinanceTransaction object.
+ * @payment_info: the payment information to set, as a string.
+ *
+ * Sets the transaction payment information, replacing the current contents.
+ *
+ * Since: 1.0
+ */
+void
+finance_transaction_set_payment_info (FinanceTransaction *self,
+                                      const gchar        *payment_info)
+{
+  g_return_if_fail (FINANCE_IS_TRANSACTION (self));
+
+  gtk_entry_set_text (GTK_ENTRY (self->payment_info), payment_info);
+}
+/**
+ * finance_transaction_get_frequency_date:
+ * @self: a #FinanceTransaction instance.
+ *
+ * Returns the date of the financial transaction frequency.
+ *
+ * Returns: a #GDateTime.
+ *
+ * Since: 1.0
+ */
+GDateTime *
+finance_transaction_get_frequency_date (FinanceTransaction *self)
+{
+  g_return_val_if_fail (FINANCE_IS_TRANSACTION (self), NULL);
+
+  return finance_entry_date_get_date (FINANCE_ENTRY_DATE (self->frequency_date));
+}
+
+/**
+ * finance_transaction_set_frequency_date:
+ * @self: a #FinanceTransaction object.
+ * @date: a valid date, as a #GDateTime.
+ *
+ * Sets the date of the financial transaction frequency.
+ *
+ * Since: 1.0
+ */
+void
+finance_transaction_set_frequency_date (FinanceTransaction *self,
+                                        GDateTime          *date)
+{
+  g_return_if_fail (FINANCE_IS_TRANSACTION (self));
+
+  finance_entry_date_set_date (FINANCE_ENTRY_DATE (self->frequency_date), date);
 }
