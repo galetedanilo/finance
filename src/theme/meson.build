@@ -1,5 +1,5 @@
 built_sources += gnome.compile_resources(
   'theme-resources',
-  'theme-gresources.xml',
+  'theme-gresource.xml',
   c_name: 'theme',
 )
