@@ -21,5 +21,8 @@ to help.
 
 ## ToDo
 
-- Side Panel
+- Transaction Object
+- Transaction GUI
+- Side Panel Object
+- Side Panel GUI
 
