@@ -383,11 +383,11 @@ finance_entry_monetary_class_init (FinanceEntryMonetaryClass *klass)
    * Sets currency symbol is local or international
    */
   properties[PROP_SYMBOL] = g_param_spec_enum ("symbol",
-                                                    "Sets currency symbol is local or international",
-                                                    "Sets currency symbol is local or international",
-                                                    FINANCE_TYPE_SYMBOL,
-                                                    FINANCE_LOCAL,
-                                                    G_PARAM_WRITABLE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+                                               "Sets currency symbol is local or international",
+                                               "Sets currency symbol is local or international",
+                                               FINANCE_TYPE_SYMBOL,
+                                               FINANCE_LOCAL,
+                                               G_PARAM_WRITABLE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
