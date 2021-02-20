@@ -63,7 +63,7 @@ finance_pref_window_class_init (FinancePrefWindowClass *klass)
 
   G_OBJECT_CLASS (klass)->dispose     = finance_pref_window_dispose;
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/gui/finance-pref-window.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/pref/finance-pref-window.ui");
 
   gtk_widget_class_bind_template_child (widget_class, FinancePrefWindow, date);
   gtk_widget_class_bind_template_child (widget_class, FinancePrefWindow, amount);
@@ -78,7 +78,7 @@ finance_pref_window_init (FinancePrefWindow *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
 
-  self->settings = g_settings_new ("org.gnome.Finance");
+  self->settings = g_settings_new ("org.gnome.finance");
 
   finance_pref_row_switch_add_settings (FINANCE_PREF_ROW_SWITCH (self->date), self->settings);
   finance_pref_row_switch_add_settings (FINANCE_PREF_ROW_SWITCH (self->amount), self->settings);

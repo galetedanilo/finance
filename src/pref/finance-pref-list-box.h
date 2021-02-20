@@ -1,6 +1,6 @@
-/* finance-window.h
+/* finance-pref-list-box.h
  *
- * Copyright 2020 galetedanilo
+ * Copyright 2021 galetedanilo <galetedanilo@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,22 +14,25 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef __FINANCE_WINDOW_H__
-#define __FINANCE_WINDOW_H__
+#ifndef __FINANCE_PREF_LIST_BOX_H__
+#define __FINANCE_PREF_LIST_BOX_H__
 
 #include <gtk/gtk.h>
-#include "finance-transaction.h"
+
+#include "finance-pref-row.h"
 
 G_BEGIN_DECLS
 
-#define FINANCE_TYPE_WINDOW (finance_window_get_type())
+#define FINANCE_TYPE_PREF_LIST_BOX (finance_pref_list_box_get_type ())
 
-G_DECLARE_FINAL_TYPE (FinanceWindow, finance_window, FINANCE, WINDOW, GtkApplicationWindow)
+G_DECLARE_FINAL_TYPE (FinancePrefListBox, finance_pref_list_box, FINANCE, PREF_LIST_BOX, GtkListBox)
 
-void    finance_window_preferences_update   (FinanceWindow *self);
+GtkWidget *     finance_pref_list_box       (void);
 
 G_END_DECLS
 
-#endif /* __FINANCE_WINDOW_H__ */
+#endif /* __FINANCE_PREF_LIST_BOX_H__ */

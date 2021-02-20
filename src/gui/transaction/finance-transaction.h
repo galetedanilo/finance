@@ -64,6 +64,16 @@ const gchar *   finance_transaction_get_payment_info    (FinanceTransaction *sel
 void            finance_transaction_set_payment_info    (FinanceTransaction *self,
                                                          const gchar        *payment_info);
 
+gint            finance_transaction_get_payment         (FinanceTransaction *self);
+
+void            finance_transaction_set_payment         (FinanceTransaction *self,
+                                                         gint               payment);
+
+gint            finance_transaction_get_frequency       (FinanceTransaction *self);
+
+void            finance_transaction_set_frequency       (FinanceTransaction *self,
+                                                         gint               frequency);
+
 gint            finance_transaction_get_frequency_number(FinanceTransaction *self);
 
 void            finance_transaction_set_frequency_number(FinanceTransaction *self,

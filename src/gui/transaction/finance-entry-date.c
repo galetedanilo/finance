@@ -282,7 +282,7 @@ finance_entry_date_class_init (FinanceEntryDateClass *klass)
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/gui/finance-entry-date.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/transaction/finance-entry-date.ui");
 
   gtk_widget_class_bind_template_child (widget_class, FinanceEntryDate, calendar);
   gtk_widget_class_bind_template_child (widget_class, FinanceEntryDate, popover);

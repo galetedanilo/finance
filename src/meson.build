@@ -1,38 +1,49 @@
-inc_dirs = [
-  include_directories('gui'),
-]
+enum_types = 'finance-enum-types'
 
-finance_sources = [
-  'main.c',
-  'gui/finance-application.c',
-  'gui/finance-entry-monetary.c',
-  'gui/finance-entry-date.c',
-  'gui/finance-pref-box.c',
-  'gui/finance-pref-list-box.c',
-  'gui/finance-pref-row.c',
-  'gui/finance-pref-row-check.c',
-  'gui/finance-pref-row-spin.c',
-  'gui/finance-pref-row-switch.c',
-  'gui/finance-pref-window.c',
-  'gui/finance-shortcuts-window.c',
-  'gui/finance-transaction.c',
-  'gui/finance-window.c',
-]
-
-finance_deps = [
-  dependency('gio-2.0', version: '>= 2.50'),
-  dependency('gtk+-3.0', version: '>= 3.22'),
-]
-
-gnome = import('gnome')
-
-finance_sources += gnome.compile_resources('finance-resources',
-  'finance.gresource.xml',
-  c_name: 'finance'
+built_sources = gnome.mkenums(
+  enum_types,
+     sources: enum_headers,
+  c_template: enum_types + '.c.template',
+  h_template: enum_types + '.h.template',
+  install_header: true,
 )
 
-executable('finance', finance_sources,
-  dependencies: finance_deps,
-  include_directories: inc_dirs,
-  install: true,
+finance_incs = [
+  include_directories('gui'),
+  include_directories('pref'),
+  include_directories('theme'),
+]
+
+sources = files()
+subdir('gui')
+subdir('pref')
+subdir('theme')
+
+finance_generated_sources_dep = declare_dependency(
+  sources: built_sources,
+)
+
+finance_deps += finance_generated_sources_dep
+
+libfinance = static_library(
+    'finance-private',
+              sources: sources,
+  include_directories: finance_incs,
+         dependencies: finance_deps,
+              install: false,
+)
+
+libfinance_dep = declare_dependency(
+            link_with: libfinance,
+              sources: built_sources,
+         dependencies: finance_deps,
+  include_directories: finance_incs,
+)
+
+
+executable(
+  meson.project_name(),
+       files('main.c'),
+          dependencies: libfinance_dep,
+               install: true,
 )

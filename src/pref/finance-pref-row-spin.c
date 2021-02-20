@@ -271,7 +271,7 @@ finance_pref_row_spin_class_init (FinancePrefRowSpinClass *klass)
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/gui/finance-pref-row-spin.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/pref/finance-pref-row-spin.ui");
 
   gtk_widget_class_bind_template_child (widget_class, FinancePrefRowSpin, title);
   gtk_widget_class_bind_template_child (widget_class, FinancePrefRowSpin, text);
@@ -296,7 +296,7 @@ finance_pref_row_spin_init (FinancePrefRowSpin *self)
  * @self: a #FinancePrefRowSpin instance.
  * @settings: a #GSettings
  *
- * Sets a #GSetting references in #FinancePrefRowSwitch.
+ * Sets a #GSetting references in #FinancePrefRowSpin.
  *
  * Since: 1.0
  */

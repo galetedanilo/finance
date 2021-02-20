@@ -22,7 +22,7 @@
 #include "finance-config.h"
 
 #include "finance-application.h"
-#include "finance-preferences-window.h"
+#include "finance-pref-window.h"
 #include "finance-shortcuts-window.h"
 #include "finance-window.h"
 
@@ -30,7 +30,11 @@ struct _FinanceApplication
 {
   GtkApplication  parent_instance;
 
+  /* The Widgets */
   GtkWidget       *window;
+
+  /* CSS File */
+  GtkCssProvider  *provider;
 };
 
 G_DEFINE_TYPE (FinanceApplication, finance_application, GTK_TYPE_APPLICATION)
@@ -41,6 +45,128 @@ enum {
 };
 
 static GParamSpec *properties [N_PROPS];
+
+static void
+finance_application_preferences (GSimpleAction  *action,
+                                 GVariant       *parameter,
+                                 gpointer       user_data)
+{
+  FinanceApplication *self = FINANCE_APPLICATION (user_data);
+
+  (void)action;
+  (void)parameter;
+
+  GtkWidget *preferences;
+
+  preferences = g_object_new (FINANCE_TYPE_PREF_WINDOW,
+                              "application", G_APPLICATION (self),
+                              "transient-for", GTK_WINDOW (self->window),
+                              "modal", TRUE,
+                              "destroy-with-parent", TRUE,
+                              "window-position", GTK_WIN_POS_CENTER_ON_PARENT,
+                              NULL);
+
+
+  gtk_window_present (GTK_WINDOW (preferences));
+}
+
+static void
+finance_application_shortcuts (GSimpleAction  *action,
+                               GVariant       *parameter,
+                               gpointer       user_data)
+{
+  FinanceApplication *self = FINANCE_APPLICATION (user_data);
+
+  (void)action;
+  (void)parameter;
+
+  GtkWidget *shortcuts;
+
+  shortcuts = g_object_new (FINANCE_TYPE_SHORTCUTS_WINDOW,
+                            "application", G_APPLICATION (self),
+                            "transient-for", GTK_WINDOW (self->window),
+                            "modal", TRUE,
+                            "destroy-with-parent", TRUE,
+                            "window-position", GTK_WIN_POS_CENTER_ON_PARENT,
+                            NULL);
+
+
+  gtk_window_present (GTK_WINDOW (shortcuts));
+}
+
+static void
+finance_application_help (GSimpleAction *action,
+                          GVariant      *parameter,
+                          gpointer      user_data)
+{
+
+}
+
+static void
+finance_application_about (GSimpleAction  *action,
+                           GVariant       *parameter,
+                           gpointer       user_data)
+{
+  FinanceApplication *self = FINANCE_APPLICATION (user_data);
+
+  (void)action;
+  (void)parameter;
+
+  GtkWidget *about_dialog;
+  GDateTime *year;
+  gchar     *str_copyright;
+
+  year = g_date_time_new_now_local ();
+
+  str_copyright =
+    g_strdup_printf (_("Copyright \xC2\xA9 2019-%d, Danilo Fernandes Galete, et al."),
+                     g_date_time_get_year (year));
+
+  const gchar *authors[] = {
+    "Danilo Fernandes Galete <galetedanilo@gmail.com>",
+    NULL
+  };
+
+  const gchar *artists[] = {
+    "Danilo Fernandes Galete <galetedanilo@gmail.com>",
+    NULL
+  };
+
+  about_dialog = g_object_new (GTK_TYPE_ABOUT_DIALOG,
+                               "transient-for", GTK_WINDOW (self->window),
+                               "modal", TRUE,
+                               "destroy-with-parent", TRUE,
+                               "logo-icon-name", APPLICATION_ID,
+                               "program-name", _("GNOME Finance"),
+                               "version", PACKAGE_VERSION,
+                               "comments", "Personal Finance Manager for GNOME",
+                               "website-label", "Visit GNOME Finance website",
+                               "website", "https://wiki.gnome.org/Apps/Finance",
+                               "copyright", str_copyright,
+                               "license-type", GTK_LICENSE_GPL_3_0,
+                               "authors", authors,
+                               "artists", artists,
+                               "translator-credits", _("translator-credits"),/* The Translators Name */
+                               NULL);
+
+  gtk_widget_show (about_dialog);
+
+  g_date_time_unref (year);
+  g_free (str_copyright);
+}
+
+static void
+finance_application_quit (GSimpleAction *action,
+                          GVariant      *parameter,
+                          gpointer      user_data)
+{
+  FinanceApplication *self = FINANCE_APPLICATION (user_data);
+
+  (void)action;
+  (void)parameter;
+
+  gtk_widget_destroy (self->window);
+}
 
 FinanceApplication *
 finance_application_new (void)
@@ -56,6 +182,8 @@ static void
 finance_application_finalize (GObject *object)
 {
   FinanceApplication *self = (FinanceApplication *)object;
+
+  g_clear_object (&self->provider);
 
   G_OBJECT_CLASS (finance_application_parent_class)->finalize (object);
 }
@@ -91,117 +219,17 @@ finance_application_set_property (GObject      *object,
 }
 
 static void
-finance_application_preferences (GSimpleAction  *aciton,
-                                 GVariant       *parameter,
-                                 gpointer       user_data)
-{
-  FinanceApplication *self = FINANCE_APPLICATION (user_data);
-
-  GtkWidget *preferences;
-
-  preferences = g_object_new (FINANCE_TYPE_PREFERENCES_WINDOW,
-                              "transient-for", GTK_WINDOW (self->window),
-                              "use-header-bar", TRUE,
-                              "destroy-with-parent", TRUE,
-                              "window-position", GTK_WIN_POS_CENTER_ON_PARENT,
-                              NULL);
-
-
-  gtk_dialog_run (GTK_DIALOG (preferences));
-
-  gtk_widget_destroy (preferences);
-
-  finance_window_preferences_update (FINANCE_WINDOW (self->window));
-}
-
-static void
-finance_application_shortcuts (GSimpleAction  *action,
-                               GVariant       *parameter,
-                               gpointer       user_data)
-{
-  FinanceApplication *self = FINANCE_APPLICATION (user_data);
-
-  GtkWidget *window;
-
-  window = g_object_new (FINANCE_TYPE_SHORTCUTS_WINDOW,
-                         "application", G_APPLICATION (self),
-                         "transient-for", GTK_WINDOW (self->window),
-                         "modal", TRUE,
-                         "destroy-with-parent", TRUE,
-                         "window-position", GTK_WIN_POS_CENTER_ON_PARENT,
-                         NULL);
-
-
-  gtk_window_present (GTK_WINDOW (window));
-}
-
-static void
-finance_application_help (GSimpleAction *action,
-                          GVariant      *parameter,
-                          gpointer      user_data)
-{
-
-}
-
-static void
-finance_application_about (GSimpleAction  *action,
-                           GVariant       *parameter,
-                           gpointer       user_data)
-{
-  FinanceApplication *self = FINANCE_APPLICATION (user_data);
-
-  (void)action;
-  (void)parameter;
-
-  GtkWidget *about_dialog;
-
-  const gchar *authors[] = {
-    "Danilo Fernandes Galete <galetedanilo@gmail.com>",
-    NULL
-  };
-
-  const gchar *artists[] = {
-    "Danilo Fernandes Galete <galetedanilo@gmail.com>",
-    NULL
-  };
-
-  about_dialog = g_object_new (GTK_TYPE_ABOUT_DIALOG,
-                               "transient-for", GTK_WINDOW (self->window),
-                               "modal", TRUE,
-                               "destroy-with-parent", TRUE,
-                               "logo-icon-name", "org.gnome.Finance",
-                               "program-name", _("GNOME Finance"),
-                               "version", "1.0",
-                               "comments", "Personal Finance Manager for GNOME",
-                               "website-label", "Visit GNOME Finance website",
-                               "website", "https://wiki.gnome.org/Apps/Finance",
-                               "copyright", "Copyright \xC2\xA9 2019 - 2020, Danilo Fernandes Galete, et al",
-                               "license-type", GTK_LICENSE_GPL_3_0,
-                               "authors", authors,
-                               "artists", artists,
-                               "translator-credits", _("translator-credits"),/* The Translators Name */
-                               NULL);
-
-  gtk_widget_show (about_dialog);
-}
-
-static void
-finance_application_quit (GSimpleAction *action,
-                          GVariant      *parameter,
-                          gpointer      user_data)
-{
-  FinanceApplication *self = FINANCE_APPLICATION (user_data);
-
-  (void)action;
-  (void)parameter;
-
-  gtk_widget_destroy (self->window);
-}
-
-static void
 finance_application_activate (GApplication *app)
 {
   FinanceApplication *self = FINANCE_APPLICATION (app);
+
+  self->provider = gtk_css_provider_new ();
+
+  gtk_style_context_add_provider_for_screen (gdk_screen_get_default (),
+                                             GTK_STYLE_PROVIDER (self->provider),
+                                             GTK_STYLE_PROVIDER_PRIORITY_APPLICATION + 1);
+
+  gtk_css_provider_load_from_resource (self->provider, "/org/gnome/finance/theme/style.css");
 
   if (!self->window)
     {

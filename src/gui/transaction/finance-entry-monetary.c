@@ -33,7 +33,7 @@ struct _FinanceEntryMonetary
   gboolean    is_formatting;
   gboolean    is_currency_symbol;
 
-  FinanceSymbolType symbol_type;
+  FinanceSymbol symbol;
 };
 
 G_DEFINE_TYPE (FinanceEntryMonetary, finance_entry_monetary, GTK_TYPE_ENTRY)
@@ -44,7 +44,7 @@ enum {
   PROP_FORMATTING,
   PROP_DECIMAL_PLACES,
   PROP_CURRENCY_SYMBOL,
-  PROP_SYMBOL_TYPE,
+  PROP_SYMBOL,
   N_PROPS,
 };
 
@@ -133,7 +133,7 @@ on_monetary_formatting (FinanceEntryMonetary *self)
 
   if (self->is_currency_symbol)
     {
-      if (self->symbol_type == LOCAL_SYMBOL_TYPE)
+      if (self->symbol == FINANCE_LOCAL)
         {
           g_snprintf (format, 7, "%%.%dn", self->decimal_value);
           strfmon (money, 40, format, self->amount);
@@ -272,8 +272,8 @@ finance_entry_monetary_get_property (GObject    *object,
       g_value_set_boolean (value, finance_entry_monetary_get_currency_symbol (self));
       break;
 
-    case PROP_SYMBOL_TYPE:
-      g_value_set_int (value, finance_entry_monetary_get_symbol_type (self));
+    case PROP_SYMBOL:
+      g_value_set_enum (value, finance_entry_monetary_get_symbol (self));
       break;
 
     default:
@@ -308,8 +308,8 @@ finance_entry_monetary_set_property (GObject      *object,
       finance_entry_monetary_set_currency_symbol (self, g_value_get_boolean (value));
       break;
 
-    case PROP_SYMBOL_TYPE:
-      finance_entry_monetary_set_symbol_type (self, g_value_get_int (value));
+    case PROP_SYMBOL:
+      finance_entry_monetary_set_symbol (self, g_value_get_enum (value));
       break;
 
     default:
@@ -382,17 +382,16 @@ finance_entry_monetary_class_init (FinanceEntryMonetaryClass *klass)
    *
    * Sets currency symbol is local or international
    */
-  properties[PROP_SYMBOL_TYPE] = g_param_spec_int ("symbol-type",
-                                                   "Sets currency symbol is local or international",
-                                                   "Sets currency symbol is local or international",
-                                                   G_MININT,
-                                                   G_MAXINT,
-                                                   0,
-                                                   G_PARAM_WRITABLE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+  properties[PROP_SYMBOL] = g_param_spec_enum ("symbol",
+                                                    "Sets currency symbol is local or international",
+                                                    "Sets currency symbol is local or international",
+                                                    FINANCE_TYPE_SYMBOL,
+                                                    FINANCE_LOCAL,
+                                                    G_PARAM_WRITABLE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/gui/finance-entry-monetary.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/transaction/finance-entry-monetary.ui");
 
   /* All Signals */
   gtk_widget_class_bind_template_callback (widget_class, on_automatic_monetary_formatting);
@@ -405,7 +404,7 @@ finance_entry_monetary_init (FinanceEntryMonetary *self)
   self->is_formatting       = TRUE;
   self->amount              = 0.0;
   self->decimal_value       = 1;
-  self->symbol_type         = 0;
+  self->symbol              = FINANCE_LOCAL;
 
   gtk_widget_init_template (GTK_WIDGET (self));
 }
@@ -577,40 +576,40 @@ finance_entry_monetary_set_currency_symbol (FinanceEntryMonetary  *self,
 }
 
 /**
- * finance_entry_monetary_get_symbol_type:
+ * finance_entry_monetary_get_symbol:
  * @self: a #FinanceEntryMonetary instance.
  *
  *
- * Returns: a #gint.
+ * Returns: a #FinanceSymbol.
  *
  * Since: 1.0
  */
 gint
-finance_entry_monetary_get_symbol_type (FinanceEntryMonetary *self)
+finance_entry_monetary_get_symbol (FinanceEntryMonetary *self)
 {
   g_return_val_if_fail (FINANCE_IS_ENTRY_MONETARY (self), -1);
 
-  return self->symbol_type;
+  return self->symbol;
 }
 
 /**
- * finance_entry_monetary_set_symbol_type:
+ * finance_entry_monetary_set_symbol:
  * @self: a #FinanceEntryMonetary object.
- * @symbol_type: a #gint.
+ * @symbol: a #FinanceSymbol.
  *
  * Sets currency symbol is local or international.
  *
  * Since: 1.0
  */
 void
-finance_entry_monetary_set_symbol_type (FinanceEntryMonetary *self,
-                                        gint                 symbol_type)
+finance_entry_monetary_set_symbol (FinanceEntryMonetary *self,
+                                   gint         symbol)
 {
   g_return_if_fail (FINANCE_IS_ENTRY_MONETARY (self));
 
-  self->symbol_type = symbol_type;
+  self->symbol = symbol;
 
   on_monetary_formatting (self);
 
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SYMBOL_TYPE]);
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SYMBOL]);
 }

@@ -51,10 +51,10 @@ gboolean      finance_entry_monetary_get_currency_symbol  (FinanceEntryMonetary 
 void          finance_entry_monetary_set_currency_symbol  (FinanceEntryMonetary *self,
                                                            gboolean             is_currency_symbol);
 
-gint          finance_entry_monetary_get_symbol_type      (FinanceEntryMonetary *self);
+gint          finance_entry_monetary_get_symbol           (FinanceEntryMonetary *self);
 
-void          finance_entry_monetary_set_symbol_type      (FinanceEntryMonetary *self,
-                                                           gint                 symbol_type);
+void          finance_entry_monetary_set_symbol           (FinanceEntryMonetary *self,
+                                                           gint                 symbol);
 
 G_END_DECLS
 

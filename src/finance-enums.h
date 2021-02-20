@@ -18,17 +18,59 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+#include "finance-enum-types.h"
+
 /**
  * FinanceFrequency:
- * @FOREVER:
- * @N_OCCURRENCES:
- * @UNTIL_DATE:
+ * @FINANCE_FOREVER:
+ * @FINANCE_N_OCCURRENCES:
+ * @FINANCE_UNTIL_DATE:
  *
- * Specifying the frequency of transactions
+ * 
  */
 typedef enum
 {
-  FOREVER,
-  N_OCCURRENCES,
-  UNTIL_DATE,
-}FinanceFrequency;
+  FINANCE_FOREVER,
+  FINANCE_N_OCCURRENCES,
+  FINANCE_UNTIL_DATE,
+} FinanceFrequency;
+
+/**
+ * FinancePayment:
+ * @FINANCE_CASH:
+ * @FINANCE_DIRECT_DEBIT:
+ * @FINANCE_TRANSFER:
+ * @FINANCE_DEBIT_CARD:
+ * @FINANCE_CREDIT_CARD:
+ * @FINANCE_ELECTRONIC_PAYMENT:
+ * @FINANCE_DEPOSIT:
+ * @FINANCE_CHECK:
+ *
+ * 
+ */
+typedef enum
+{
+  FINANCE_CASH,
+  FINANCE_DIRECT_DEBIT,
+  FINANCE_TRANSFER,
+  FINANCE_DEBIT_CARD,
+  FINANCE_CREDIT_CARD,
+  FINANCE_ELECTRONIC_PAYMENT,
+  FINANCE_DEPOSIT,
+  FINANCE_CHECK,
+} FinancePayment;
+
+/**
+ * FinanceSymbol:
+ * @FINANCE_LOCAL_SYMBOL:
+ * @FINANCE_INTERNATIONAL_SYMBOL:
+ *
+ *
+ */
+typedef enum
+{
+  FINANCE_LOCAL,
+  FINANCE_INTERNATIONAL,
+} FinanceSymbol;
+
+

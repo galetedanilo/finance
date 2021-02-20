@@ -1,6 +1,6 @@
-/* finance-window.h
+/* finance-types.h
  *
- * Copyright 2020 galetedanilo
+ * Copyright 2020 galetedanilo <galetedanilo@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,22 +14,19 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef __FINANCE_WINDOW_H__
-#define __FINANCE_WINDOW_H__
+#pragma once
 
-#include <gtk/gtk.h>
-#include "finance-transaction.h"
+#include <glib.h>
 
 G_BEGIN_DECLS
 
-#define FINANCE_TYPE_WINDOW (finance_window_get_type())
-
-G_DECLARE_FINAL_TYPE (FinanceWindow, finance_window, FINANCE, WINDOW, GtkApplicationWindow)
-
-void    finance_window_preferences_update   (FinanceWindow *self);
+typedef struct _FinanceFrequency FinanceFrequency;
+typedef struct _FinancePayment FinancePayment;
+typedef struct _FinanceSymbol FinanceSymbol;
 
 G_END_DECLS
 
-#endif /* __FINANCE_WINDOW_H__ */

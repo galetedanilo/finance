@@ -21,7 +21,6 @@
 #include <glib/gi18n.h>
 #include "finance-config.h"
 #include "finance-enums.h"
-
 #include "finance-transaction.h"
 
 struct _FinanceTransaction
@@ -37,8 +36,8 @@ struct _FinanceTransaction
   GtkWidget *payment_info;
   GtkWidget *category;
   GtkWidget *repeat;
+  GtkWidget *frequency;
   GtkWidget *frequency_number;
-  GtkWidget *frequency_type;
   GtkWidget *frequency_date;
   GtkWidget *notes;
 
@@ -58,7 +57,7 @@ enum {
   PROP_PAYMENT_INFO,
   PROP_CATEGORY,
   PROP_REPEAT,
-  PROP_FREQUENCY_TYPE,
+  PROP_FREQUENCY,
   PROP_FREQUENCY_NUMBER,
   PROP_FREQUENCY_DATE,
   PROP_NOTES,
@@ -81,17 +80,17 @@ on_frequency_type_changed (GtkComboBox  *widget,
 
   switch (data)
     {
-    case FOREVER:
+    case FINANCE_FOREVER:
       gtk_widget_set_visible (self->frequency_number, FALSE);
       gtk_widget_set_visible (self->frequency_date, FALSE);
       break;
 
-    case N_OCCURRENCES:
+    case FINANCE_N_OCCURRENCES:
       gtk_widget_set_visible (self->frequency_number, TRUE);
       gtk_widget_set_visible (self->frequency_date, FALSE);
       break;
 
-    case UNTIL_DATE:
+    case FINANCE_UNTIL_DATE:
       gtk_widget_set_visible (self->frequency_number, FALSE);
       gtk_widget_set_visible (self->frequency_date, TRUE);
       break;
@@ -105,9 +104,9 @@ on_repeat_changed (GtkComboBox  *widget,
 {
   FinanceTransaction *self = FINANCE_TRANSACTION (user_data);
 
-  gtk_combo_box_set_active (GTK_COMBO_BOX (self->frequency_type), 0);
+  gtk_combo_box_set_active (GTK_COMBO_BOX (self->frequency), 0);
 
-  gtk_widget_set_visible (self->frequency_type,
+  gtk_widget_set_visible (self->frequency,
                           gtk_combo_box_get_active (widget));
 
 }
@@ -161,6 +160,14 @@ finance_transaction_get_property (GObject    *object,
     case PROP_PAYMENT_INFO:
       g_value_set_string (value, finance_transaction_get_payment_info (self));
       break;
+      
+    case PROP_PAYMENT:
+      g_value_set_enum (value, finance_transaction_get_payment (self));
+      break;
+      
+    case PROP_FREQUENCY:
+      g_value_set_enum (value, finance_transaction_get_frequency (self));
+      break;
 
     case PROP_FREQUENCY_NUMBER:
       g_value_set_int (value, finance_transaction_get_frequency_number (self));
@@ -209,6 +216,14 @@ finance_transaction_set_property (GObject      *object,
     case PROP_PAYMENT_INFO:
       finance_transaction_set_payment_info (self, g_value_get_string (value));
       break;
+      
+    case PROP_PAYMENT:
+      finance_transaction_set_payment (self, g_value_get_enum (value));
+      break;
+      
+    case PROP_FREQUENCY:
+      finance_transaction_set_frequency (self, g_value_get_enum (value));
+      break;
 
     case PROP_FREQUENCY_NUMBER:
       finance_transaction_set_frequency_number (self, g_value_get_int (value));
@@ -235,7 +250,7 @@ finance_transaction_class_init (FinanceTransactionClass *klass)
 
   object_class->finalize = finance_transaction_finalize;
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/gui/finance-transaction.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/transaction/finance-transaction.ui");
 
   /* The Widgets */
   gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, icon);
@@ -247,7 +262,7 @@ finance_transaction_class_init (FinanceTransactionClass *klass)
   gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, payment_info);
   gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, category);
   gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, repeat);
-  gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, frequency_type);
+  gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, frequency);
   gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, frequency_number);
   gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, frequency_date);
   gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, notes);
@@ -262,7 +277,7 @@ finance_transaction_init (FinanceTransaction *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
 
-  self->settings = g_settings_new ("org.gnome.Finance");
+  self->settings = g_settings_new ("org.gnome.finance");
 
   g_settings_bind (self->settings, "date",
                    self->date, "formatting",
@@ -285,7 +300,7 @@ finance_transaction_init (FinanceTransaction *self)
                    G_SETTINGS_BIND_GET);
 
   g_settings_bind (self->settings, "symbol-type",
-                   self->amount, "symbol-type",
+                   self->amount, "symbol",
                    G_SETTINGS_BIND_GET);
 }
 
@@ -514,6 +529,78 @@ finance_transaction_set_payment_info (FinanceTransaction *self,
 }
 
 /**
+ * finance_transaction_get_payment:
+ * @self: a #FinanceTransaction instance.
+ * 
+ * Returns the form of payment.
+ * 
+ * Returns: a #FinancePayment.
+ * 
+ * Since: 1.0
+ */
+gint
+finance_transaction_get_payment (FinanceTransaction *self)
+{
+  g_return_val_if_fail (FINANCE_IS_TRANSACTION (self), -1);
+  
+  return gtk_combo_box_get_active (GTK_COMBO_BOX (self->payment));
+}
+
+/**
+ * finance_transaction_set_payment:
+ * @self: a #FinanceTransaction object.
+ * @payment: a #FinancePayment.
+ * 
+ * Sets the form of payment.
+ * 
+ * Since: 1.0
+ */
+void
+finance_transaction_set_payment (FinanceTransaction *self,
+                                 gint               payment)
+{
+  g_return_if_fail (FINANCE_IS_TRANSACTION (self));
+  
+  gtk_combo_box_set_active (GTK_COMBO_BOX (self->payment), payment);
+}
+
+/**
+ * finance_transaction_get_frequency:
+ * @self: a #FinanceTransaction instance.
+ * 
+ * Returns the transaction frequency.
+ * 
+ * Returns: a #FinanceFrequency.
+ * 
+ * Since: 1.0
+ */
+gint
+finance_transaction_get_frequency (FinanceTransaction *self)
+{
+  g_return_val_if_fail (FINANCE_IS_TRANSACTION (self), -1);
+  
+  return gtk_combo_box_get_active (GTK_COMBO_BOX (self->frequency));
+}
+
+/**
+ * finance_transaction_set_frequency:
+ * @self: a #FinanceTransaction object.
+ * @frequency: a #FinanceFrequency.
+ * 
+ * Sets the transaction frequency.
+ * 
+ * Since: 1.0
+ */
+void
+finance_transaction_set_frequency (FinanceTransaction *self,
+                                   gint               frequency)
+{
+  g_return_if_fail (FINANCE_IS_TRANSACTION (self));
+  
+  gtk_combo_box_set_active (GTK_COMBO_BOX (self->payment), frequency);
+}
+
+/**
  * finance_transaction_get_frequency_number:
  * @self: a #FinanceTransaction instance.
  *
@@ -534,7 +621,7 @@ finance_transaction_get_frequency_number (FinanceTransaction *self)
 /**
  * finance_transaction_set_frequency_number:
  * @self: a #FinanceTransaction object.
- * @frequency_number: a #guint.
+ * @frequency_number: a #gint.
  *
  * Sets the number of frequency of transactions.
  *
@@ -545,8 +632,12 @@ finance_transaction_set_frequency_number (FinanceTransaction *self,
                                           gint               frequency_number)
 {
   g_return_if_fail (FINANCE_IS_TRANSACTION (self));
+  
+  if (frequency_number < 2)
+    return;
 
-  gtk_spin_button_set_value (GTK_SPIN_BUTTON (self->frequency_number), (gdouble)frequency_number);
+  gtk_spin_button_set_value (GTK_SPIN_BUTTON (self->frequency_number),
+                             (gdouble)frequency_number);
 }
 
 /**

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="finance">
+  <schema id="org.gnome.finance" path="/org/gnome/finance/">
+    <key name="maximized" type="b">
+      <default>false</default>
+      <summary>Window maximized</summary>
+      <description>Window maximized state</description>
+    </key>
+    <key name="width" type="i">
+      <default>768</default>
+      <summary>Window width</summary>
+      <description>Window size width</description>
+    </key>
+    <key name="height" type="i">
+      <default>600</default>
+      <summary>Window height</summary>
+      <description>Window size height</description>
+    </key>
+    <key name="pos-x" type="i">
+      <default>10</default>
+      <summary>Window position</summary>
+      <description>The Window position X</description>
+    </key>
+    <key name="pos-y" type="i">
+      <default>10</default>
+      <summary>Window position</summary>
+      <description>The Window position Y</description>
+    </key>
+    <key name="left-panel" type="b">
+      <default>true</default>
+      <summary>Left panel</summary>
+      <description>Show left panel</description>
+    </key>
+    <key name="date" type="b">
+      <default>true</default>
+      <summary>Automatic date formatting</summary>
+      <description>Activate automatic date formatting</description>
+    </key>
+    <key name="amount" type="b">
+      <default>true</default>
+      <summary>Automatic amount formatting</summary>
+      <description>Activate automatic amount formatting</description>
+    </key>
+    <key name="decimal-places" type="i">
+      <default>0</default>
+      <summary>Monetary values</summary>
+      <description>The number of digits to the right of a decimal point</description>
+    </key>
+    <key name="currency-symbol" type="b">
+      <default>true</default>
+      <summary>Currency symbol</summary>
+      <description>Activate automatic currency symbol</description>
+    </key>
+    <key name="symbol-type" enum="org.gnome.finance.FinanceSymbol">
+      <default>'local'</default>
+      <summary>Currency symbol type</summary>
+      <description>Expecifique the currency symbol type</description>
+    </key>
+  </schema>
+</schemalist>

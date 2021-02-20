@@ -32,7 +32,7 @@ finance_shortcuts_window_class_init (FinanceShortcutsWindowClass *klass)
 {
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/Finance/gui/finance-shortcuts-window.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/gui/finance-shortcuts-window.ui");
 }
 
 static void

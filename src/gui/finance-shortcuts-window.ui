@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <!-- interface-requires gtk+ 3.19 -->
+  <template class="FinanceShortcutsWindow" parent="GtkShortcutsWindow">
+    <child>
+      <object class="GtkShortcutsSection">
+        <property name="visible">true</property>
+        <property name="section-name">editor</property>
+        <property name="title" translatable="yes" context="shortcut window">Program Shortcuts</property>
+        <child>
+          <object class="GtkShortcutsGroup">
+            <property name="visible">true</property>
+            <property name="title" translatable="yes" context="shortcut window">General</property>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="visible">true</property>
+                <property name="title" translatable="yes" context="shortcut window">Preferences</property>
+                <property name="accelerator">F3</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="visible">true</property>
+                <property name="title" translatable="yes" context="shortcut window">Keyboard Shortcuts</property>
+                <property name="accelerator">F2</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="visible">true</property>
+                <property name="title" translatable="yes" context="shortcut window">Show help</property>
+                <property name="accelerator">F1</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="visible">true</property>
+                <property name="title" translatable="yes" context="shortcut window">Quit Application</property>
+                <property name="accelerator">&lt;ctrl&gt;Q</property>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>
+

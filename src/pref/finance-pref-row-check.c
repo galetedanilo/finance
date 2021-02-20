@@ -78,6 +78,23 @@ active_preference (FinancePrefRowCheck *self)
 
       return;
     }
+  
+  /* G_TYPE_ENUM */
+  if (g_variant_is_of_type (value, G_VARIANT_TYPE_STRING) &&
+      g_variant_is_of_type (self->value, G_VARIANT_TYPE_INT32))
+    {
+      gint32 v1, v2;
+      
+      v1 = g_variant_get_int32 (self->value);
+      v2 = g_settings_get_enum (self->settings, self->key);
+
+
+      gtk_revealer_set_reveal_child (GTK_REVEALER (self->pref_check), (v1 == v2));
+
+      g_variant_unref (value);
+
+      return;
+    }
 
   if (g_variant_is_of_type (value, G_VARIANT_TYPE_STRING))
     {
@@ -150,7 +167,7 @@ active_preference (FinancePrefRowCheck *self)
 
       return;
     }
-
+  
   g_variant_unref (value);
 }
 
@@ -172,6 +189,19 @@ change_settings (FinancePrefRowCheck *self)
       return;
     }
 
+  /* G_TYPE_ENUM */
+  if (g_variant_is_of_type (value, G_VARIANT_TYPE_STRING) &&
+      g_variant_is_of_type (self->value, G_VARIANT_TYPE_INT32))
+    {
+      g_settings_set_enum (self->settings,
+                           self->key,
+                           g_variant_get_int32 (self->value));
+
+      g_variant_unref (value);
+
+      return;
+    }
+  
   if (g_variant_is_of_type (value, G_VARIANT_TYPE_STRING))
     {
       g_settings_set_string (self->settings,
@@ -398,7 +428,7 @@ finance_pref_row_check_class_init (FinancePrefRowCheckClass *klass)
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/gui/finance-pref-row-check.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/pref/finance-pref-row-check.ui");
 
   gtk_widget_class_bind_template_child (widget_class, FinancePrefRowCheck, title);
   gtk_widget_class_bind_template_child (widget_class, FinancePrefRowCheck, text);
