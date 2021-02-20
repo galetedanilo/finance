@@ -21,6 +21,27 @@
 #include "finance-enum-types.h"
 
 /**
+ * FinanceRepeat:
+ * @FINANCE_NO_REPEAT:
+ * @FINANCE_DAILY:
+ * @FINANCE_MONDAY_FRIDAY:
+ * @FINANCE_WEEKLY:
+ * @FINANCE_MONTHLY:
+ * @FINANCE_YEARLY:
+ *
+ *
+ */
+typedef enum
+{
+  FINANCE_NO_REPEAT,
+  FINANCE_DAILY,
+  FINANCE_MONDAY_FRIDAY,
+  FINANCE_WEEKLY,
+  FINANCE_MONTHLY,
+  FINANCE_YEARLY,
+} FinanceReapt;
+
+/**
  * FinanceFrequency:
  * @FINANCE_FOREVER:
  * @FINANCE_N_OCCURRENCES:
