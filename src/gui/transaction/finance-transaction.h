@@ -59,15 +59,15 @@ const gchar *   finance_transaction_get_payee_name      (FinanceTransaction *sel
 void            finance_transaction_set_payee_name      (FinanceTransaction *self,
                                                          const gchar        *payee_name);
 
-const gchar *   finance_transaction_get_payment_info    (FinanceTransaction *self);
-
-void            finance_transaction_set_payment_info    (FinanceTransaction *self,
-                                                         const gchar        *payment_info);
-
 gint            finance_transaction_get_payment         (FinanceTransaction *self);
 
 void            finance_transaction_set_payment         (FinanceTransaction *self,
                                                          gint               payment);
+
+const gchar *   finance_transaction_get_payment_info    (FinanceTransaction *self);
+
+void            finance_transaction_set_payment_info    (FinanceTransaction *self,
+                                                         const gchar        *payment_info);
 
 gint            finance_transaction_get_repeat          (FinanceTransaction *self);
 
@@ -88,6 +88,11 @@ GDateTime *     finance_transaction_get_frequency_date  (FinanceTransaction *sel
 
 void            finance_transaction_set_frequency_date  (FinanceTransaction *self,
                                                          GDateTime          *date);
+
+const gchar *   finance_transaction_get_notes           (FinanceTransaction *self);
+
+void            finance_transaction_set_notes           (FinanceTransaction *self,
+                                                         const gchar        *notes);
 
 G_END_DECLS
 

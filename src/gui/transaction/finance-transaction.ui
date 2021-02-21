@@ -8,7 +8,7 @@
     <property name="step-increment">1</property>
     <property name="page-increment">10</property>
   </object>
-  <object class="GtkTextBuffer" id="textbuffer"/>
+  <object class="GtkTextBuffer" id="notes_buffer"/>
   <template class="FinanceTransaction" parent="GtkBox">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
@@ -338,7 +338,7 @@
                       <object class="GtkTextView" id="notes">
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
-                        <property name="buffer">textbuffer</property>
+                        <property name="buffer">notes_buffer</property>
                         <property name="accepts-tab">False</property>
                       </object>
                     </child>

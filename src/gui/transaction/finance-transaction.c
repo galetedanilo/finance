@@ -28,6 +28,7 @@ struct _FinanceTransaction
 {
   GtkBox    parent_instance;
 
+  /* The widgets */
   GtkWidget *icon;
   GtkWidget *name;
   GtkWidget *amount;
@@ -40,9 +41,10 @@ struct _FinanceTransaction
   GtkWidget *frequency;
   GtkWidget *frequency_number;
   GtkWidget *frequency_date;
-  GtkWidget *notes;
+  GtkWidget *notes_buffer;
 
   GSettings *settings;
+  gchar     *notes;
 };
 
 G_DEFINE_TYPE (FinanceTransaction, finance_transaction, GTK_TYPE_BOX)
@@ -56,7 +58,7 @@ enum {
   PROP_PAYEE_NAME,
   PROP_PAYMENT,
   PROP_PAYMENT_INFO,
-  PROP_CATEGORY,
+  //PROP_CATEGORY,
   PROP_REPEAT,
   PROP_FREQUENCY,
   PROP_FREQUENCY_NUMBER,
@@ -124,6 +126,7 @@ finance_transaction_finalize (GObject *object)
   FinanceTransaction *self = (FinanceTransaction *)object;
 
   g_clear_object (&self->settings);
+  g_free (self->notes);
 
   G_OBJECT_CLASS (finance_transaction_parent_class)->finalize (object);
 }
@@ -157,13 +160,13 @@ finance_transaction_get_property (GObject    *object,
     case PROP_PAYEE_NAME:
       g_value_set_string (value, finance_transaction_get_payee_name (self));
       break;
-
-    case PROP_PAYMENT_INFO:
-      g_value_set_string (value, finance_transaction_get_payment_info (self));
-      break;
       
     case PROP_PAYMENT:
       g_value_set_enum (value, finance_transaction_get_payment (self));
+      break;
+
+    case PROP_PAYMENT_INFO:
+      g_value_set_string (value, finance_transaction_get_payment_info (self));
       break;
       
     case PROP_REPEAT:
@@ -180,6 +183,10 @@ finance_transaction_get_property (GObject    *object,
 
     case PROP_FREQUENCY_DATE:
       g_value_set_boxed (value,finance_transaction_get_frequency_date (self));
+      break;
+
+    case PROP_NOTES:
+      g_value_set_string (value, finance_transaction_get_notes (self));
       break;
 
     default:
@@ -217,13 +224,13 @@ finance_transaction_set_property (GObject      *object,
     case PROP_PAYEE_NAME:
       finance_transaction_set_payee_name (self, g_value_get_string (value));
       break;
-
-    case PROP_PAYMENT_INFO:
-      finance_transaction_set_payment_info (self, g_value_get_string (value));
-      break;
       
     case PROP_PAYMENT:
       finance_transaction_set_payment (self, g_value_get_enum (value));
+      break;
+
+    case PROP_PAYMENT_INFO:
+      finance_transaction_set_payment_info (self, g_value_get_string (value));
       break;
       
     case PROP_REPEAT:
@@ -242,6 +249,10 @@ finance_transaction_set_property (GObject      *object,
       finance_transaction_set_frequency_date (self, g_value_get_boxed (value));
       break;
 
+    case PROP_NOTES:
+      finance_transaction_set_notes (self, g_value_get_string (value));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -257,7 +268,148 @@ finance_transaction_class_init (FinanceTransactionClass *klass)
   g_type_ensure (FINANCE_TYPE_ENTRY_MONETARY);
   g_type_ensure (FINANCE_TYPE_ENTRY_DATE);
 
-  object_class->finalize = finance_transaction_finalize;
+  object_class->finalize     = finance_transaction_finalize;
+  object_class->get_property = finance_transaction_get_property;
+  object_class->set_property = finance_transaction_set_property;
+
+  /**
+   * FinanceTransaction::icon:
+   *
+   * The transaction icon
+   */
+  properties[PROP_ICON] = g_param_spec_string ("icon",
+                                               "Icon",
+                                               "The transaction icon",
+                                               NULL,
+                                               G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * FinanceTransaction::name:
+   *
+   * The transaction name
+   */
+  properties[PROP_NAME] = g_param_spec_string ("name",
+                                               "Name",
+                                               "The transaction name",
+                                               NULL,
+                                               G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * FinanceTransaction::amount:
+   *
+   * The transaction amount
+   */
+  properties[PROP_AMOUNT] =  g_param_spec_double ("amount",
+                                                  "Amount",
+                                                  "The transaction amount",
+                                                  -G_MINDOUBLE,
+                                                  G_MAXDOUBLE,
+                                                  0.0,
+                                                  G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * FinanceTransaction::date:
+   *
+   * The transaction date
+   */
+  properties[PROP_DATE] = g_param_spec_boxed ("date",
+                                              "Date",
+                                              "The transaction date",
+                                              G_TYPE_DATE_TIME,
+                                              G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * FinanceTransaction::payee_name:
+   *
+   * The transaction payee name
+   */
+  properties[PROP_PAYEE_NAME] = g_param_spec_string ("payee-name",
+                                                     "Payee name",
+                                                     "The transaction payee name",
+                                                     NULL,
+                                                     G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * FinanceTransaction::payment:
+   *
+   * The payment method of the transaction
+   */
+  properties[PROP_PAYMENT] = g_param_spec_enum ("payment",
+                                                "Payment",
+                                                "The payment method of the transaction",
+                                                FINANCE_TYPE_PAYMENT,
+                                                FINANCE_CASH,
+                                                G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * FinanceTransaction::payment_info:
+   *
+   * The transaction payment information
+   */
+  properties[PROP_PAYMENT_INFO] = g_param_spec_string ("payment-info",
+                                                       "Payment information",
+                                                       "The transaction payment information",
+                                                       NULL,
+                                                       G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * FinanceTransaction::repeat:
+   *
+   * The transaction repeat type
+   */
+  properties[PROP_REPEAT] = g_param_spec_enum ("repeat",
+                                               "Repeat",
+                                               "The transaction repeat type",
+                                               FINANCE_TYPE_REPEAT,
+                                               FINANCE_NO_REPEAT,
+                                               G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * FinanceTransaction::frequency:
+   *
+   * The transaction frequency
+   */
+  properties[PROP_FREQUENCY] = g_param_spec_enum ("frequency",
+                                                  "Frequency",
+                                                  "The transaction frequency",
+                                                  FINANCE_TYPE_FREQUENCY,
+                                                  FINANCE_FOREVER,
+                                                  G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * FinanceTransaction::frequency_number:
+   *
+   * The number of frequency of transactions
+   */
+  properties[PROP_FREQUENCY_NUMBER] = g_param_spec_int ("frequency-number",
+                                                        "Frequency Number",
+                                                        "The number of frequency of transactions",
+                                                        2, 365, 2,
+                                                        G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * FinanceTransaction::frequency_date:
+   *
+   * The date of the financial transaction frequency
+   */
+  properties[PROP_FREQUENCY_DATE] = g_param_spec_boxed ("frequency-date",
+                                                        "Fequency date",
+                                                        "The date of the financial transaction frequency",
+                                                        G_TYPE_DATE_TIME,
+                                                        G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * FinanceTransaction::notes:
+   *
+   * The transaction notes information
+   */
+  properties[PROP_NOTES] = g_param_spec_string ("notes",
+                                                "Notes",
+                                                "The transaction notes information",
+                                                NULL,
+                                                G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
+  g_object_class_install_properties (object_class, N_PROPS, properties);
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/transaction/finance-transaction.ui");
 
@@ -274,7 +426,7 @@ finance_transaction_class_init (FinanceTransactionClass *klass)
   gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, frequency);
   gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, frequency_number);
   gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, frequency_date);
-  gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, notes);
+  gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, notes_buffer);
 
   /* The CallBacks */
   gtk_widget_class_bind_template_callback (widget_class, on_repeat_changed);
@@ -389,6 +541,8 @@ finance_transaction_set_name (FinanceTransaction *self,
   g_return_if_fail (FINANCE_IS_TRANSACTION (self));
 
   gtk_entry_set_text (GTK_ENTRY (self->name), name);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_NAME]);
 }
 
 /**
@@ -425,6 +579,8 @@ finance_transaction_set_amount (FinanceTransaction *self,
   g_return_if_fail (FINANCE_IS_TRANSACTION (self));
 
   finance_entry_monetary_set_amount (FINANCE_ENTRY_MONETARY (self->amount), amount);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_AMOUNT]);
 }
 
 /**
@@ -461,6 +617,8 @@ finance_transaction_set_date (FinanceTransaction *self,
   g_return_if_fail (FINANCE_IS_TRANSACTION (self));
 
   finance_entry_date_set_date (FINANCE_ENTRY_DATE (self->date), date);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_DATE]);
 }
 
 /**
@@ -497,6 +655,46 @@ finance_transaction_set_payee_name (FinanceTransaction *self,
   g_return_if_fail (FINANCE_IS_TRANSACTION (self));
 
   gtk_entry_set_text (GTK_ENTRY (self->payee_name), payee_name);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_PAYEE_NAME]);
+}
+
+/**
+ * finance_transaction_get_payment:
+ * @self: a #FinanceTransaction instance.
+ *
+ * Returns the payment method of the transaction.
+ *
+ * Returns: a #FinancePayment.
+ *
+ * Since: 1.0
+ */
+gint
+finance_transaction_get_payment (FinanceTransaction *self)
+{
+  g_return_val_if_fail (FINANCE_IS_TRANSACTION (self), -1);
+
+  return gtk_combo_box_get_active (GTK_COMBO_BOX (self->payment));
+}
+
+/**
+ * finance_transaction_set_payment:
+ * @self: a #FinanceTransaction object.
+ * @payment: a #FinancePayment.
+ *
+ * Sets the payment method of the transaction.
+ *
+ * Since: 1.0
+ */
+void
+finance_transaction_set_payment (FinanceTransaction *self,
+                                 gint               payment)
+{
+  g_return_if_fail (FINANCE_IS_TRANSACTION (self));
+
+  gtk_combo_box_set_active (GTK_COMBO_BOX (self->payment), payment);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_PAYMENT]);
 }
 
 /**
@@ -535,42 +733,8 @@ finance_transaction_set_payment_info (FinanceTransaction *self,
   g_return_if_fail (FINANCE_IS_TRANSACTION (self));
 
   gtk_entry_set_text (GTK_ENTRY (self->payment_info), payment_info);
-}
 
-/**
- * finance_transaction_get_payment:
- * @self: a #FinanceTransaction instance.
- * 
- * Returns the form of payment.
- * 
- * Returns: a #FinancePayment.
- * 
- * Since: 1.0
- */
-gint
-finance_transaction_get_payment (FinanceTransaction *self)
-{
-  g_return_val_if_fail (FINANCE_IS_TRANSACTION (self), -1);
-  
-  return gtk_combo_box_get_active (GTK_COMBO_BOX (self->payment));
-}
-
-/**
- * finance_transaction_set_payment:
- * @self: a #FinanceTransaction object.
- * @payment: a #FinancePayment.
- * 
- * Sets the form of payment.
- * 
- * Since: 1.0
- */
-void
-finance_transaction_set_payment (FinanceTransaction *self,
-                                 gint               payment)
-{
-  g_return_if_fail (FINANCE_IS_TRANSACTION (self));
-  
-  gtk_combo_box_set_active (GTK_COMBO_BOX (self->payment), payment);
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_PAYMENT_INFO]);
 }
 
 /**
@@ -607,6 +771,8 @@ finance_transaction_set_repeat (FinanceTransaction *self,
   g_return_if_fail (FINANCE_IS_TRANSACTION (self));
 
   gtk_combo_box_set_active (GTK_COMBO_BOX (self->repeat), repeat);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_REPEAT]);
 }
 
 /**
@@ -643,6 +809,8 @@ finance_transaction_set_frequency (FinanceTransaction *self,
   g_return_if_fail (FINANCE_IS_TRANSACTION (self));
   
   gtk_combo_box_set_active (GTK_COMBO_BOX (self->payment), frequency);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_FREQUENCY]);
 }
 
 /**
@@ -683,6 +851,8 @@ finance_transaction_set_frequency_number (FinanceTransaction *self,
 
   gtk_spin_button_set_value (GTK_SPIN_BUTTON (self->frequency_number),
                              (gdouble)frequency_number);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_FREQUENCY_NUMBER]);
 }
 
 /**
@@ -719,4 +889,54 @@ finance_transaction_set_frequency_date (FinanceTransaction *self,
   g_return_if_fail (FINANCE_IS_TRANSACTION (self));
 
   finance_entry_date_set_date (FINANCE_ENTRY_DATE (self->frequency_date), date);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_FREQUENCY_DATE]);
+}
+
+/**
+ * finance_transaction_get_notes:
+ * @self: a #FinanceTransaction instance.
+ *
+ * Returns the transaction notes information.
+ *
+ * Returns: The transaction notes as a string, or %NULL.
+ * This string points to internally allocated storage in the object
+ * and must not be freed, modified or stored.
+ *
+ * Since: 1.0
+ */
+const gchar *
+finance_transaction_get_notes (FinanceTransaction *self)
+{
+  g_return_val_if_fail (FINANCE_IS_TRANSACTION (self), NULL);
+
+  return self->notes;
+}
+
+/**
+ * finance_transaction_set_notes:
+ * @self: a #FinanceTransaction object.
+ * @notes: UTF-8 text to insert.
+ *
+ * Sets the transaction notes information, replacing the current contents.
+ *
+ * Since: 1.0
+ */
+void
+finance_transaction_set_notes (FinanceTransaction *self,
+                               const gchar        *notes)
+{
+  g_return_if_fail (FINANCE_IS_TRANSACTION (self));
+
+  g_free (self->notes);
+
+  if (!g_utf8_validate (notes, -1, NULL))
+    return;
+
+  self->notes = g_strdup (notes);
+
+  gtk_text_buffer_set_text (GTK_TEXT_BUFFER (self->notes_buffer),
+                            self->notes, -1);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_NOTES]);
 }
