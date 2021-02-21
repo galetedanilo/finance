@@ -29,18 +29,14 @@ struct _FinancePrefListBox
 
 G_DEFINE_TYPE (FinancePrefListBox, finance_pref_list_box, GTK_TYPE_LIST_BOX)
 
-enum {
-  PROP_0,
-  N_PROPS
-};
-
-static GParamSpec *properties [N_PROPS];
-
 static void
 on_list_box_row_activated (GtkListBox    *list,
                            GtkListBoxRow *row,
                            gpointer       user_data)
 {
+  (void)list;
+  (void)user_data;
+
   finance_pref_row_change_preference (FINANCE_PREF_ROW (row));
 }
 
@@ -51,51 +47,9 @@ finance_pref_list_box_new (void)
 }
 
 static void
-finance_pref_list_box_finalize (GObject *object)
-{
-  FinancePrefListBox *self = (FinancePrefListBox *)object;
-
-  G_OBJECT_CLASS (finance_pref_list_box_parent_class)->finalize (object);
-}
-
-static void
-finance_pref_list_box_get_property (GObject    *object,
-                                    guint       prop_id,
-                                    GValue     *value,
-                                    GParamSpec *pspec)
-{
-  FinancePrefListBox *self = FINANCE_PREF_LIST_BOX (object);
-
-  switch (prop_id)
-    {
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-    }
-}
-
-static void
-finance_pref_list_box_set_property (GObject      *object,
-                                    guint         prop_id,
-                                    const GValue *value,
-                                    GParamSpec   *pspec)
-{
-  FinancePrefListBox *self = FINANCE_PREF_LIST_BOX (object);
-
-  switch (prop_id)
-    {
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-    }
-}
-
-static void
 finance_pref_list_box_class_init (FinancePrefListBoxClass *klass)
 {
-  GObjectClass *object_class = G_OBJECT_CLASS (klass);
-
-  object_class->finalize = finance_pref_list_box_finalize;
-  object_class->get_property = finance_pref_list_box_get_property;
-  object_class->set_property = finance_pref_list_box_set_property;
+  (void)klass;
 }
 
 static void
