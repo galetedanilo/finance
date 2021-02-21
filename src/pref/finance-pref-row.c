@@ -27,7 +27,7 @@ G_DEFINE_INTERFACE (FinancePrefRow, finance_pref_row, GTK_TYPE_LIST_BOX_ROW)
 static void
 finance_pref_row_default_init (FinancePrefRowInterface *iface)
 {
-
+  (void)iface;
 }
 
 /**
