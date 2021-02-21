@@ -39,7 +39,7 @@ typedef enum
   FINANCE_WEEKLY,
   FINANCE_MONTHLY,
   FINANCE_YEARLY,
-} FinanceReapt;
+} FinanceRepeat;
 
 /**
  * FinanceFrequency:
