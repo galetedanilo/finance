@@ -69,6 +69,11 @@ gint            finance_transaction_get_payment         (FinanceTransaction *sel
 void            finance_transaction_set_payment         (FinanceTransaction *self,
                                                          gint               payment);
 
+gint            finance_transaction_get_repeat          (FinanceTransaction *self);
+
+void            finance_transaction_set_repeat          (FinanceTransaction *self,
+                                                         gint               repeat);
+
 gint            finance_transaction_get_frequency       (FinanceTransaction *self);
 
 void            finance_transaction_set_frequency       (FinanceTransaction *self,

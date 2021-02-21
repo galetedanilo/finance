@@ -21,6 +21,7 @@
 #include <glib/gi18n.h>
 #include "finance-config.h"
 #include "finance-enums.h"
+
 #include "finance-transaction.h"
 
 struct _FinanceTransaction
@@ -165,6 +166,10 @@ finance_transaction_get_property (GObject    *object,
       g_value_set_enum (value, finance_transaction_get_payment (self));
       break;
       
+    case PROP_REPEAT:
+      g_value_set_enum (value, finance_transaction_get_repeat (self));
+      break;
+
     case PROP_FREQUENCY:
       g_value_set_enum (value, finance_transaction_get_frequency (self));
       break;
@@ -221,6 +226,10 @@ finance_transaction_set_property (GObject      *object,
       finance_transaction_set_payment (self, g_value_get_enum (value));
       break;
       
+    case PROP_REPEAT:
+      finance_transaction_set_repeat (self, g_value_get_enum (value));
+      break;
+
     case PROP_FREQUENCY:
       finance_transaction_set_frequency (self, g_value_get_enum (value));
       break;
@@ -562,6 +571,42 @@ finance_transaction_set_payment (FinanceTransaction *self,
   g_return_if_fail (FINANCE_IS_TRANSACTION (self));
   
   gtk_combo_box_set_active (GTK_COMBO_BOX (self->payment), payment);
+}
+
+/**
+ * finance_transaction_get_repeat:
+ * @self: a #FinanceTransaction instance.
+ *
+ * Returns the transaction repeat type.
+ *
+ * Returns: a #FinanceRepeat.
+ *
+ * Since: 1.0
+ */
+gint
+finance_transaction_get_repeat (FinanceTransaction *self)
+{
+  g_return_val_if_fail (FINANCE_IS_TRANSACTION (self), -1);
+
+  return gtk_combo_box_get_active (GTK_COMBO_BOX (self->repeat));
+}
+
+/**
+ * finance_transaction_set_repeat:
+ * @self: a #FinanceTransaction object.
+ * @repeat: a #FinanceRepeat.
+ *
+ * Sets the transaction repeat type.
+ *
+ * Since: 1.0
+ */
+void
+finance_transaction_set_repeat (FinanceTransaction *self,
+                                gint               repeat)
+{
+  g_return_if_fail (FINANCE_IS_TRANSACTION (self));
+
+  gtk_combo_box_set_active (GTK_COMBO_BOX (self->repeat), repeat);
 }
 
 /**
