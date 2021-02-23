@@ -12,12 +12,14 @@ finance_incs = [
   include_directories('gui'),
   include_directories('pref'),
   include_directories('theme'),
+  include_directories('utils'),
 ]
 
 sources = files()
 subdir('gui')
 subdir('pref')
 subdir('theme')
+subdir('utils')
 
 finance_generated_sources_dep = declare_dependency(
   sources: built_sources,
