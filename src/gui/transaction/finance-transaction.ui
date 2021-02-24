@@ -4,7 +4,7 @@
   <requires lib="gtk+" version="3.24"/>
   <object class="GtkAdjustment" id="adjustment">
     <property name="lower">2</property>
-    <property name="upper">364</property>
+    <property name="upper">365</property>
     <property name="step-increment">1</property>
     <property name="page-increment">10</property>
   </object>
@@ -30,16 +30,10 @@
                 <property name="halign">center</property>
                 <property name="valign">center</property>
                 <child>
-                  <object class="GtkLabel" id="icon">
-                    <property name="width-request">150</property>
-                    <property name="height-request">200</property>
+                  <object class="GtkImage" id="image">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="margin-start">5</property>
-                    <property name="margin-end">5</property>
-                    <property name="margin-top">5</property>
-                    <property name="margin-bottom">5</property>
-                    <property name="label" translatable="yes">label</property>
+                    <property name="stock">gtk-missing-image</property>
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
@@ -50,7 +44,7 @@
                 <child>
                   <object class="GtkEntry" id="name">
                     <property name="width-request">400</property>
-                    <property name="height-request">60</property>
+                    <property name="height-request">50</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="margin-start">5</property>
@@ -68,7 +62,7 @@
                 <child>
                   <object class="FinanceEntryMonetary" id="amount">
                     <property name="width-request">200</property>
-                    <property name="height-request">60</property>
+                    <property name="height-request">50</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="margin-start">5</property>
@@ -85,7 +79,7 @@
                 <child>
                   <object class="FinanceEntryDate" id="date">
                     <property name="width-request">200</property>
-                    <property name="height-request">60</property>
+                    <property name="height-request">50</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="margin-start">5</property>
@@ -102,7 +96,7 @@
                 <child>
                   <object class="GtkEntry" id="payee_name">
                     <property name="width-request">400</property>
-                    <property name="height-request">60</property>
+                    <property name="height-request">50</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="margin-start">5</property>
@@ -139,7 +133,7 @@
                 <child>
                   <object class="GtkComboBoxText" id="payment">
                     <property name="width-request">400</property>
-                    <property name="height-request">60</property>
+                    <property name="height-request">50</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="margin-start">5</property>
@@ -167,7 +161,7 @@
                 <child>
                   <object class="GtkEntry" id="payment_info">
                     <property name="width-request">400</property>
-                    <property name="height-request">60</property>
+                    <property name="height-request">50</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="margin-start">5</property>
@@ -223,7 +217,7 @@
                 <child>
                   <object class="GtkComboBoxText" id="repeat">
                     <property name="width-request">200</property>
-                    <property name="height-request">60</property>
+                    <property name="height-request">50</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="margin-start">5</property>
@@ -249,7 +243,7 @@
                 <child>
                   <object class="GtkSpinButton" id="frequency_number">
                     <property name="width-request">200</property>
-                    <property name="height-request">60</property>
+                    <property name="height-request">50</property>
                     <property name="can-focus">True</property>
                     <property name="margin-start">5</property>
                     <property name="margin-end">5</property>
@@ -267,7 +261,7 @@
                 <child>
                   <object class="GtkComboBoxText" id="frequency">
                     <property name="width-request">200</property>
-                    <property name="height-request">60</property>
+                    <property name="height-request">50</property>
                     <property name="can-focus">False</property>
                     <property name="margin-start">5</property>
                     <property name="margin-end">5</property>
@@ -289,7 +283,7 @@
                 <child>
                   <object class="FinanceEntryDate" id="frequency_date">
                     <property name="width-request">200</property>
-                    <property name="height-request">60</property>
+                    <property name="height-request">50</property>
                     <property name="visible">False</property>
                     <property name="can-focus">True</property>
                     <property name="margin-start">5</property>
@@ -352,7 +346,7 @@
                 <child>
                   <object class="GtkComboBoxText" id="category">
                     <property name="width-request">400</property>
-                    <property name="height-request">60</property>
+                    <property name="height-request">50</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="margin-start">5</property>
