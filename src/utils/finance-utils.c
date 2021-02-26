@@ -23,7 +23,7 @@
 #include "finance-utils.h"
 
 /**
- * finance_utils_rgba_get_color:
+ * finance_utils_random_rgba_color:
  *
  * Returns a color from the GNOME Human Interface Guidelines color palette.
  *
@@ -32,7 +32,7 @@
  * Since: 1.0
  */
 GdkRGBA *
-finance_utils_rgba_get_color (void)
+finance_utils_random_rgba_color (void)
 {
   GdkRGBA color;
   int     id;
@@ -42,55 +42,34 @@ finance_utils_rgba_get_color (void)
    * By GNOME Human Interface Guidelines
    * See: https://gitlab.gnome.org/Community/Design/HIG-app-icons/blob/master/GNOME%20HIG.gpl
    */
-  int rgb[45][3] = {
-    {153, 193, 241},
-    { 98, 160, 234},
+  int rgb[24][3] = {
     { 53, 132, 228},
     { 28, 113, 216},
     { 26,  95, 180},
-    {143, 240, 164},
-    { 87, 227, 137},
     { 51, 209, 122},
     { 46, 194, 126},
     { 38, 162, 105},
-    {249, 240, 107},
-    {248, 228,  92},
     {246, 211,  45},
     {245, 194,  17},
     {229, 165,  10},
-    {255, 190, 111},
-    {255, 163,  72},
     {255, 120,   0},
     {230,  97,   0},
     {198,  70,   0},
-    {246,  97,  81},
-    {237,  51,  59},
     {224,  27,  36},
     {192,  28,  40},
     {165,  29,  45},
-    {220, 138, 221},
-    {192,  97, 203},
-    {145,  65, 172},
-    {129,  61, 156},
     { 97,  53, 131},
     {205, 171, 143},
     {181, 131,  90},
-    {152, 106,  68},
-    {134,  94,  60},
     { 99,  69,  44},
     {255, 255, 255},
     {246, 245, 244},
-    {222, 221, 218},
-    {192, 191, 188},
-    {154, 153, 150},
     {119, 118, 123},
     { 94,  92, 100},
     { 61,  56,  70},
-    { 36,  31,  49},
-    {  0,   0,   0}
   };
 
-  id = g_random_int_range (0, 44);
+  id = g_random_int_range (0, 23);
 
   color.red   = rgb [id] [0] / 255.;
   color.green = rgb [id] [1] / 255.;
@@ -101,33 +80,57 @@ finance_utils_rgba_get_color (void)
 }
 
 /**
- * finance_utils_create_circle_with_color:
+ * finance_utils_create_circle_transaction:
  * @color: a #GdkRGBA.
- * @size: a #gint.
+ * @str: a #gchar, to define the letters in the icon.
  *
- * Creates a circular surface filled with @color. The
- * surface is always @size x @size.
+ * Creates a circular surface filled with @color.
  *
  * Returns: (transfer full): a #cairo_surface_t
+ *
+ * Since: 1.0
  */
-cairo_surface_t*
-finance_utils_create_circle_with_color (const GdkRGBA *color,
-                                        gint          size)
+cairo_surface_t *
+finance_utils_create_circle_transaction (const GdkRGBA *color,
+                                         const gchar   *str)
 {
   cairo_surface_t *surface;
   cairo_t         *cr;
+  gint            arc_size;
+  gdouble         font_size;
 
-  surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, size, size);
+  arc_size = 140;
+  font_size = 50.0;
+
+  surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, arc_size, arc_size);
   cr = cairo_create (surface);
+
+  cairo_select_font_face (cr, "Sans",
+                          CAIRO_FONT_SLANT_NORMAL,
+                          CAIRO_FONT_WEIGHT_BOLD);
+
+  cairo_set_font_size (cr, font_size);
+
+  cairo_arc (cr,
+             arc_size / 2.0,
+             arc_size / 2.0,
+             arc_size / 2.0,
+             0.0,
+             2 * G_PI);
 
   cairo_set_source_rgba (cr,
                          color->red,
                          color->green,
                          color->blue,
                          color->alpha);
-
-  cairo_arc (cr, size / 2.0, size / 2.0, size / 2.0, 0., 2 * G_PI);
   cairo_fill (cr);
+
+  cairo_move_to (cr, 30.0 , 85.0);
+
+  cairo_text_path (cr, str);
+  cairo_set_source_rgb (cr, 1, 1, 1);
+  cairo_fill (cr);
+
   cairo_destroy (cr);
 
   return surface;
