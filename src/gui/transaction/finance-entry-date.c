@@ -308,7 +308,7 @@ finance_entry_date_init (FinanceEntryDate *self)
  *
  * Get the value of the date.
  *
- * Returns: a #GDateTime with the date.
+ * Returns: (transfer none): a #GDateTime with the date.
  *
  * Since: 1.0
  */
