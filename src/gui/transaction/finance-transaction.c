@@ -29,7 +29,7 @@ struct _FinanceTransaction
   GtkBox    parent_instance;
 
   /* The widgets */
-  GtkWidget *icon;
+  GtkWidget *image;
   GtkWidget *name;
   GtkWidget *amount;
   GtkWidget *date;
@@ -43,8 +43,13 @@ struct _FinanceTransaction
   GtkWidget *frequency_date;
   GtkWidget *notes_buffer;
 
-  GSettings *settings;
+  GdkRGBA   *color;
+  gchar     *icon;
   gchar     *notes;
+
+  GSettings *settings;
+
+  cairo_surface_t *surface;
 };
 
 G_DEFINE_TYPE (FinanceTransaction, finance_transaction, GTK_TYPE_BOX)
@@ -52,6 +57,7 @@ G_DEFINE_TYPE (FinanceTransaction, finance_transaction, GTK_TYPE_BOX)
 enum {
   PROP_0,
   PROP_ICON,
+  PROP_COLOR,
   PROP_NAME,
   PROP_AMOUNT,
   PROP_DATE,
@@ -125,10 +131,22 @@ finance_transaction_finalize (GObject *object)
 {
   FinanceTransaction *self = (FinanceTransaction *)object;
 
-  g_clear_object (&self->settings);
-  g_free (self->notes);
+  g_clear_pointer (&self->icon, g_free);
+  g_clear_pointer (&self->notes, g_free);
 
   G_OBJECT_CLASS (finance_transaction_parent_class)->finalize (object);
+}
+
+static void
+finance_transaction_dispose (GObject *object)
+{
+  FinanceTransaction *self = (FinanceTransaction *)object;
+
+  g_clear_pointer (&self->surface, cairo_surface_destroy);
+  g_clear_pointer (&self->color, gdk_rgba_free);
+  g_clear_object (&self->settings);
+
+  G_OBJECT_CLASS (finance_transaction_parent_class)->dispose (object);
 }
 
 static void
@@ -143,6 +161,10 @@ finance_transaction_get_property (GObject    *object,
     {
     case PROP_ICON:
       g_value_set_string (value, finance_transaction_get_icon (self));
+      break;
+
+    case PROP_COLOR:
+      g_value_set_boxed (value, finance_transaction_get_color (self));
       break;
 
     case PROP_NAME:
@@ -209,6 +231,10 @@ finance_transaction_set_property (GObject      *object,
       finance_transaction_set_icon (self, g_value_get_string (value));
       break;
 
+    case PROP_COLOR:
+      finance_transaction_set_color (self, g_value_get_boxed (value));
+      break;
+
     case PROP_NAME:
       finance_transaction_set_name (self, g_value_get_string (value));
       break;
@@ -269,6 +295,7 @@ finance_transaction_class_init (FinanceTransactionClass *klass)
   g_type_ensure (FINANCE_TYPE_ENTRY_DATE);
 
   object_class->finalize     = finance_transaction_finalize;
+  object_class->dispose      = finance_transaction_dispose;
   object_class->get_property = finance_transaction_get_property;
   object_class->set_property = finance_transaction_set_property;
 
@@ -281,6 +308,17 @@ finance_transaction_class_init (FinanceTransactionClass *klass)
                                                "Icon",
                                                "The transaction icon",
                                                NULL,
+                                               G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * FinanceTransaction::color:
+   *
+   * The transaction icon color
+   */
+  properties[PROP_COLOR] = g_param_spec_boxed ("color",
+                                               "Color",
+                                               "The icon color",
+                                               GDK_TYPE_RGBA,
                                                G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
@@ -414,7 +452,7 @@ finance_transaction_class_init (FinanceTransactionClass *klass)
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/transaction/finance-transaction.ui");
 
   /* The Widgets */
-  gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, icon);
+  gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, image);
   gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, name);
   gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, amount);
   gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, date);
@@ -437,6 +475,13 @@ static void
 finance_transaction_init (FinanceTransaction *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  self->color = finance_utils_random_rgba_color ();
+  self->icon  = g_strdup ("NT");
+
+  self->surface = finance_utils_create_circle_transaction (self->color, self->icon);
+
+  gtk_image_set_from_surface (GTK_IMAGE (self->image), self->surface);
 
   self->settings = g_settings_new ("org.gnome.finance");
 
@@ -482,7 +527,7 @@ finance_transaction_get_icon (FinanceTransaction *self)
 {
   g_return_val_if_fail (FINANCE_IS_TRANSACTION (self), NULL);
 
-  return gtk_label_get_text (GTK_LABEL (self->icon));
+  return self->icon;
 }
 
 /**
@@ -500,9 +545,58 @@ finance_transaction_set_icon (FinanceTransaction *self,
 {
   g_return_if_fail (FINANCE_IS_TRANSACTION (self));
 
-  gtk_label_set_text (GTK_LABEL (self->icon), icon);
+  cairo_surface_destroy (self->surface);
+  g_free (self->icon);
+
+  self->icon = g_strdup (icon);
+
+  self->surface = finance_utils_create_circle_transaction (self->color,
+                                                           self->icon);
+
+  gtk_image_set_from_surface (GTK_IMAGE (self->image),
+                                         self->surface);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_ICON]);
+}
+
+/**
+ * finance_transaction_get_color:
+ * @self: a #FinanceTransaction object.
+ *
+ * Returns the transaction icon color.
+ *
+ * Returns: (transfer none): a #GdkRGBA with the color.
+ *
+ * Since: 1.0
+ */
+GdkRGBA *
+finance_transaction_get_color (FinanceTransaction *self)
+{
+  g_return_val_if_fail (FINANCE_IS_TRANSACTION (self), NULL);
+
+  return self->color;
+}
+
+/**
+ * finance_transaction_set_color:
+ * @self: a #FinanceTransaction instance.
+ * @color: a #GdkRGBA.
+ *
+ * Sets the icon color.
+ *
+ * Since: 1.0
+ */
+void
+finance_transaction_set_color (FinanceTransaction *self,
+                               const GdkRGBA      *color)
+{
+  g_return_if_fail (FINANCE_IS_TRANSACTION (self));
+
+  gdk_rgba_free (self->color);
+
+  self->color = gdk_rgba_copy (color);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_COLOR]);
 }
 
 /**
