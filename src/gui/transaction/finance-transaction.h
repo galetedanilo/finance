@@ -25,6 +25,7 @@
 
 #include "finance-entry-date.h"
 #include "finance-entry-monetary.h"
+#include "finance-utils.h"
 
 G_BEGIN_DECLS
 
@@ -38,6 +39,11 @@ const gchar *   finance_transaction_get_icon            (FinanceTransaction *sel
 
 void            finance_transaction_set_icon            (FinanceTransaction *self,
                                                          const gchar        *icon);
+
+GdkRGBA *       finance_transaction_get_color           (FinanceTransaction *self);
+
+void            finance_transaction_set_color           (FinanceTransaction *self,
+                                                         const GdkRGBA      *color);
 
 const gchar *   finance_transaction_get_name            (FinanceTransaction *self);
 
