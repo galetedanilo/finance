@@ -48,8 +48,6 @@ struct _FinanceTransaction
   gchar     *notes;
 
   GSettings *settings;
-
-  cairo_surface_t *surface;
 };
 
 G_DEFINE_TYPE (FinanceTransaction, finance_transaction, GTK_TYPE_BOX)
@@ -142,7 +140,6 @@ finance_transaction_dispose (GObject *object)
 {
   FinanceTransaction *self = (FinanceTransaction *)object;
 
-  g_clear_pointer (&self->surface, cairo_surface_destroy);
   g_clear_pointer (&self->color, gdk_rgba_free);
   g_clear_object (&self->settings);
 
@@ -476,12 +473,16 @@ finance_transaction_init (FinanceTransaction *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
 
+  cairo_surface_t *surface;
+
   self->color = finance_utils_random_rgba_color ();
   self->icon  = g_strdup ("NT");
 
-  self->surface = finance_utils_create_circle_transaction (self->color, self->icon);
+  surface = finance_utils_create_circle_transaction (self->color, self->icon);
 
-  gtk_image_set_from_surface (GTK_IMAGE (self->image), self->surface);
+  gtk_image_set_from_surface (GTK_IMAGE (self->image), surface);
+
+  g_clear_pointer (&surface, cairo_surface_destroy);
 
   self->settings = g_settings_new ("org.gnome.finance");
 
@@ -545,16 +546,17 @@ finance_transaction_set_icon (FinanceTransaction *self,
 {
   g_return_if_fail (FINANCE_IS_TRANSACTION (self));
 
-  cairo_surface_destroy (self->surface);
+  cairo_surface_t *surface;
+
   g_free (self->icon);
 
   self->icon = g_strdup (icon);
 
-  self->surface = finance_utils_create_circle_transaction (self->color,
-                                                           self->icon);
+  surface = finance_utils_create_circle_transaction (self->color, self->icon);
 
-  gtk_image_set_from_surface (GTK_IMAGE (self->image),
-                                         self->surface);
+  gtk_image_set_from_surface (GTK_IMAGE (self->image), surface);
+
+  g_clear_pointer (&surface, cairo_surface_destroy);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_ICON]);
 }
