@@ -1,6 +1,6 @@
-#ToDo
+# ToDo
 
-##Welcome to GNOME Finance
+## Welcome to GNOME Finance
 
 GNOME Finance is a free software project that aims to develop a 
 personal finance management system for the GNOME desktop.
