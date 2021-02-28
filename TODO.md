@@ -20,3 +20,33 @@ list below to finalize version 1.0.
  - [ ] Create FinanceViewDebits
  - [ ] Create FinanceViewGraphcs
  - [ ] Create FinanceCore
+ - [ ] Preferences Window
+ - [ ] Keyboards Shortcuts Window
+ 
+ ### FinanceEntryDate
+ 
+ ### FinanceEntryMonetary
+ 
+ ### FinanceCategory
+ 
+ ### FinanceTransaction
+ 
+ ### FinanceObject
+ 
+ ### FinancePaneRow
+ 
+ ### FinancePane
+ 
+ ### FinanceViews
+ 
+ ### FinanceViewCredits
+ 
+ ### FinanceViewDebits
+ 
+ ### FinanceViewGraphcs
+ 
+ ### FinanceCore
+ 
+ ### Preferences Window
+ 
+ ### Keyboards Shortcuts Window
