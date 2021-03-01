@@ -29,13 +29,13 @@ struct _FinancePaneRow
   /* The Widgets */
   GtkWidget       *image;
   GtkWidget       *name;
-  GtkWidget       *amount;
-  GtkWidget       *category;
+  GtkWidget       *info;
   GtkWidget       *revealer;
   GtkWidget       *check;
 
+  GdkRGBA         *color;
   gchar           *icon;
-  gdouble         value;
+  gdouble         amount;
 };
 
 G_DEFINE_TYPE (FinancePaneRow, finance_pane_row, GTK_TYPE_LIST_BOX_ROW)
@@ -43,4 +43,69 @@ G_DEFINE_TYPE (FinancePaneRow, finance_pane_row, GTK_TYPE_LIST_BOX_ROW)
 enum {
   PROP_0,
   PROP_ICON,
+  PROP_COLOR,
+  PROP_NAME,
+  PROP_INFO,
+  PROP_SELECTED,
+  PROP_AMOUNT,
+  PROP_SYMBOL,
+  N_PROPS,
+};
+
+static GParamSpec *properties [N_PROPS] = { NULL, };
+
+GtkWidget *
+finance_pane_row_new (void)
+{
+  return g_object_new (FINANCE_TYPE_PANE_ROW, NULL);
+}
+
+static void
+finance_pane_row_finalize (GObject *object)
+{
+  FinancePaneRow *self = (FinancePaneRow *)object;
+
+  g_clear_pointer (&self->icon, g_free);
+
+  G_OBJECT_CLASS (finance_pane_row_parent_class)->finalize (object);
+}
+
+static void
+finance_pane_row_dispose (GObject *object)
+{
+  FinancePaneRow *self = (FinancePaneRow *)object;
+
+  g_clear_pointer (&self->color, gdk_rbga_clear);
+
+  G_OBJECT_CLASS (finance_pane_row_parent_class)->dispose (object);
+}
+
+static void
+finance_pane_row_get_property ()
+{
+
+}
+
+static void
+finance_pane_row_set_property ()
+{
+
+}
+
+static void
+finance_pane_row_class_init (FinancePaneRowClass *klass)
+{
+  GObjectClass    *object_class = G_OBJECT_CLASS (klass);
+  GtkWidgetClass  *widget_class = GTK_WIDGET_CLASS (klass);
+
+  object_class->finalize      = finance_pane_row_finalize;
+  object_class->dispose       = finance_pane_row_dispose;
+  object_class->get_property  = finance_pane_row_get_property;
+  object_class->set_property  = finance_pane_row_set_property;
+}
+
+static void
+finance_pane_row_init (FinancePaneRow *self)
+{
+  gtk_widget_init_template (GTK_WIDGET (self));
 }
