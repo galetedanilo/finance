@@ -25,10 +25,11 @@
 
 G_BEGIN_DECLS
 
-GdkRGBA *         finance_utils_random_rgba_color             (void);
+GdkRGBA *         finance_utils_random_rgba_color   (void);
 
-cairo_surface_t * finance_utils_create_circle_transaction     (const GdkRGBA *color,
-                                                               const gchar   *str);
+cairo_surface_t * finance_utils_create_circle       (const GdkRGBA  *color,
+                                                     gint           arc_size,
+                                                     const gchar    *str);
 
 G_END_DECLS
 
