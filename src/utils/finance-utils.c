@@ -80,27 +80,25 @@ finance_utils_random_rgba_color (void)
 }
 
 /**
- * finance_utils_create_circle_transaction:
+ * finance_utils_create_circle:
  * @color: a #GdkRGBA.
+ * @arc_size: the size of the surface.
  * @str: a #gchar, to define the letters in the icon.
  *
- * Creates a circular surface filled with @color.
+ * Creates a circular surface filled with @color. The
+ * surface is always @arc_size x @arc_size.
  *
  * Returns: (transfer full): a #cairo_surface_t
  *
  * Since: 1.0
  */
 cairo_surface_t *
-finance_utils_create_circle_transaction (const GdkRGBA *color,
-                                         const gchar   *str)
+finance_utils_create_circle (const GdkRGBA  *color,
+                             gint           arc_size,
+                             const gchar    *str)
 {
   cairo_surface_t *surface;
   cairo_t         *cr;
-  gint            arc_size;
-  gdouble         font_size;
-
-  arc_size = 140;
-  font_size = 50.0;
 
   surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, arc_size, arc_size);
   cr = cairo_create (surface);
@@ -109,7 +107,7 @@ finance_utils_create_circle_transaction (const GdkRGBA *color,
                           CAIRO_FONT_SLANT_NORMAL,
                           CAIRO_FONT_WEIGHT_BOLD);
 
-  cairo_set_font_size (cr, font_size);
+  cairo_set_font_size (cr, (arc_size * 0.3571));
 
   cairo_arc (cr,
              arc_size / 2.0,
@@ -125,7 +123,7 @@ finance_utils_create_circle_transaction (const GdkRGBA *color,
                          color->alpha);
   cairo_fill (cr);
 
-  cairo_move_to (cr, 30.0 , 85.0);
+  cairo_move_to (cr, (arc_size * 0.2285), (arc_size * 0.6214));
 
   cairo_text_path (cr, str);
   cairo_set_source_rgb (cr, 1, 1, 1);
