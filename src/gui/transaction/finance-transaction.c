@@ -478,7 +478,7 @@ finance_transaction_init (FinanceTransaction *self)
   self->color = finance_utils_random_rgba_color ();
   self->icon  = g_strdup ("NT");
 
-  surface = finance_utils_create_circle_transaction (self->color, self->icon);
+  surface = finance_utils_create_circle (self->color, 140, self->icon);
 
   gtk_image_set_from_surface (GTK_IMAGE (self->image), surface);
 
@@ -552,7 +552,7 @@ finance_transaction_set_icon (FinanceTransaction *self,
 
   self->icon = g_strdup (icon);
 
-  surface = finance_utils_create_circle_transaction (self->color, self->icon);
+  surface = finance_utils_create_circle (self->color, 140, self->icon);
 
   gtk_image_set_from_surface (GTK_IMAGE (self->image), surface);
 
