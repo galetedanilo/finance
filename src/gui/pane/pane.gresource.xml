@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/org/gnome/finance/pane">
+    <file compressed="true">finance-pane.ui</file>
+  </gresource>
+</gresources>
+  
