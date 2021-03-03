@@ -25,13 +25,14 @@ struct _FinanceWindow
   GtkApplicationWindow  parent_instance;
 
   /* Template widgets */
-  GtkHeaderBar        *header_bar;
-  GtkWidget           *toggle_button_panel;
+  GtkHeaderBar  *header_bar;
+  GtkWidget     *toggle_button_panel;
 
-  GtkWidget           *transaction;
-  GtkWidget           *revealer_panel;
+  GtkWidget     *pane;
+  GtkWidget     *transaction;
+  GtkWidget     *revealer_panel;
 
-  GSettings   *settings;
+  GSettings     *settings;
 
   /* Window State */
   gint                width;
@@ -105,6 +106,7 @@ finance_window_class_init (FinanceWindowClass *klass)
 {
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
+  g_type_ensure (FINANCE_TYPE_PANE);
   g_type_ensure (FINANCE_TYPE_TRANSACTION);
 
   G_OBJECT_CLASS (klass)->constructed = finance_window_constructed;
@@ -117,6 +119,7 @@ finance_window_class_init (FinanceWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, header_bar);
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, toggle_button_panel);
 
+  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, pane);
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, transaction);
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, revealer_panel);
 

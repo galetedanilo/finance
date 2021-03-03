@@ -81,15 +81,35 @@ finance_pane_row_dispose (GObject *object)
 }
 
 static void
-finance_pane_row_get_property ()
+finance_pane_row_get_property (GObject    *object,
+                               guint       prop_id,
+                               GValue     *value,
+                               GParamSpec *pspec)
 {
+  FinancePaneRow *self = FINANCE_PANE_ROW (object);
 
+  switch (prop_id)
+    {
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
 }
 
 static void
-finance_pane_row_set_property ()
+finance_pane_row_set_property (GObject      *object,
+                               guint         prop_id,
+                               const GValue *value,
+                               GParamSpec   *pspec)
 {
+  FinancePaneRow *self = FINANCE_PANE_ROW (object);
 
+  switch (prop_id)
+    {
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
 }
 
 static void
@@ -102,6 +122,8 @@ finance_pane_row_class_init (FinancePaneRowClass *klass)
   object_class->dispose       = finance_pane_row_dispose;
   object_class->get_property  = finance_pane_row_get_property;
   object_class->set_property  = finance_pane_row_set_property;
+
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/pane/finance-pane-row.ui");
 }
 
 static void

@@ -20,6 +20,8 @@
 #define __FINANCE_WINDOW_H__
 
 #include <gtk/gtk.h>
+
+#include "finance-pane.h"
 #include "finance-transaction.h"
 
 G_BEGIN_DECLS

@@ -133,20 +133,10 @@
             <property name="transition-type">slide-right</property>
             <property name="reveal-child">True</property>
             <child>
-              <object class="GtkBox">
+              <object class="FinancePane" id="pane">
                 <property name="width-request">300</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="orientation">vertical</property>
-                <child>
-                  <placeholder/>
-                </child>
-                <child>
-                  <placeholder/>
-                </child>
-                <child>
-                  <placeholder/>
-                </child>
               </object>
             </child>
           </object>

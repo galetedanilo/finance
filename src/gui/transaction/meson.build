@@ -1,7 +1,7 @@
 built_sources += gnome.compile_resources(
   'transaction-resouces',
   'transaction.gresource.xml',
-  c_name: 'trasanction',
+  c_name: 'transaction',
 )
 
 sources += files(

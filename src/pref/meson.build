@@ -1,3 +1,9 @@
+built_sources += gnome.compile_resources(
+  'pref-resources',
+  'pref.gresource.xml',
+  c_name: 'pref',
+)
+
 sources += files(
   'finance-pref-box.c',
   'finance-pref-list-box.c',
@@ -6,10 +12,4 @@ sources += files(
   'finance-pref-row-spin.c',
   'finance-pref-row-switch.c',
   'finance-pref-window.c',
-)
-
-built_sources += gnome.compile_resources(
-  'pref-resources',
-  'pref.gresource.xml',
-  c_name: 'pref',
 )
