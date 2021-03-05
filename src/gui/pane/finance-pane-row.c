@@ -28,7 +28,7 @@ struct _FinancePaneRow
 
   /* The Widgets */
   GtkWidget       *image;
-  GtkWidget       *name;
+  GtkWidget       *title;
   GtkWidget       *info;
   GtkWidget       *revealer;
   GtkWidget       *check;
@@ -44,7 +44,7 @@ enum {
   PROP_0,
   PROP_ICON,
   PROP_COLOR,
-  PROP_NAME,
+  PROP_TITLE,
   PROP_INFO,
   PROP_SELECTED,
   PROP_AMOUNT,
@@ -90,6 +90,10 @@ finance_pane_row_get_property (GObject    *object,
 
   switch (prop_id)
     {
+    case PROP_TITLE:
+      g_value_set_string (value, finance_pane_row_get_title (self));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -106,6 +110,10 @@ finance_pane_row_set_property (GObject      *object,
 
   switch (prop_id)
     {
+    case PROP_TITLE:
+      finance_pane_row_set_title (self, g_value_get_string (value));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -130,4 +138,42 @@ static void
 finance_pane_row_init (FinancePaneRow *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
+}
+
+/**
+ * finance_pane_row_get_title:
+ * @self: a #FinancePaneRow object.
+ *
+ * Returns the title.
+ *
+ * Returns: The title as a string, or %NULL.
+ * This string points to internally allocated storage in the object
+ * and must not be freed, modified or stored.
+ *
+ * Since: 1.0
+ */
+const gchar *
+finance_pane_row_get_title (FinancePaneRow *self)
+{
+  g_return_val_if_fail (FINANCE_IS_PANE_ROW (self), NULL);
+
+  return gtk_label_get_text (GTK_LABEL (self->title));
+}
+
+/**
+ * finance_pane_row_set_title:
+ * @self: a #FinancePaneRow instance.
+ * @title: the title to set, as a string.
+ *
+ * Sets the title, replacing the current contents.
+ *
+ * Since: 1.0
+ */
+void
+finance_pane_row_set_title (FinancePaneRow *self,
+                            const gchar    *title)
+{
+  g_return_if_fail (FINANCE_IS_PANE_ROW (self));
+
+  gtk_label_set_text (GTK_LABEL (self->title), title);
 }
