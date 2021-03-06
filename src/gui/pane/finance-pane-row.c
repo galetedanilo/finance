@@ -149,6 +149,56 @@ finance_pane_row_init (FinancePaneRow *self)
 }
 
 /**
+ * finance_pane_row_get_icon:
+ * @self: a #FinancePaneRow object.
+ *
+ * Returns the pane row icon.
+ *
+ * Returns: The pane row icon as a string, or %NULL.
+ * This string points to internally allocated storage in the object
+ * and must not be freed, modified or stored.
+ *
+ * Since: 1.0
+ */
+const gchar *
+finance_pane_row_get_icon (FinancePaneRow *self)
+{
+  g_return_val_if_fail (FINANCE_IS_PANE_ROW (self), NULL);
+
+  return self->icon;
+}
+
+/**
+ * finance_pane_row_set_icon:
+ * @self: a #FinancePaneRow instance.
+ * @icon: the icon to set, as a string.
+ *
+ * Sets the icon, replacing the current contents.
+ *
+ * Since:1.0
+ */
+void
+finance_pane_row_set_icon (FinancePaneRow *self,
+                           const gchar    *icon)
+{
+  g_return_if_fail (FINANCE_IS_PANE_ROW (self));
+
+  cairo_surface_t *surface;
+
+  g_free (self->icon);
+
+  self->icon = g_strdup (icon);
+
+  surface = finance_utils_create_circle (self->color, 140, self->icon);
+
+  gtk_image_set_from_surface (GTK_IMAGE (self->image), surface);
+
+  g_clear_pointer (&surface, cairo_surface_destroy);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_ICON]);
+}
+
+/**
  * finance_pane_row_get_color:
  * @self: a #FinancePaneRow object.
  *
