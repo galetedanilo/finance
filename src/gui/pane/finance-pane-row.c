@@ -90,6 +90,10 @@ finance_pane_row_get_property (GObject    *object,
 
   switch (prop_id)
     {
+    case PROP_ICON:
+      g_value_set_string (value, finance_pane_row_get_icon (self));
+      break;
+
     case PROP_COLOR:
       g_value_set_boxed (value, finance_pane_row_get_color (self));
       break;
@@ -114,6 +118,10 @@ finance_pane_row_set_property (GObject      *object,
 
   switch (prop_id)
     {
+    case PROP_ICON:
+      finance_pane_row_set_icon (self, g_value_get_string (value));
+      break;
+
     case PROP_COLOR:
       finance_pane_row_set_color (self, g_value_get_boxed (value));
       break;
