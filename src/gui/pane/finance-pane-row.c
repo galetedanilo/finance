@@ -35,7 +35,6 @@ struct _FinancePaneRow
 
   GdkRGBA         *color;
   gchar           *icon;
-  gdouble         amount;
 };
 
 G_DEFINE_TYPE (FinancePaneRow, finance_pane_row, GTK_TYPE_LIST_BOX_ROW)
@@ -47,8 +46,6 @@ enum {
   PROP_TITLE,
   PROP_INFO,
   PROP_SELECTED,
-  PROP_AMOUNT,
-  PROP_SYMBOL,
   N_PROPS,
 };
 
@@ -75,7 +72,7 @@ finance_pane_row_dispose (GObject *object)
 {
   FinancePaneRow *self = (FinancePaneRow *)object;
 
-  g_clear_pointer (&self->color, gdk_rbga_clear);
+  g_clear_pointer (&self->color, gdk_rgba_free);
 
   G_OBJECT_CLASS (finance_pane_row_parent_class)->dispose (object);
 }
@@ -100,6 +97,14 @@ finance_pane_row_get_property (GObject    *object,
 
     case PROP_TITLE:
       g_value_set_string (value, finance_pane_row_get_title (self));
+      break;
+
+    case PROP_INFO:
+      g_value_set_string (value, finance_pane_row_get_info (self));
+      break;
+
+    case PROP_SELECTED:
+      g_value_set_boolean (value, finance_pane_row_is_selected (self));
       break;
 
     default:
@@ -128,6 +133,14 @@ finance_pane_row_set_property (GObject      *object,
 
     case PROP_TITLE:
       finance_pane_row_set_title (self, g_value_get_string (value));
+      break;
+
+    case PROP_INFO:
+      finance_pane_row_set_info (self, g_value_get_string (value));
+      break;
+
+    case PROP_SELECTED:
+      finance_pane_row_set_selected (self, g_value_get_boolean (value));
       break;
 
     default:
@@ -284,4 +297,82 @@ finance_pane_row_set_title (FinancePaneRow *self,
   gtk_label_set_text (GTK_LABEL (self->title), title);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_TITLE]);
+}
+
+/**
+ * finance_pane_row_get_info:
+ * @self: a #FinancePaneRow object.
+ *
+ * Returns the information text.
+ *
+ * Returns: The information text as a string, or %NULL.
+ * This string points to internally allocated storage in the object
+ * and must not be freed, modified or stored.
+ *
+ * Since: 1.0
+ */
+const gchar *
+finance_pane_row_get_info (FinancePaneRow *self)
+{
+  g_return_val_if_fail (FINANCE_IS_PANE_ROW (self), NULL);
+
+  return gtk_label_get_text (GTK_LABEL (self->info));
+}
+
+/**
+ * finance_pane_row_set_info:
+ * @self: a #FinancePaneRow instance.
+ * @info: the information text to set, as a string.
+ *
+ * Sets the information text, replacing the current contents.
+ *
+ * Since: 1.0
+ */
+void
+finance_pane_row_set_info (FinancePaneRow *self,
+                           const gchar    *info)
+{
+  g_return_if_fail (FINANCE_IS_PANE_ROW (self));
+
+  gtk_label_set_text (GTK_LABEL (self->info), info);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_INFO]);
+}
+
+/**
+ * finance_pane_row_is_selected:
+ * @self: a #FinancePaneRow object.
+ *
+ * Returns whether the row is in its “on” or “off” state.
+ *
+ * Returns: #TRUE if the row is selected, and #FALSE otherwise
+ *
+ * Since: 1.0
+ */
+gboolean
+finance_pane_row_is_selected (FinancePaneRow *self)
+{
+  g_return_val_if_fail (FINANCE_IS_PANE_ROW (self), FALSE);
+
+  return gtk_check_button_get_active (GTK_CHECK_BUTTON (self->check));
+}
+
+/**
+ * finance_pane_row_set_selected:
+ * @self: a #FinancePaneRow instance.
+ * @selected: #TRUE if row is to be selected, and #FALSE otherwise.
+ *
+ * Changes the state of #FinancePaneRow to the desired one.
+ *
+ * Since: 1.0
+ */
+void
+finance_pane_row_set_selected (FinancePaneRow *self,
+                               gboolean       selected)
+{
+  g_return_if_fail (FINANCE_IS_PANE_ROW (self));
+
+  gtk_check_button_set_active (GTK_CHECK_BUTTON (self->check), selected);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SELECTED]);
 }
