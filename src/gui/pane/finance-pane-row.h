@@ -31,6 +31,31 @@ G_DECLARE_FINAL_TYPE (FinancePaneRow, finance_pane_row, FINANCE, PANE_ROW, GtkLi
 
 GtkWidget *     finance_pane_row_new            (void);
 
+const gchar *   finance_pane_row_get_icon       (FinancePaneRow *self);
+
+void            finance_pane_row_set_icon       (FinancePaneRow *self,
+                                                 const gchar    *icon);
+
+GdkRGBA *       finance_pane_row_get_color      (FinancePaneRow *self);
+
+void            finance_pane_row_set_color      (FinancePaneRow *self,
+                                                 const GdkRGBA  *color);
+
+const gchar *   finance_pane_row_get_title      (FinancePaneRow *self);
+
+void            finance_pane_row_set_title      (FinancePaneRow *self,
+                                                 const gchar    *title);
+
+const gchar *   finance_pane_row_get_info       (FinancePaneRow *self);
+
+void            finance_pane_row_set_info       (FinancePaneRow *self,
+                                                 const gchar    *info);
+
+gboolean        finance_pane_row_is_selected    (FinancePaneRow *self);
+
+void            finance_pane_row_set_selected   (FinancePaneRow *self,
+                                                 gboolean        selected);
+
 G_END_DECLS
 
 #endif /* __FINANCE_PANE_ROW_H__ */
