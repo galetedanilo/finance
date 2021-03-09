@@ -6,4 +6,5 @@ built_sources += gnome.compile_resources(
 
 sources += files(
   'finance-pane.c',
+  'finance-pane-row.c',
 )
