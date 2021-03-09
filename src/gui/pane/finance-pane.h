@@ -23,6 +23,8 @@
 
 #include <gtk/gtk.h>
 
+#include "finance-pane-row.h"
+
 G_BEGIN_DECLS
 
 #define FINANCE_TYPE_PANE (finance_pane_get_type ())
