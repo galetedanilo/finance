@@ -2,6 +2,7 @@
 <gresources>
   <gresource prefix="/org/gnome/finance/pane">
     <file compressed="true">finance-pane.ui</file>
+    <file compressed="true">finance-pane-row.ui</file>
   </gresource>
 </gresources>
   
