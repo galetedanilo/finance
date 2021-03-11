@@ -17,6 +17,10 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="double-buffered">False</property>
+            <property name="margin-start">8</property>
+            <property name="margin-end">8</property>
+            <property name="margin-top">8</property>
+            <property name="margin-bottom">8</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -31,16 +35,14 @@
             <property name="orientation">vertical</property>
             <child>
               <object class="GtkLabel" id="title">
-                <property name="width-request">200</property>
-                <property name="height-request">38</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
+                <property name="margin-top">10</property>
                 <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
-                <property name="yalign">1</property>
-                <attributes>
-                  <attribute name="weight" value="ultrabold"/>
-                </attributes>
+                <style>
+                  <class name="row-title"/>
+                </style>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -49,17 +51,15 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="info">
-                <property name="width-request">200</property>
+              <object class="GtkLabel" id="amount">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="halign">start</property>
+                <property name="margin-start">10</property>
                 <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
-                <attributes>
-                  <attribute name="weight" value="bold"/>
-                  <attribute name="size" value="9000"/>
-                </attributes>
+                <style>
+                  <class name="row-amount"/>
+                </style>
               </object>
               <packing>
                 <property name="expand">False</property>
