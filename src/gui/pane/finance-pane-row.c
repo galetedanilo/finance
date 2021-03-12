@@ -24,12 +24,12 @@
 
 struct _FinancePaneRow
 {
-  GtkListBoxRow   parent_class;
+  GtkListBoxRow   parent_instance;
 
   /* The Widgets */
   GtkWidget       *image;
   GtkWidget       *title;
-  GtkWidget       *info;
+  GtkWidget       *amount;
   GtkWidget       *revealer;
   GtkWidget       *check;
 
@@ -44,12 +44,28 @@ enum {
   PROP_ICON,
   PROP_COLOR,
   PROP_TITLE,
-  PROP_INFO,
+  PROP_AMOUNT,
   PROP_SELECTED,
   N_PROPS,
 };
 
 static GParamSpec *properties [N_PROPS] = { NULL, };
+
+static void
+on_row_state_flags_changed (GtkWidget     *object,
+                            GtkStateFlags flags,
+                            gpointer      user_data)
+{
+  FinancePaneRow *self = FINANCE_PANE_ROW (user_data);
+
+  flags = gtk_widget_get_state_flags (object);
+
+  if (!gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (self->check)))
+    {
+      gtk_revealer_set_reveal_child (GTK_REVEALER (self->revealer),
+                                     (flags & GTK_STATE_FLAG_PRELIGHT) != 0);
+    }
+}
 
 GtkWidget *
 finance_pane_row_new (void)
@@ -99,8 +115,8 @@ finance_pane_row_get_property (GObject    *object,
       g_value_set_string (value, finance_pane_row_get_title (self));
       break;
 
-    case PROP_INFO:
-      g_value_set_string (value, finance_pane_row_get_info (self));
+    case PROP_AMOUNT:
+      g_value_set_string (value, finance_pane_row_get_amount (self));
       break;
 
     case PROP_SELECTED:
@@ -135,8 +151,8 @@ finance_pane_row_set_property (GObject      *object,
       finance_pane_row_set_title (self, g_value_get_string (value));
       break;
 
-    case PROP_INFO:
-      finance_pane_row_set_info (self, g_value_get_string (value));
+    case PROP_AMOUNT:
+      finance_pane_row_set_amount (self, g_value_get_string (value));
       break;
 
     case PROP_SELECTED:
@@ -160,13 +176,81 @@ finance_pane_row_class_init (FinancePaneRowClass *klass)
   object_class->get_property  = finance_pane_row_get_property;
   object_class->set_property  = finance_pane_row_set_property;
 
+  /**
+   * FinancePaneRow::icon:
+   *
+   * The pane row icon
+   */
+  properties[PROP_ICON] = g_param_spec_string ("icon",
+                                               "Icon",
+                                               "The pane row icon",
+                                               NULL,
+                                               G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * FinancePaneRow::color:
+   *
+   * The pane row icon color
+   */
+  properties[PROP_COLOR] = g_param_spec_boxed ("color",
+                                               "Color",
+                                               "The icon color",
+                                               GDK_TYPE_RGBA,
+                                               G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * FinancePaneRow::title:
+   *
+   * The pane row title
+   */
+  properties[PROP_TITLE] = g_param_spec_string ("title",
+                                                "Title",
+                                                "The pane row title",
+                                                NULL,
+                                                G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * FinancePaneRow::amount:
+   *
+   * The pane row amount
+   */
+  properties[PROP_AMOUNT] =  g_param_spec_string ("amount",
+                                                  "Amount",
+                                                  "The pane row amount",
+                                                  NULL,
+                                                  G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * FinancePaneRow::selected
+   *
+   * The pane row is selected
+   */
+  properties[PROP_SELECTED] = g_param_spec_boolean ("selected",
+                                                    "Selected",
+                                                    "Is Selected",
+                                                    FALSE,
+                                                    G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
+  g_object_class_install_properties (object_class, N_PROPS, properties);
+
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/pane/finance-pane-row.ui");
+
+  gtk_widget_class_bind_template_child (widget_class, FinancePaneRow, image);
+  gtk_widget_class_bind_template_child (widget_class, FinancePaneRow, title);
+  gtk_widget_class_bind_template_child (widget_class, FinancePaneRow, amount);
+  gtk_widget_class_bind_template_child (widget_class, FinancePaneRow, revealer);
+  gtk_widget_class_bind_template_child (widget_class, FinancePaneRow, check);
+
+  /* All signals */
+  gtk_widget_class_bind_template_callback (widget_class, on_row_state_flags_changed);
 }
 
 static void
 finance_pane_row_init (FinancePaneRow *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  self->color = finance_utils_random_rgba_color ();
 }
 
 /**
@@ -210,7 +294,7 @@ finance_pane_row_set_icon (FinancePaneRow *self,
 
   self->icon = g_strdup (icon);
 
-  surface = finance_utils_create_circle (self->color, 140, self->icon);
+  surface = finance_utils_create_circle (self->color, 45, self->icon);
 
   gtk_image_set_from_surface (GTK_IMAGE (self->image), surface);
 
@@ -300,43 +384,43 @@ finance_pane_row_set_title (FinancePaneRow *self,
 }
 
 /**
- * finance_pane_row_get_info:
+ * finance_pane_row_get_amount:
  * @self: a #FinancePaneRow object.
  *
- * Returns the information text.
+ * Returns the amount as a string.
  *
- * Returns: The information text as a string, or %NULL.
+ * Returns: The amount as a string, or %NULL.
  * This string points to internally allocated storage in the object
  * and must not be freed, modified or stored.
  *
  * Since: 1.0
  */
 const gchar *
-finance_pane_row_get_info (FinancePaneRow *self)
+finance_pane_row_get_amount (FinancePaneRow *self)
 {
   g_return_val_if_fail (FINANCE_IS_PANE_ROW (self), NULL);
 
-  return gtk_label_get_text (GTK_LABEL (self->info));
+  return gtk_label_get_text (GTK_LABEL (self->amount));
 }
 
 /**
- * finance_pane_row_set_info:
+ * finance_pane_row_set_amount:
  * @self: a #FinancePaneRow instance.
- * @info: the information text to set, as a string.
+ * @amount: the amount to set, as a string.
  *
- * Sets the information text, replacing the current contents.
+ * Sets the amount, replacing the current contents.
  *
  * Since: 1.0
  */
 void
-finance_pane_row_set_info (FinancePaneRow *self,
-                           const gchar    *info)
+finance_pane_row_set_amount (FinancePaneRow *self,
+                             const gchar    *amount)
 {
   g_return_if_fail (FINANCE_IS_PANE_ROW (self));
 
-  gtk_label_set_text (GTK_LABEL (self->info), info);
+  gtk_label_set_text (GTK_LABEL (self->amount), amount);
 
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_INFO]);
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_AMOUNT]);
 }
 
 /**
@@ -354,7 +438,7 @@ finance_pane_row_is_selected (FinancePaneRow *self)
 {
   g_return_val_if_fail (FINANCE_IS_PANE_ROW (self), FALSE);
 
-  return gtk_check_button_get_active (GTK_CHECK_BUTTON (self->check));
+  return TRUE; //gtk_check_button_get_active (GTK_CHECK_BUTTON (self->check));
 }
 
 /**
@@ -372,7 +456,7 @@ finance_pane_row_set_selected (FinancePaneRow *self,
 {
   g_return_if_fail (FINANCE_IS_PANE_ROW (self));
 
-  gtk_check_button_set_active (GTK_CHECK_BUTTON (self->check), selected);
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (self->check), selected);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SELECTED]);
 }
