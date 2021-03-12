@@ -22,7 +22,9 @@
 
 struct _FinancePane
 {
-  GtkBox    parent_instance;
+  GtkBox      parent_instance;
+
+  GtkListBox  *list;
 };
 
 G_DEFINE_TYPE (FinancePane, finance_pane, GTK_TYPE_BOX)
@@ -89,10 +91,22 @@ finance_pane_class_init (FinancePaneClass *klass)
   object_class->set_property  = finance_pane_set_property;
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/pane/finance-pane.ui");
+
+  gtk_widget_class_bind_template_child (widget_class, FinancePane, list);
 }
 
 static void
 finance_pane_init (FinancePane *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  //this is a test
+  GtkWidget *row = finance_pane_row_new ();
+
+  finance_pane_row_set_icon (row, "TR");
+  finance_pane_row_set_title (row, "Transaction Name Title");
+  finance_pane_row_set_amount (row, "R$2,540.45");
+
+  gtk_list_box_insert (GTK_LIST_BOX (self->list), row, -1);
+
 }
