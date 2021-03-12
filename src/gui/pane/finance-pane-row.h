@@ -23,6 +23,8 @@
 
 #include <gtk/gtk.h>
 
+#include "finance-utils.h"
+
 G_BEGIN_DECLS
 
 #define FINANCE_TYPE_PANE_ROW (finance_pane_row_get_type ())
@@ -46,10 +48,10 @@ const gchar *   finance_pane_row_get_title      (FinancePaneRow *self);
 void            finance_pane_row_set_title      (FinancePaneRow *self,
                                                  const gchar    *title);
 
-const gchar *   finance_pane_row_get_info       (FinancePaneRow *self);
+const gchar *   finance_pane_row_get_amount     (FinancePaneRow *self);
 
-void            finance_pane_row_set_info       (FinancePaneRow *self,
-                                                 const gchar    *info);
+void            finance_pane_row_set_amount     (FinancePaneRow *self,
+                                                 const gchar    *amount);
 
 gboolean        finance_pane_row_is_selected    (FinancePaneRow *self);
 
