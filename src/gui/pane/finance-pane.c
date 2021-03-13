@@ -24,7 +24,9 @@ struct _FinancePane
 {
   GtkBox      parent_instance;
 
-  GtkListBox  *list;
+  /* The Widgets */
+  GtkWidget   *search;
+  GtkWidget   *list;
 };
 
 G_DEFINE_TYPE (FinancePane, finance_pane, GTK_TYPE_BOX)
@@ -35,6 +37,32 @@ enum {
 };
 
 static GParamSpec *properties [N_PROPS] = { NULL, };
+
+static gboolean
+finance_pane_filter_list (GtkListBoxRow *row,
+                          gpointer      user_data)
+{
+  FinancePane *self = FINANCE_PANE (user_data);
+
+  if (strcasestr (finance_pane_row_get_title (FINANCE_PANE_ROW (row)),
+                  gtk_entry_get_text (GTK_ENTRY (self->search))))
+    return TRUE;
+  else
+    return FALSE;
+
+}
+
+static void
+on_pane_search_changed (GtkSearchEntry  *entry,
+                        gpointer        user_data)
+{
+  FinancePane *self = FINANCE_PANE (user_data);
+
+  gtk_list_box_set_filter_func (GTK_LIST_BOX (self->list),
+                                (GtkListBoxFilterFunc)finance_pane_filter_list,
+                                (gpointer) self,
+                                FALSE);
+}
 
 GtkWidget *
 finance_pane_new (void)
@@ -92,7 +120,10 @@ finance_pane_class_init (FinancePaneClass *klass)
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/pane/finance-pane.ui");
 
+  gtk_widget_class_bind_template_child (widget_class, FinancePane, search);
   gtk_widget_class_bind_template_child (widget_class, FinancePane, list);
+
+  gtk_widget_class_bind_template_callback (widget_class, on_pane_search_changed);
 }
 
 static void
