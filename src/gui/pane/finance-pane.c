@@ -27,16 +27,26 @@ struct _FinancePane
   /* The Widgets */
   GtkWidget   *search;
   GtkWidget   *list;
+
+  GPtrArray   *selected;
 };
 
 G_DEFINE_TYPE (FinancePane, finance_pane, GTK_TYPE_BOX)
 
 enum {
   PROP_0,
+  PROP_NUM_ROWS_SELECTED,
   N_PROPS
 };
 
+enum {
+  ROW_CHANGE_STATE,
+  N_SIGNALS
+};
+
 static GParamSpec *properties [N_PROPS] = { NULL, };
+
+static guint signals[N_SIGNALS] = { 0, };
 
 static gboolean
 finance_pane_filter_list (GtkListBoxRow *row,
@@ -75,6 +85,8 @@ finance_pane_finalize (GObject *object)
 {
   FinancePane *self = (FinancePane *)object;
 
+  g_ptr_array_free (self->selected, TRUE);
+
   G_OBJECT_CLASS (finance_pane_parent_class)->finalize (object);
 }
 
@@ -88,6 +100,10 @@ finance_pane_get_property (GObject    *object,
 
   switch (prop_id)
     {
+    case PROP_NUM_ROWS_SELECTED:
+      g_value_set_uint (value, finance_pane_get_num_rows_selected (self));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -118,6 +134,34 @@ finance_pane_class_init (FinancePaneClass *klass)
   object_class->get_property  = finance_pane_get_property;
   object_class->set_property  = finance_pane_set_property;
 
+  /**
+   * FinancePane::row-change-state:
+   *
+   * Emitted when the row is changes its state
+   */
+  signals[ROW_CHANGE_STATE] = g_signal_new ("row-change-state",
+                                            FINANCE_TYPE_PANE,
+                                            G_SIGNAL_RUN_LAST,
+                                            0,
+                                            NULL, NULL, NULL,
+                                            G_TYPE_NONE,
+                                            0);
+
+  /**
+   * FinancePane::num-rows-selected:
+   *
+   * The number of rows selected
+   */
+  properties[PROP_NUM_ROWS_SELECTED] = g_param_spec_uint ("num-rows-selected",
+                                                          "Num rows selected",
+                                                          "The number of rows selected",
+                                                          0,
+                                                          G_MAXUINT,
+                                                          0,
+                                                          G_PARAM_READABLE);
+
+  g_object_class_install_properties (object_class, N_PROPS, properties);
+
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/pane/finance-pane.ui");
 
   gtk_widget_class_bind_template_child (widget_class, FinancePane, search);
@@ -131,6 +175,8 @@ finance_pane_init (FinancePane *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
 
+  self->selected = g_ptr_array_new ();
+
   //this is a test
   GtkWidget *row = finance_pane_row_new ();
 
@@ -140,4 +186,22 @@ finance_pane_init (FinancePane *self)
 
   gtk_list_box_insert (GTK_LIST_BOX (self->list), row, -1);
 
+}
+
+/**
+ * finance_pane_get_num_rows_selected:
+ * @self: a #FinancePane object.
+ *
+ * Returns the number of rows selected.
+ *
+ * Returns: the number of rows selected as a #guint.
+ *
+ * Since: 1.0
+ */
+guint
+finance_pane_get_num_rows_selected (FinancePane *self)
+{
+  g_return_val_if_fail (FINANCE_IS_PANE (self), 0);
+
+  return self->selected->len;
 }
