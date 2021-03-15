@@ -61,6 +61,7 @@
                   <object class="GtkListBox" id="list">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
+                    <signal name="row-activated" handler="teste" swapped="no" />
                     <style>
                       <class name="pane"/>
                     </style>

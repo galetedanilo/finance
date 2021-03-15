@@ -48,6 +48,16 @@ static GParamSpec *properties [N_PROPS] = { NULL, };
 
 static guint signals[N_SIGNALS] = { 0, };
 
+static void
+teste(FinancePaneRow *row,
+      gpointer user_data)
+{
+  FinancePane *self = FINANCE_PANE (user_data);
+
+  g_signal_emit (self, signals[ROW_CHANGE_STATE], 0);
+
+}
+
 static gboolean
 finance_pane_filter_list (GtkListBoxRow *row,
                           gpointer      user_data)
@@ -57,8 +67,8 @@ finance_pane_filter_list (GtkListBoxRow *row,
   if (strcasestr (finance_pane_row_get_title (FINANCE_PANE_ROW (row)),
                   gtk_entry_get_text (GTK_ENTRY (self->search))))
     return TRUE;
-  else
-    return FALSE;
+
+  return FALSE;
 
 }
 
@@ -168,6 +178,7 @@ finance_pane_class_init (FinancePaneClass *klass)
   gtk_widget_class_bind_template_child (widget_class, FinancePane, list);
 
   gtk_widget_class_bind_template_callback (widget_class, on_pane_search_changed);
+  gtk_widget_class_bind_template_callback (widget_class, teste);
 }
 
 static void
@@ -183,7 +194,7 @@ finance_pane_init (FinancePane *self)
   finance_pane_row_set_icon (row, "TR");
   finance_pane_row_set_title (row, "Transaction Name Title");
   finance_pane_row_set_amount (row, "R$2,540.45");
-
+  g_signal_connect (row, "selected", G_CALLBACK (teste), self);
   gtk_list_box_insert (GTK_LIST_BOX (self->list), row, -1);
 
 }
@@ -203,5 +214,5 @@ finance_pane_get_num_rows_selected (FinancePane *self)
 {
   g_return_val_if_fail (FINANCE_IS_PANE (self), 0);
 
-  return self->selected->len;
+  return 1;//self->selected->len;
 }

@@ -45,12 +45,22 @@ enum {
   PROP_COLOR,
   PROP_TITLE,
   PROP_AMOUNT,
-  PROP_SELECTED,
+  PROP_SELECT,
   N_PROPS,
+};
+
+enum {
+  SELECTED,
+  N_SIGNALS
 };
 
 static GParamSpec *properties [N_PROPS] = { NULL, };
 
+static guint signals[N_SIGNALS] = { 0, };
+
+/*
+ * Show the check button, when the mouse is over the row.
+ */
 static void
 on_row_state_flags_changed (GtkWidget     *object,
                             GtkStateFlags flags,
@@ -65,6 +75,15 @@ on_row_state_flags_changed (GtkWidget     *object,
       gtk_revealer_set_reveal_child (GTK_REVEALER (self->revealer),
                                      (flags & GTK_STATE_FLAG_PRELIGHT) != 0);
     }
+}
+
+static void
+on_check_toggled (GtkToggleButton *button,
+                  gpointer        user_data)
+{
+  FinancePaneRow *self = FINANCE_PANE_ROW (user_data);
+
+  g_signal_emit (self, signals[SELECTED], 0);
 }
 
 GtkWidget *
@@ -119,8 +138,8 @@ finance_pane_row_get_property (GObject    *object,
       g_value_set_string (value, finance_pane_row_get_amount (self));
       break;
 
-    case PROP_SELECTED:
-      g_value_set_boolean (value, finance_pane_row_is_selected (self));
+    case PROP_SELECT:
+      g_value_set_boolean (value, finance_pane_row_get_select (self));
       break;
 
     default:
@@ -155,8 +174,8 @@ finance_pane_row_set_property (GObject      *object,
       finance_pane_row_set_amount (self, g_value_get_string (value));
       break;
 
-    case PROP_SELECTED:
-      finance_pane_row_set_selected (self, g_value_get_boolean (value));
+    case PROP_SELECT:
+      finance_pane_row_set_select (self, g_value_get_boolean (value));
       break;
 
     default:
@@ -175,6 +194,19 @@ finance_pane_row_class_init (FinancePaneRowClass *klass)
   object_class->dispose       = finance_pane_row_dispose;
   object_class->get_property  = finance_pane_row_get_property;
   object_class->set_property  = finance_pane_row_set_property;
+
+  /**
+   * FinancePaneRow::selected:
+   *
+   * Emitted when the row is checked
+   */
+  signals[SELECTED] = g_signal_new ("selected",
+                                    FINANCE_TYPE_PANE_ROW,
+                                    G_SIGNAL_RUN_LAST,
+                                    0,
+                                    NULL, NULL, NULL,
+                                    G_TYPE_NONE,
+                                    0);
 
   /**
    * FinancePaneRow::icon:
@@ -221,15 +253,15 @@ finance_pane_row_class_init (FinancePaneRowClass *klass)
                                                   G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinancePaneRow::selected
+   * FinancePaneRow::select
    *
-   * The pane row is selected
+   * The pane row select
    */
-  properties[PROP_SELECTED] = g_param_spec_boolean ("selected",
-                                                    "Selected",
-                                                    "Is Selected",
-                                                    FALSE,
-                                                    G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+  properties[PROP_SELECT] = g_param_spec_boolean ("select",
+                                                  "Select",
+                                                  "Set select",
+                                                  FALSE,
+                                                  G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
@@ -243,6 +275,7 @@ finance_pane_row_class_init (FinancePaneRowClass *klass)
 
   /* All signals */
   gtk_widget_class_bind_template_callback (widget_class, on_row_state_flags_changed);
+  gtk_widget_class_bind_template_callback (widget_class, on_check_toggled);
 }
 
 static void
@@ -424,7 +457,7 @@ finance_pane_row_set_amount (FinancePaneRow *self,
 }
 
 /**
- * finance_pane_row_is_selected:
+ * finance_pane_row_get_select:
  * @self: a #FinancePaneRow object.
  *
  * Returns whether the row is in its “on” or “off” state.
@@ -434,15 +467,15 @@ finance_pane_row_set_amount (FinancePaneRow *self,
  * Since: 1.0
  */
 gboolean
-finance_pane_row_is_selected (FinancePaneRow *self)
+finance_pane_row_get_select (FinancePaneRow *self)
 {
   g_return_val_if_fail (FINANCE_IS_PANE_ROW (self), FALSE);
 
-  return TRUE; //gtk_check_button_get_active (GTK_CHECK_BUTTON (self->check));
+  return gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (self->check));
 }
 
 /**
- * finance_pane_row_set_selected:
+ * finance_pane_row_set_select:
  * @self: a #FinancePaneRow instance.
  * @selected: #TRUE if row is to be selected, and #FALSE otherwise.
  *
@@ -451,12 +484,12 @@ finance_pane_row_is_selected (FinancePaneRow *self)
  * Since: 1.0
  */
 void
-finance_pane_row_set_selected (FinancePaneRow *self,
-                               gboolean       selected)
+finance_pane_row_set_select (FinancePaneRow *self,
+                             gboolean       selected)
 {
   g_return_if_fail (FINANCE_IS_PANE_ROW (self));
 
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (self->check), selected);
 
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SELECTED]);
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SELECT]);
 }

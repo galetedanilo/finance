@@ -1,5 +1,6 @@
 finance_incs += include_directories('transaction')
 finance_incs += include_directories('pane')
+finance_incs += include_directories('views')
 
 built_sources += gnome.compile_resources(
   'gui-resources',
@@ -15,3 +16,4 @@ sources += files(
 
 subdir('pane')
 subdir('transaction')
+subdir('views')

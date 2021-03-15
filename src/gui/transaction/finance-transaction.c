@@ -473,16 +473,7 @@ finance_transaction_init (FinanceTransaction *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
 
-  cairo_surface_t *surface;
-
   self->color = finance_utils_random_rgba_color ();
-  self->icon  = g_strdup ("NT");
-
-  surface = finance_utils_create_circle (self->color, 140, self->icon);
-
-  gtk_image_set_from_surface (GTK_IMAGE (self->image), surface);
-
-  g_clear_pointer (&surface, cairo_surface_destroy);
 
   self->settings = g_settings_new ("org.gnome.finance");
 
