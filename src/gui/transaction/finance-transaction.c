@@ -71,7 +71,25 @@ enum {
   N_PROPS
 };
 
+enum {
+  CANCEL,
+  N_SIGNALS
+};
+
 static GParamSpec *properties [N_PROPS] = { NULL, };
+
+static guint signals[N_SIGNALS] = { 0, };
+
+static void
+on_cancel_button_clicked (GtkButton *button,
+                          gpointer  user_data)
+{
+  FinanceTransaction *self = FINANCE_TRANSACTION (user_data);
+
+  (void)button;
+
+  g_signal_emit (self, signals[CANCEL], 0);
+}
 
 static void
 on_frequency_type_changed (GtkComboBox  *widget,
@@ -297,6 +315,19 @@ finance_transaction_class_init (FinanceTransactionClass *klass)
   object_class->set_property = finance_transaction_set_property;
 
   /**
+   * FinanceTransaction::cancel:
+   *
+   * Emitted when the cancel button is clicked
+   */
+  signals[CANCEL] = g_signal_new ("cancel",
+                                  FINANCE_TYPE_TRANSACTION,
+                                  G_SIGNAL_RUN_LAST,
+                                  0,
+                                  NULL, NULL, NULL,
+                                  G_TYPE_NONE,
+                                  0);
+
+  /**
    * FinanceTransaction::icon:
    *
    * The transaction icon
@@ -466,6 +497,7 @@ finance_transaction_class_init (FinanceTransactionClass *klass)
   /* The CallBacks */
   gtk_widget_class_bind_template_callback (widget_class, on_repeat_changed);
   gtk_widget_class_bind_template_callback (widget_class, on_frequency_type_changed);
+  gtk_widget_class_bind_template_callback (widget_class, on_cancel_button_clicked);
 }
 
 static void
