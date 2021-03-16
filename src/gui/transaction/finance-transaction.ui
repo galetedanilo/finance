@@ -413,6 +413,7 @@
             <property name="margin-end">5</property>
             <property name="margin-top">5</property>
             <property name="margin-bottom">5</property>
+            <signal name="clicked" handler="on_cancel_button_clicked" swapped="no"/>
             <style>
               <class name="destructive-action"/>
             </style>
