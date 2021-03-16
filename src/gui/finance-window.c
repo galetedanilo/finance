@@ -94,6 +94,21 @@ on_transaction_new_debit (GtkButton *button,
 }
 
 static void
+on_transaction_cancel_clicked (GtkButton  *button,
+                               gpointer   user_data)
+{
+  FinanceWindow *self = FINANCE_WINDOW (user_data);
+
+  (void)button;
+
+  gtk_stack_set_visible_child (GTK_STACK (self->stack), self->transaction);
+
+  gtk_widget_set_state_flags (self->stack_switch, GTK_STATE_FLAG_NORMAL, TRUE);
+  gtk_widget_set_state_flags (self->stack_menu, GTK_STATE_FLAG_NORMAL, TRUE);
+  gtk_widget_set_state_flags (self->pane, GTK_STATE_FLAG_NORMAL, TRUE);
+}
+
+static void
 on_pane_show_toggled (GtkToggleButton *toggle_button,
                       gpointer        user_data)
 {
@@ -191,6 +206,7 @@ finance_window_class_init (FinanceWindowClass *klass)
   /* The CallBacks */
   gtk_widget_class_bind_template_callback (widget_class, on_transaction_new_credit);
   gtk_widget_class_bind_template_callback (widget_class, on_transaction_new_debit);
+  gtk_widget_class_bind_template_callback (widget_class, on_transaction_cancel_clicked);
   gtk_widget_class_bind_template_callback (widget_class, on_pane_show_toggled);
   gtk_widget_class_bind_template_callback (widget_class, on_pane_row_change_state);
 
