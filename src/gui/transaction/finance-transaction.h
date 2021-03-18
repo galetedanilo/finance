@@ -100,6 +100,8 @@ const gchar *   finance_transaction_get_notes           (FinanceTransaction *sel
 void            finance_transaction_set_notes           (FinanceTransaction *self,
                                                          const gchar        *notes);
 
+void            finance_transaction_clear               (FinanceTransaction *self);
+
 G_END_DECLS
 
 #endif /* __FINANCE_TRANSACTION_H__ */
