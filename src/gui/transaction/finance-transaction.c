@@ -81,6 +81,18 @@ static GParamSpec *properties [N_PROPS] = { NULL, };
 static guint signals[N_SIGNALS] = { 0, };
 
 static void
+create_icon (FinanceTransaction *self)
+{
+  cairo_surface_t *surface;
+
+  surface = finance_utils_create_circle (self->color, 140, self->icon);
+
+  gtk_image_set_from_surface (GTK_IMAGE (self->image), surface);
+
+  g_clear_pointer (&surface, cairo_surface_destroy);
+}
+
+static void
 on_cancel_button_clicked (GtkButton *button,
                           gpointer  user_data)
 {
@@ -505,6 +517,8 @@ finance_transaction_init (FinanceTransaction *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
 
+  self->icon = g_strdup ("NW");
+
   self->color = finance_utils_random_rgba_color ();
 
   self->settings = g_settings_new ("org.gnome.finance");
@@ -569,17 +583,11 @@ finance_transaction_set_icon (FinanceTransaction *self,
 {
   g_return_if_fail (FINANCE_IS_TRANSACTION (self));
 
-  cairo_surface_t *surface;
-
   g_free (self->icon);
 
   self->icon = g_strdup (icon);
 
-  surface = finance_utils_create_circle (self->color, 140, self->icon);
-
-  gtk_image_set_from_surface (GTK_IMAGE (self->image), surface);
-
-  g_clear_pointer (&surface, cairo_surface_destroy);
+  create_icon (self);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_ICON]);
 }
@@ -1058,4 +1066,38 @@ finance_transaction_set_notes (FinanceTransaction *self,
                             self->notes, -1);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_NOTES]);
+}
+
+/**
+ * finance_transaction_clear:
+ * @self: a #FinanceTransaction object.
+ *
+ * Clears all data entry fields.
+ *
+ * Since: 1.0
+ */
+void
+finance_transaction_clear (FinanceTransaction *self)
+{
+  g_return_if_fail (FINANCE_IS_TRANSACTION (self));
+
+  g_free (self->icon);
+  g_free (self->notes);
+
+  self->icon = g_strdup ("NT");
+  self->notes = g_strdup ("");
+
+  self->color = finance_utils_random_rgba_color ();
+  gtk_text_buffer_set_text (GTK_TEXT_BUFFER (self->notes_buffer),
+                            self->notes, -1);
+
+  create_icon (self);
+
+  gtk_entry_set_text (GTK_ENTRY (self->name), "");
+  gtk_entry_set_text (GTK_ENTRY (self->amount), "");
+  gtk_entry_set_text (GTK_ENTRY (self->date), "");
+  gtk_entry_set_text (GTK_ENTRY (self->payee_name), "");
+  gtk_combo_box_set_active (GTK_COMBO_BOX (self->payment), 0);
+  gtk_entry_set_text (GTK_ENTRY (self->payment_info), "");
+  gtk_combo_box_set_active (GTK_COMBO_BOX (self->repeat), 0);
 }
