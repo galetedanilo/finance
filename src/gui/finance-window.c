@@ -71,6 +71,8 @@ on_transaction_new_credit (GtkButton  *button,
 
   (void)button;
 
+  finance_transaction_clear (FINANCE_TRANSACTION (self->transaction));
+
   gtk_stack_set_visible_child (GTK_STACK (self->stack), self->transaction);
 
   gtk_widget_set_state_flags (self->stack_switch, GTK_STATE_FLAG_INSENSITIVE, TRUE);
@@ -85,6 +87,8 @@ on_transaction_new_debit (GtkButton *button,
   FinanceWindow *self = FINANCE_WINDOW (user_data);
 
   (void)button;
+
+  finance_transaction_clear (FINANCE_TRANSACTION (self->transaction));
 
   gtk_stack_set_visible_child (GTK_STACK (self->stack), self->transaction);
 
