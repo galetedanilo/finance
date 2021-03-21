@@ -53,9 +53,9 @@ const gchar *   finance_pane_row_get_amount       (FinancePaneRow *self);
 void            finance_pane_row_set_amount       (FinancePaneRow *self,
                                                    const gchar    *amount);
 
-gboolean        finance_pane_row_get_select       (FinancePaneRow *self);
+gboolean        finance_pane_row_is_selected      (FinancePaneRow *self);
 
-void            finance_pane_row_set_select       (FinancePaneRow *self,
+void            finance_pane_row_set_selected     (FinancePaneRow *self,
                                                    gboolean       selected);
 
 G_END_DECLS
