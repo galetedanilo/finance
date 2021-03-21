@@ -29,7 +29,7 @@
  * @FINANCE_MONTHLY:
  * @FINANCE_YEARLY:
  *
- *
+ * Enum with available repetitions
  */
 typedef enum
 {
@@ -47,7 +47,7 @@ typedef enum
  * @FINANCE_N_OCCURRENCES:
  * @FINANCE_UNTIL_DATE:
  *
- * 
+ * Enum with available frequency
  */
 typedef enum
 {
@@ -67,7 +67,7 @@ typedef enum
  * @FINANCE_DEPOSIT:
  * @FINANCE_CHECK:
  *
- * 
+ * Enum with available payments
  */
 typedef enum
 {
@@ -86,7 +86,7 @@ typedef enum
  * @FINANCE_LOCAL_SYMBOL:
  * @FINANCE_INTERNATIONAL_SYMBOL:
  *
- *
+ * Enum with available symbols
  */
 typedef enum
 {
