@@ -39,6 +39,8 @@ struct _FinanceWindow
   GtkWidget   *transaction;
   GtkWidget   *revealer_panel;
 
+  GtkWidget   *view_transactions;
+
   GSettings   *settings;
 
   /* Window State */
@@ -185,6 +187,7 @@ finance_window_class_init (FinanceWindowClass *klass)
 
   g_type_ensure (FINANCE_TYPE_PANE);
   g_type_ensure (FINANCE_TYPE_TRANSACTION);
+  g_type_ensure (FINANCE_TYPE_TRANSACTIONS_VIEW);
 
   G_OBJECT_CLASS (klass)->constructed = finance_window_constructed;
   G_OBJECT_CLASS (klass)->finalize    = finance_window_finalize;
@@ -202,10 +205,13 @@ finance_window_class_init (FinanceWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, toggle_button_panel);
 
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, pane);
+  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, revealer_panel);
 
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, stack);
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, transaction);
-  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, revealer_panel);
+
+  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, view_transactions);
+
 
   /* The CallBacks */
   gtk_widget_class_bind_template_callback (widget_class, on_transaction_new_credit);

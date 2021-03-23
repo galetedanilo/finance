@@ -1,6 +1,6 @@
-/* finance-pref-list-box.h
+/* finance-preferences-window.h
  *
- * Copyright 2021 galetedanilo <galetedanilo@gmail.com>
+ * Copyright 2020 galetedanilo <galetedanilo@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,21 +18,17 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef __FINANCE_PREF_LIST_BOX_H__
-#define __FINANCE_PREF_LIST_BOX_H__
+#ifndef __FINANCE_PREFERENCES_WINDOW_H__
+#define __FINANCE_PREFERENCES_WINDOW_H__
 
-#include <gtk/gtk.h>
-
-#include "finance-pref-row.h"
+#include <handy.h>
 
 G_BEGIN_DECLS
 
-#define FINANCE_TYPE_PREF_LIST_BOX (finance_pref_list_box_get_type ())
+#define FINANCE_TYPE_PREFERENCES_WINDOW (finance_preferences_window_get_type())
 
-G_DECLARE_FINAL_TYPE (FinancePrefListBox, finance_pref_list_box, FINANCE, PREF_LIST_BOX, GtkListBox)
-
-GtkWidget *     finance_pref_list_box       (void);
+G_DECLARE_FINAL_TYPE (FinancePreferencesWindow, finance_preferences_window, FINANCE, PREFERENCES_WINDOW, HdyPreferencesWindow)
 
 G_END_DECLS
 
-#endif /* __FINANCE_PREF_LIST_BOX_H__ */
+#endif /* __FINANCE_PREFERENCES_WINDOW_H__ */

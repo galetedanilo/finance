@@ -23,11 +23,13 @@
 
 #include <gtk/gtk.h>
 
+#include "finance-utils.h"
+
 G_BEGIN_DECLS
 
 #define FINANCE_TYPE_VIEW_CHILD (finance_view_child_get_type ())
 
-G_DECLARE_FINAL_TYPE (FinanceViewChild, finance_view_child, FINANCE, VIEW_CHILD, GtkFlowBoxChild)
+G_DECLARE_FINAL_TYPE (FinanceViewChild, finance_view_child, FINANCE, VIEW_CHILD, GtkButton)
 
 GtkWidget *     finance_view_child_new          (void);
 

@@ -1,4 +1,4 @@
-/* finance-pref-row.h
+/* finance-preferences-window.h
  *
  * Copyright 2020 galetedanilo <galetedanilo@gmail.com>
  *
@@ -18,26 +18,17 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef __FINANCE_PREF_ROW_H__
-#define __FINANCE_PREF_ROW_H__
+#ifndef __FINANCE_PREFERENCES_WINDOW_H__
+#define __FINANCE_PREFERENCES_WINDOW_H__
 
-#include <gtk/gtk.h>
+#include <handy.h>
 
 G_BEGIN_DECLS
 
-#define FINANCE_TYPE_PREF_ROW (finance_pref_row_get_type ())
+#define FINANCE_TYPE_PREFERENCES_WINDOW (finance_preferences_window_get_type())
 
-G_DECLARE_INTERFACE (FinancePrefRow, finance_pref_row, FINANCE, PREF_ROW, GObject)
-
-struct _FinancePrefRowInterface
-{
-  GTypeInterface  parent_iface;
-
-  void            (*change_preference)                  (FinancePrefRow *row);
-};
-
-void              finance_pref_row_change_preference    (FinancePrefRow *row);
+G_DECLARE_FINAL_TYPE (FinancePreferencesWindow, finance_preferences_window, FINANCE, PREFERENCES_WINDOW, HdyPreferencesWindow)
 
 G_END_DECLS
 
-#endif /* __FINANCE_PREF_ROW_H__ */
+#endif /* __FINANCE_PREFERENCES_WINDOW_H__ */

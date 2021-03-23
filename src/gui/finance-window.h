@@ -23,14 +23,13 @@
 
 #include "finance-pane.h"
 #include "finance-transaction.h"
+#include "finance-transactions-view.h"
 
 G_BEGIN_DECLS
 
 #define FINANCE_TYPE_WINDOW (finance_window_get_type())
 
 G_DECLARE_FINAL_TYPE (FinanceWindow, finance_window, FINANCE, WINDOW, GtkApplicationWindow)
-
-void    finance_window_preferences_update   (FinanceWindow *self);
 
 G_END_DECLS
 

@@ -22,10 +22,13 @@
 
 struct _FinanceTransactionsView
 {
-  GtkFlowBox parent_instance;
+  GtkBox     parent_instance;
+
+  /* The widgets */
+  GtkFlowBox *flow_box;
 };
 
-G_DEFINE_TYPE (FinanceTransactionsView, finance_transactions_view, GTK_TYPE_FLOW_BOX)
+G_DEFINE_TYPE (FinanceTransactionsView, finance_transactions_view, GTK_TYPE_BOX)
 
 enum {
   PROP_0,
@@ -81,14 +84,26 @@ finance_transactions_view_set_property (GObject      *object,
 static void
 finance_transactions_view_class_init (FinanceTransactionsViewClass *klass)
 {
-  GObjectClass *object_class = G_OBJECT_CLASS (klass);
+  GObjectClass    *object_class = G_OBJECT_CLASS (klass);
+  GtkWidgetClass  *widget_class = GTK_WIDGET_CLASS (klass);
 
   object_class->finalize = finance_transactions_view_finalize;
   object_class->get_property = finance_transactions_view_get_property;
   object_class->set_property = finance_transactions_view_set_property;
+
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/views/finance-transactions-view.ui");
+
+  gtk_widget_class_bind_template_child (widget_class, FinanceTransactionsView, flow_box);
 }
 
 static void
 finance_transactions_view_init (FinanceTransactionsView *self)
 {
+  gtk_widget_init_template (GTK_WIDGET (self));
+
+  /* for (int x = 0; x < 5; x++) */
+  /*   { */
+  /*     GtkWidget *child = finance_view_child_new (); */
+  /*     gtk_flow_box_insert (GTK_FLOW_BOX (self->flow_box), child, -1); */
+  /*   } */
 }

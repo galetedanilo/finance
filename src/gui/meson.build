@@ -10,6 +10,7 @@ built_sources += gnome.compile_resources(
 
 sources += files(
   'finance-application.c',
+  'finance-preferences-window.c',
   'finance-shortcuts-window.c',
   'finance-window.c',
 )

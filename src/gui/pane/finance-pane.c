@@ -26,9 +26,12 @@ struct _FinancePane
 
   /* The Widgets */
   GtkWidget   *search;
+  GtkWidget   *sort_ascending;
+  GtkWidget   *sort_descending;
   GtkWidget   *list;
 
   GPtrArray   *selected;
+  GtkSortType sort;
 };
 
 G_DEFINE_TYPE (FinancePane, finance_pane, GTK_TYPE_BOX)
@@ -48,19 +51,9 @@ static GParamSpec *properties [N_PROPS] = { NULL, };
 
 static guint signals[N_SIGNALS] = { 0, };
 
-static void
-teste(FinancePaneRow *row,
-      gpointer user_data)
-{
-  FinancePane *self = FINANCE_PANE (user_data);
-
-  g_signal_emit (self, signals[ROW_CHANGE_STATE], 0);
-
-}
-
 static gboolean
-finance_pane_filter_list (GtkListBoxRow *row,
-                          gpointer      user_data)
+listbox_list_func (GtkListBoxRow  *row,
+                   gpointer       user_data)
 {
   FinancePane *self = FINANCE_PANE (user_data);
 
@@ -72,16 +65,71 @@ finance_pane_filter_list (GtkListBoxRow *row,
 
 }
 
+static gint
+listbox_sort_func (GtkListBoxRow *row1,
+                   GtkListBoxRow *row2,
+                   gpointer       user_data)
+{
+  FinancePane *self = FINANCE_PANE (user_data);
+
+  if (self->sort == GTK_SORT_ASCENDING)
+    return strcasecmp (finance_pane_row_get_title (FINANCE_PANE_ROW (row1)),
+                       finance_pane_row_get_title (FINANCE_PANE_ROW (row2)));
+
+  return -1 * strcasecmp (finance_pane_row_get_title (FINANCE_PANE_ROW (row1)),
+                          finance_pane_row_get_title (FINANCE_PANE_ROW (row2)));
+}
+
+static void
+on_list_box_row_activated (GtkListBox    *box,
+                           GtkListBoxRow *row,
+                           gpointer      user_data)
+{
+  FinancePane *self = FINANCE_PANE (user_data);
+}
+
+
 static void
 on_pane_search_changed (GtkSearchEntry  *entry,
                         gpointer        user_data)
 {
   FinancePane *self = FINANCE_PANE (user_data);
 
-  gtk_list_box_set_filter_func (GTK_LIST_BOX (self->list),
-                                (GtkListBoxFilterFunc)finance_pane_filter_list,
-                                (gpointer) self,
-                                FALSE);
+  (void)entry;
+
+  gtk_list_box_invalidate_filter (GTK_LIST_BOX (self->list));
+}
+
+static void
+on_sort_ascending_clicked (GtkButton *button,
+                           gpointer   user_data)
+{
+  FinancePane *self = FINANCE_PANE (user_data);
+
+  (void)button;
+
+  gtk_widget_set_visible (self->sort_ascending, FALSE);
+  gtk_widget_set_visible (self->sort_descending, TRUE);
+
+  self->sort = GTK_SORT_ASCENDING;
+
+  gtk_list_box_invalidate_sort (GTK_LIST_BOX (self->list));
+}
+
+static void
+on_sort_descending_clicked (GtkButton *button,
+                            gpointer   user_data)
+{
+  FinancePane *self = FINANCE_PANE (user_data);
+
+  (void)button;
+
+  gtk_widget_set_visible (self->sort_descending, FALSE);
+  gtk_widget_set_visible (self->sort_ascending, TRUE);
+
+  self->sort = GTK_SORT_DESCENDING;
+
+  gtk_list_box_invalidate_sort (GTK_LIST_BOX (self->list));
 }
 
 GtkWidget *
@@ -144,6 +192,8 @@ finance_pane_class_init (FinancePaneClass *klass)
   object_class->get_property  = finance_pane_get_property;
   object_class->set_property  = finance_pane_set_property;
 
+  g_type_ensure (FINANCE_TYPE_PANE_ROW);
+
   /**
    * FinancePane::row-change-state:
    *
@@ -175,10 +225,15 @@ finance_pane_class_init (FinancePaneClass *klass)
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/pane/finance-pane.ui");
 
   gtk_widget_class_bind_template_child (widget_class, FinancePane, search);
+  gtk_widget_class_bind_template_child (widget_class, FinancePane, sort_ascending);
+  gtk_widget_class_bind_template_child (widget_class, FinancePane, sort_descending);
   gtk_widget_class_bind_template_child (widget_class, FinancePane, list);
 
+  /* All signals */
   gtk_widget_class_bind_template_callback (widget_class, on_pane_search_changed);
-  gtk_widget_class_bind_template_callback (widget_class, teste);
+  gtk_widget_class_bind_template_callback (widget_class, on_sort_ascending_clicked);
+  gtk_widget_class_bind_template_callback (widget_class, on_sort_descending_clicked);
+  gtk_widget_class_bind_template_callback (widget_class, on_list_box_row_activated);
 }
 
 static void
@@ -187,6 +242,18 @@ finance_pane_init (FinancePane *self)
   gtk_widget_init_template (GTK_WIDGET (self));
 
   self->selected = g_ptr_array_new ();
+  self->sort = GTK_SORT_ASCENDING;
+
+  gtk_list_box_set_filter_func (GTK_LIST_BOX (self->list),
+                                (GtkListBoxFilterFunc)listbox_list_func,
+                                (gpointer) self,
+                                FALSE);
+
+  gtk_list_box_set_sort_func (GTK_LIST_BOX (self->list),
+                              (GtkListBoxSortFunc)listbox_sort_func,
+                              (gpointer) self,
+                              FALSE);
+
 
   //this is a test
   GtkWidget *row = finance_pane_row_new ();
@@ -194,8 +261,26 @@ finance_pane_init (FinancePane *self)
   finance_pane_row_set_icon (row, "TR");
   finance_pane_row_set_title (row, "Transaction Name Title");
   finance_pane_row_set_amount (row, "R$2,540.45");
-  g_signal_connect (row, "selected", G_CALLBACK (teste), self);
   gtk_list_box_insert (GTK_LIST_BOX (self->list), row, -1);
+
+  row = finance_pane_row_new ();
+  finance_pane_row_set_icon (row, "BC");
+  finance_pane_row_set_title (row, "New Home");
+  finance_pane_row_set_amount (row, "R$2,540.45");
+  gtk_list_box_insert (GTK_LIST_BOX (self->list), row, -1);
+
+  row = finance_pane_row_new ();
+  finance_pane_row_set_icon (row, "VT");
+  finance_pane_row_set_title (row, "View System");
+  finance_pane_row_set_amount (row, "R$2,540.45");
+  gtk_list_box_insert (GTK_LIST_BOX (self->list), row, -1);
+
+  row = finance_pane_row_new ();
+  finance_pane_row_set_icon (row, "BA");
+  finance_pane_row_set_title (row, "Bank");
+  finance_pane_row_set_amount (row, "R$2,540.45");
+  gtk_list_box_insert (GTK_LIST_BOX (self->list), row, -1);
+
 
 }
 

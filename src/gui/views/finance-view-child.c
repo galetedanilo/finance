@@ -22,17 +22,52 @@
 
 struct _FinanceViewChild
 {
-  GtkFlowBoxChild parent_instance;
+  GtkButton parent_instance;
+
+  /* The widgets */
+  GtkWidget *image;
+  GtkWidget *name;
+  GtkWidget *amount;
+  GtkWidget *date;
+  GtkWidget *payee_name;
+  GtkWidget *payment;
+  GtkWidget *payment_info;
+  GtkWidget *category;
+  GtkWidget *repeat;
+
+  GdkRGBA   *color;
+  gchar     *icon;
 };
 
-G_DEFINE_TYPE (FinanceViewChild, finance_view_child, GTK_TYPE_FLOW_BOX_CHILD)
+G_DEFINE_TYPE (FinanceViewChild, finance_view_child, GTK_TYPE_BUTTON)
 
 enum {
   PROP_0,
+  PROP_ICON,
+  PROP_COLOR,
+  PROP_NAME,
+  PROP_AMOUNT,
+  PROP_DATE,
+  PROP_PAYEE_NAME,
+  PROP_PAYMENT,
+  PROP_CATEGORY,
+  PROP_REPEAT,
   N_PROPS
 };
 
 static GParamSpec *properties [N_PROPS];
+
+static void
+create_icon (FinanceViewChild *self)
+{
+  cairo_surface_t *surface;
+
+  surface = finance_utils_create_circle (self->color, 100, self->icon);
+
+  gtk_image_set_from_surface (GTK_IMAGE (self->image), surface);
+
+  g_clear_pointer (&surface, cairo_surface_destroy);
+}
 
 GtkWidget *
 finance_view_child_new (void)
@@ -44,6 +79,8 @@ static void
 finance_view_child_finalize (GObject *object)
 {
   FinanceViewChild *self = (FinanceViewChild *)object;
+
+  g_clear_pointer (&self->color, gdk_rgba_free);
 
   G_OBJECT_CLASS (finance_view_child_parent_class)->finalize (object);
 }
@@ -88,11 +125,182 @@ finance_view_child_class_init (FinanceViewChildClass *klass)
   object_class->get_property  = finance_view_child_get_property;
   object_class->set_property  = finance_view_child_set_property;
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/view/finance-view-child.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/views/finance-view-child.ui");
 
+  gtk_widget_class_bind_template_child (widget_class, FinanceViewChild, image);
 }
 
 static void
 finance_view_child_init (FinanceViewChild *self)
 {
+  gtk_widget_init_template (GTK_WIDGET (self));
+
+  self->color = finance_utils_random_rgba_color ();
+
+  create_icon (self);
+}
+
+/**
+ * finance_view_child_get_icon:
+ * @self: a #FinanceViewChild object.
+ *
+ * Since: 1.0
+ */
+const gchar *
+finance_view_child_get_icon (FinanceViewChild *self)
+{
+  g_return_val_if_fail (FINANCE_IS_VIEW_CHILD (self), NULL);
+
+  return self->icon;
+}
+
+/**
+ * finance_child_view_set_icon:
+ * @self: a #FinanceChildView instance.
+ * @icon: the icon to set, as a string.
+ *
+ * Since:1.0
+ */
+void
+finance_child_view_set_icon (FinanceViewChild *self,
+                             const gchar      *icon)
+{
+  g_return_if_fail (FINANCE_IS_VIEW_CHILD (self));
+
+  g_free (self->icon);
+
+  self->icon = g_strdup (icon);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_ICON]);
+}
+
+/**
+ * finance_view_child_get_color:
+ * @self: a #FinanceViewChild object.
+ *
+ * Since: 1.0
+ */
+GdkRGBA *
+finance_view_child_get_color (FinanceViewChild *self)
+{
+  g_return_val_if_fail (FINANCE_IS_VIEW_CHILD (self), NULL);
+
+  return self->color;
+}
+
+/**
+ * finance_view_child_set_color:
+ * @self: a #FinanceViewChild instance.
+ * @color: a #GdkRGBA.
+ *
+ * Since: 1.0
+ */
+void
+finance_view_child_set_color (FinanceViewChild *self,
+                              const GdkRGBA    *color)
+{
+  g_return_if_fail (FINANCE_IS_VIEW_CHILD (self));
+
+  gdk_rgba_free (self->color);
+
+  self->color = gdk_rgba_copy (color);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_COLOR]);
+}
+
+/**
+ * finance_view_child_get_name:
+ * @self: a #FinanceViewChild object.
+ *
+ * Since: 1.0
+ */
+const gchar *
+finance_view_child_get_name (FinanceViewChild *self)
+{
+  g_return_val_if_fail (FINANCE_IS_VIEW_CHILD (self), NULL);
+
+  return gtk_label_get_text (GTK_LABEL (self->name));
+}
+
+/**
+ * finance_view_child_set_name:
+ * @self: a #FinanceViewChild instance.
+ * @name: the name to set, as a string.
+ *
+ * Since: 1.0
+ */
+void
+finance_view_child_set_name (FinanceViewChild *self,
+                             const gchar      *name)
+{
+  g_return_if_fail (FINANCE_IS_VIEW_CHILD (self));
+
+  gtk_label_set_text (GTK_LABEL (self->name), name);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_NAME]);
+}
+
+/**
+ * finance_view_child_get_amount:
+ * @self: a #FinanceViewChild instance.
+ *
+ * Since: 1.0
+ */
+const gchar *
+finance_view_child_get_amount (FinanceViewChild *self)
+{
+  g_return_val_if_fail (FINANCE_IS_VIEW_CHILD (self), NULL);
+
+  return gtk_label_get_text (GTK_LABEL (self->amount));
+}
+
+/**
+ * finance_view_child_set_amount:
+ * @self: a #FinanceTransaction object.
+ *
+ * Since: 1.0
+ */
+void
+finance_view_child_set_amount (FinanceViewChild *self,
+                               const gchar      *amount)
+{
+  g_return_if_fail (FINANCE_IS_VIEW_CHILD (self));
+
+  gtk_label_set_text (GTK_LABEL (self->amount), amount);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_AMOUNT]);
+}
+
+/**
+ * finance_view_child_get_date:
+ * @self: a #FinanceViewChild instance.
+ *
+ * Since: 1.0
+ */
+const gchar *
+finance_view_child_get_date (FinanceViewChild *self)
+{
+  g_return_val_if_fail (FINANCE_IS_VIEW_CHILD (self), NULL);
+
+  return gtk_label_get_text (GTK_LABEL (self->date));
+}
+
+/**
+ * finance_transaction_set_date:
+ * @self: a #FinanceTransaction object.
+ * @date: a valid date, as a #GDateTime.
+ *
+ * Sets the date of the financial transaction.
+ *
+ * Since: 1.0
+ */
+void
+finance_view_child_set_date (FinanceViewChild *self,
+                             const gchar      *date)
+{
+  g_return_if_fail (FINANCE_IS_VIEW_CHILD (self));
+
+  gtk_label_set_text (GTK_LABEL (self->date), date);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_DATE]);
 }

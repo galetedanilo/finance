@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
   <gresource prefix="/org/gnome/finance/gui">
+    <file compressed="true">finance-preferences-window.ui</file>
     <file compressed="true">finance-shortcuts-window.ui</file>
     <file compressed="true">finance-window.ui</file>
   </gresource>

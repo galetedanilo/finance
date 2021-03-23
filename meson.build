@@ -31,6 +31,7 @@ add_project_arguments([
 finance_deps = [
   dependency('gio-2.0', version: '>= 2.50'),
   dependency('gtk+-3.0', version: '>= 3.22'),
+  dependency('libhandy-1', version: '>= 1.0.0'),
 ]
 
 i18n = import('i18n')

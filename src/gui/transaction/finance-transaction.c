@@ -342,22 +342,22 @@ finance_transaction_class_init (FinanceTransactionClass *klass)
   /**
    * FinanceTransaction::icon:
    *
-   * The transaction icon
+   * The two letters that are part of the icon image
    */
   properties[PROP_ICON] = g_param_spec_string ("icon",
                                                "Icon",
-                                               "The transaction icon",
+                                               "TThe two letters that are part of the icon image",
                                                NULL,
                                                G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
    * FinanceTransaction::color:
    *
-   * The transaction icon color
+   * The background color of the icon
    */
   properties[PROP_COLOR] = g_param_spec_boxed ("color",
                                                "Color",
-                                               "The icon color",
+                                               "The background color of the icon",
                                                GDK_TYPE_RGBA,
                                                G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
@@ -552,9 +552,9 @@ finance_transaction_init (FinanceTransaction *self)
  * finance_transaction_get_icon:
  * @self: a #FinanceTransaction object.
  *
- * Returns the transaction icon.
+ * Returns the two letters that are part of the icon image.
  *
- * Returns: The transaction icon as a string, or %NULL.
+ * Returns: A two-letter string , or %NULL.
  * This string points to internally allocated storage in the object
  * and must not be freed, modified or stored.
  *
@@ -571,9 +571,10 @@ finance_transaction_get_icon (FinanceTransaction *self)
 /**
  * finance_transaction_set_icon:
  * @self: a #FinanceTransaction instance.
- * @icon: the icon to set, as a string.
+ * @icon: the icon to set, as a two-letter string.
  *
- * Sets the icon, replacing the current contents.
+ * Sets the two letters that are part of the icon image,
+ * replacing the current contents.
  *
  * Since:1.0
  */
@@ -596,7 +597,7 @@ finance_transaction_set_icon (FinanceTransaction *self,
  * finance_transaction_get_color:
  * @self: a #FinanceTransaction object.
  *
- * Returns the transaction icon color.
+ * Returns the background color of the icon.
  *
  * Returns: (transfer none): a #GdkRGBA with the color.
  *
@@ -615,7 +616,7 @@ finance_transaction_get_color (FinanceTransaction *self)
  * @self: a #FinanceTransaction instance.
  * @color: a #GdkRGBA.
  *
- * Sets the icon color.
+ * Sets the background color of the icon.
  *
  * Since: 1.0
  */
@@ -628,6 +629,8 @@ finance_transaction_set_color (FinanceTransaction *self,
   gdk_rgba_free (self->color);
 
   self->color = gdk_rgba_copy (color);
+
+  create_icon (self);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_COLOR]);
 }
@@ -757,6 +760,8 @@ finance_transaction_set_date (FinanceTransaction *self,
  * Returns: The transaction payee name as a string, or %NULL.
  * This string points to internally allocated storage in the object
  * and must not be freed, modified or stored.
+ *
+ * Since: 1.0
  */
 const gchar *
 finance_transaction_get_payee_name (FinanceTransaction *self)

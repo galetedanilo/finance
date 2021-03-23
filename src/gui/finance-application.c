@@ -22,7 +22,7 @@
 #include "finance-config.h"
 
 #include "finance-application.h"
-#include "finance-pref-window.h"
+#include "finance-preferences-window.h"
 #include "finance-shortcuts-window.h"
 #include "finance-window.h"
 
@@ -58,7 +58,7 @@ finance_application_preferences (GSimpleAction  *action,
 
   GtkWidget *preferences;
 
-  preferences = g_object_new (FINANCE_TYPE_PREF_WINDOW,
+  preferences = g_object_new (FINANCE_TYPE_PREFERENCES_WINDOW,
                               "application", G_APPLICATION (self),
                               "transient-for", GTK_WINDOW (self->window),
                               "modal", TRUE,
