@@ -49,4 +49,17 @@ list below to finalize version 1.0.
  
  ### Preferences Window
  
+ The preferences window is the interface on which users can enable or 
+ disable some features present in the system.
+ 
+ - [x] use libhandy
+ - [x] transaction preferences
+ - [ ] home view preferences
+ - [ ] transactions view preferences
+ - [ ] graphics view preferences
+ - [ ] left pane preferences
+ - [ ] general preferences
+ 
+ ![alt text](https://gitlab.gnome.org/galetedanilo/finance/-/blob/master/doc/imgs/FinancePreferencesWindow.png)
+ 
  ### Keyboards Shortcuts Window
