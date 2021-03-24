@@ -60,6 +60,6 @@ list below to finalize version 1.0.
  - [ ] left pane preferences
  - [ ] general preferences
  
- ![alt tag](https://gitlab.gnome.org/galetedanilo/finance/-/blob/master/doc/imgs/FinancePreferencesWindow.png)
+ ![Screenshot of the frontend](https://gitlab.gnome.org/galetedanilo/finance/-/blob/master/doc/imgs/FinancePreferencesWindow.png)
  
  ### Keyboards Shortcuts Window
