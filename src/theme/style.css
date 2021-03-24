@@ -46,27 +46,28 @@ checkbutton.row-check {
   margin: 1em;
 }
 
-list > row {
+.preferences list > row {
   border-right: 1px solid #CCC;
   border-left: 1px solid #CCC;
   padding: 1em;
 }
-list > row:first-child {
+
+.preferences list > row:first-child {
   border-top: 1px solid #CCC;
   border-bottom: 0.5px solid @theme_bg_color;
 }
 
-list > row:last-child {
+.preferences list > row:last-child {
   border-top: 0.5px solid @theme_bg_color;
   border-bottom: 1px solid #CCC;
 }
 
-list > row:only-child {
+.preferences list > row:only-child {
   border-top: 1px solid #CCC;
   border-bottom: 1px solid #CCC;
 }
 
-list > row:not(:last-child) {
+.preferences list > row:not(:last-child) {
   border-bottom: 0.5px solid #C1C1C1;
 }
 
