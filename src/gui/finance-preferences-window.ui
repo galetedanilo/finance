@@ -59,6 +59,9 @@
                 </child>
               </object>
             </child>
+            <style>
+              <class name="preferences"/>
+            </style>
           </object>
         </child>
         <child>
@@ -83,6 +86,9 @@
                 </child>
               </object>
             </child>
+            <style>
+              <class name="preferences"/>
+            </style>
           </object>
         </child>
         <child>
@@ -105,85 +111,46 @@
               </object>
             </child>
             <child>
-              <object class="HdyPreferencesRow">
+              <object class="HdyActionRow" id="row_local">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="title">Sets local currency symbol</property>
+                <property name="sensitive">False</property>
+                <property name="title" translatable="yes">Sets local currency symbol</property>
+                <property name="activatable-widget">radio_local</property>
+                <signal name="activated" handler="on_currency_symbol_local" swapped="yes" />
                 <child>
-                  <object class="GtkBox">
+                  <object class="GtkRadioButton" id="radio_local">
                     <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <child>
-                      <object class="GtkRadioButton" id="radio_local">
-                        <property name="visible">True</property>
-                        <property name="can-focus">True</property>
-                        <property name="receives-default">False</property>
-                        <property name="draw-indicator">True</property>
-                        <property name="group">radiobutton1</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">Sets local currency symbol</property>
-                        <property name="ellipsize">end</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">False</property>
+                    <property name="draw-indicator">True</property>
+                    <property name="group">radiobutton1</property>
                   </object>
                 </child>
               </object>
             </child>
             <child>
-              <object class="HdyPreferencesRow">
+              <object class="HdyActionRow" id="row_international">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="title">Sets international currency symbol</property>
+                <property name="sensitive">False</property>
+                <property name="title" translatable="yes">Sets international currency symbol</property>
+                <property name="activatable-widget">radio_international</property>
+                <signal name="activated" handler="on_currency_symbol_international" swapped="yes" />
                 <child>
-                  <object class="GtkBox">
+                  <object class="GtkRadioButton" id="radio_international">
                     <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <child>
-                      <object class="GtkRadioButton" id="radio_international">
-                        <property name="visible">True</property>
-                        <property name="can-focus">True</property>
-                        <property name="receives-default">False</property>
-                        <property name="draw-indicator">True</property>
-                        <property name="group">radiobutton1</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">Sets international currency symbol</property>
-                        <property name="ellipsize">end</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">False</property>
+                    <property name="draw-indicator">True</property>
+                    <property name="group">radiobutton1</property>
                   </object>
                 </child>
               </object>
             </child>
+            <style>
+              <class name="preferences"/>
+            </style>
           </object>
         </child>
       </object>
