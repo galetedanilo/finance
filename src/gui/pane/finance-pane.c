@@ -25,10 +25,10 @@ struct _FinancePane
   GtkBox      parent_instance;
 
   /* The Widgets */
+  GtkWidget   *list;
   GtkWidget   *search;
   GtkWidget   *sort_ascending;
   GtkWidget   *sort_descending;
-  GtkWidget   *list;
 
   GtkSortType sort;
 };
@@ -131,16 +131,16 @@ finance_pane_class_init (FinancePaneClass *klass)
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/pane/finance-pane.ui");
 
+  gtk_widget_class_bind_template_child (widget_class, FinancePane, list);
   gtk_widget_class_bind_template_child (widget_class, FinancePane, search);
   gtk_widget_class_bind_template_child (widget_class, FinancePane, sort_ascending);
   gtk_widget_class_bind_template_child (widget_class, FinancePane, sort_descending);
-  gtk_widget_class_bind_template_child (widget_class, FinancePane, list);
 
   /* All signals */
+  gtk_widget_class_bind_template_callback (widget_class, on_list_box_row_activated);
   gtk_widget_class_bind_template_callback (widget_class, on_pane_search_changed);
   gtk_widget_class_bind_template_callback (widget_class, on_sort_ascending_clicked);
   gtk_widget_class_bind_template_callback (widget_class, on_sort_descending_clicked);
-  gtk_widget_class_bind_template_callback (widget_class, on_list_box_row_activated);
 }
 
 static void
@@ -186,6 +186,4 @@ finance_pane_init (FinancePane *self)
   finance_pane_row_set_title (row, "Bank");
   finance_pane_row_set_amount (row, "R$2,540.45");
   gtk_list_box_insert (GTK_LIST_BOX (self->list), row, -1);
-
-
 }
