@@ -20,6 +20,7 @@
 #define __FINANCE_WINDOW_H__
 
 #include <gtk/gtk.h>
+#include <handy.h>
 
 #include "finance-pane.h"
 #include "finance-transaction.h"
@@ -29,7 +30,7 @@ G_BEGIN_DECLS
 
 #define FINANCE_TYPE_WINDOW (finance_window_get_type())
 
-G_DECLARE_FINAL_TYPE (FinanceWindow, finance_window, FINANCE, WINDOW, GtkApplicationWindow)
+G_DECLARE_FINAL_TYPE (FinanceWindow, finance_window, FINANCE, WINDOW, HdyApplicationWindow)
 
 G_END_DECLS
 
