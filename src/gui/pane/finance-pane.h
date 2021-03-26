@@ -32,8 +32,6 @@ G_DECLARE_FINAL_TYPE (FinancePane, finance_pane, FINANCE, PANE, GtkBox)
 
 GtkWidget *   finance_pane_new                   (void);
 
-guint         finance_pane_get_num_rows_selected (FinancePane *self);
-
 G_END_DECLS
 
 #endif /* __FINANCE_PANE_H__ */
