@@ -30,26 +30,10 @@ struct _FinancePane
   GtkWidget   *sort_descending;
   GtkWidget   *list;
 
-  GPtrArray   *selected;
   GtkSortType sort;
 };
 
 G_DEFINE_TYPE (FinancePane, finance_pane, GTK_TYPE_BOX)
-
-enum {
-  PROP_0,
-  PROP_NUM_ROWS_SELECTED,
-  N_PROPS
-};
-
-enum {
-  ROW_CHANGE_STATE,
-  N_SIGNALS
-};
-
-static GParamSpec *properties [N_PROPS] = { NULL, };
-
-static guint signals[N_SIGNALS] = { 0, };
 
 static gboolean
 listbox_list_func (GtkListBoxRow  *row,
@@ -139,88 +123,11 @@ finance_pane_new (void)
 }
 
 static void
-finance_pane_finalize (GObject *object)
-{
-  FinancePane *self = (FinancePane *)object;
-
-  g_ptr_array_free (self->selected, TRUE);
-
-  G_OBJECT_CLASS (finance_pane_parent_class)->finalize (object);
-}
-
-static void
-finance_pane_get_property (GObject    *object,
-                           guint       prop_id,
-                           GValue     *value,
-                           GParamSpec *pspec)
-{
-  FinancePane *self = FINANCE_PANE (object);
-
-  switch (prop_id)
-    {
-    case PROP_NUM_ROWS_SELECTED:
-      g_value_set_uint (value, finance_pane_get_num_rows_selected (self));
-      break;
-
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-    }
-}
-
-static void
-finance_pane_set_property (GObject      *object,
-                           guint         prop_id,
-                           const GValue *value,
-                           GParamSpec   *pspec)
-{
-  FinancePane *self = FINANCE_PANE (object);
-
-  switch (prop_id)
-    {
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-    }
-}
-
-static void
 finance_pane_class_init (FinancePaneClass *klass)
 {
-  GObjectClass    *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass  *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->finalize      = finance_pane_finalize;
-  object_class->get_property  = finance_pane_get_property;
-  object_class->set_property  = finance_pane_set_property;
-
   g_type_ensure (FINANCE_TYPE_PANE_ROW);
-
-  /**
-   * FinancePane::row-change-state:
-   *
-   * Emitted when the row is changes its state
-   */
-  signals[ROW_CHANGE_STATE] = g_signal_new ("row-change-state",
-                                            FINANCE_TYPE_PANE,
-                                            G_SIGNAL_RUN_LAST,
-                                            0,
-                                            NULL, NULL, NULL,
-                                            G_TYPE_NONE,
-                                            0);
-
-  /**
-   * FinancePane::num-rows-selected:
-   *
-   * The number of rows selected
-   */
-  properties[PROP_NUM_ROWS_SELECTED] = g_param_spec_uint ("num-rows-selected",
-                                                          "Num rows selected",
-                                                          "The number of rows selected",
-                                                          0,
-                                                          G_MAXUINT,
-                                                          0,
-                                                          G_PARAM_READABLE);
-
-  g_object_class_install_properties (object_class, N_PROPS, properties);
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/pane/finance-pane.ui");
 
@@ -241,7 +148,6 @@ finance_pane_init (FinancePane *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
 
-  self->selected = g_ptr_array_new ();
   self->sort = GTK_SORT_ASCENDING;
 
   gtk_list_box_set_filter_func (GTK_LIST_BOX (self->list),
@@ -282,22 +188,4 @@ finance_pane_init (FinancePane *self)
   gtk_list_box_insert (GTK_LIST_BOX (self->list), row, -1);
 
 
-}
-
-/**
- * finance_pane_get_num_rows_selected:
- * @self: a #FinancePane object.
- *
- * Returns the number of rows selected.
- *
- * Returns: the number of rows selected as a #guint.
- *
- * Since: 1.0
- */
-guint
-finance_pane_get_num_rows_selected (FinancePane *self)
-{
-  g_return_val_if_fail (FINANCE_IS_PANE (self), 0);
-
-  return 1;//self->selected->len;
 }
