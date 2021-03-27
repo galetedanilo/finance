@@ -16,160 +16,116 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <glib/gi18n.h>
 #include "finance-config.h"
 
 #include "finance-window.h"
 
 struct _FinanceWindow
 {
-  GtkApplicationWindow  parent_instance;
+  HdyApplicationWindow  parent_instance;
 
   /* Template widgets */
-  GtkWidget   *header_bar;
-  GtkWidget   *stack_switch;
-  GtkWidget   *stack_menu;
-  GtkWidget   *box_menu;
-  GtkWidget   *box_selected;
-  GtkWidget   *counter;
-  GtkWidget   *toggle_button_panel;
-
-  GtkWidget   *pane;
-
+  GtkWidget   *content;
+  GtkWidget   *content_left;
+  GtkWidget   *header_bar_right;
+  GtkWidget   *header_bar_squeezer;
+  GtkWidget   *leaflet;
   GtkWidget   *stack;
+  GtkWidget   *stack_transactions;
+  GtkWidget   *title_label;
   GtkWidget   *transaction;
-  GtkWidget   *revealer_panel;
-
-  GtkWidget   *view_transactions;
+  GtkWidget   *view_switcher_bottom;
+  GtkWidget   *view_switcher_top;
 
   GSettings   *settings;
-
-  /* Window State */
-  gint        width;
-  gint        height;
 };
 
-G_DEFINE_TYPE (FinanceWindow, finance_window, GTK_TYPE_APPLICATION_WINDOW)
+G_DEFINE_TYPE (FinanceWindow, finance_window, HDY_TYPE_APPLICATION_WINDOW)
 
 static void
-on_pane_show_action_activated (GSimpleAction *action,
-                               GVariant      *parameter,
-                               gpointer      user_data)
+finance_window_prepare_new_transaction (FinanceWindow *self)
 {
-  FinanceWindow *self = FINANCE_WINDOW (user_data);
-
-  (void)action;
-  (void)parameter;
-
-  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (self->toggle_button_panel),
-                                !gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (self->toggle_button_panel)));
-
+  gtk_widget_set_sensitive (self->transaction, TRUE);
+  gtk_label_set_text (GTK_LABEL (self->title_label), _("New"));
+  hdy_header_bar_set_show_close_button (HDY_HEADER_BAR (self->header_bar_right), FALSE);
+  hdy_leaflet_set_visible_child (HDY_LEAFLET (self->leaflet), self->content);
+  gtk_stack_set_visible_child_name (GTK_STACK (self->stack), "transactions");
+  gtk_stack_set_visible_child (GTK_STACK (self->stack_transactions), self->transaction);
 }
 
 static void
-on_transaction_new_credit (GtkButton  *button,
-                           gpointer   user_data)
+on_add_credit_clicked (GtkButton *button,
+                       gpointer   user_data)
 {
   FinanceWindow *self = FINANCE_WINDOW (user_data);
 
   (void)button;
 
-  finance_transaction_clear (FINANCE_TRANSACTION (self->transaction));
-
-  gtk_stack_set_visible_child (GTK_STACK (self->stack), self->transaction);
-
-  gtk_widget_set_state_flags (self->stack_switch, GTK_STATE_FLAG_INSENSITIVE, TRUE);
-  gtk_widget_set_state_flags (self->stack_menu, GTK_STATE_FLAG_INSENSITIVE, TRUE);
-  gtk_widget_set_state_flags (self->pane, GTK_STATE_FLAG_INSENSITIVE, TRUE);
+  finance_window_prepare_new_transaction (self);
 }
 
 static void
-on_transaction_new_debit (GtkButton *button,
-                          gpointer  user_data)
+on_add_debit_clicked (GtkButton *button,
+                      gpointer   user_data)
 {
   FinanceWindow *self = FINANCE_WINDOW (user_data);
 
   (void)button;
 
-  finance_transaction_clear (FINANCE_TRANSACTION (self->transaction));
-
-  gtk_stack_set_visible_child (GTK_STACK (self->stack), self->transaction);
-
-  gtk_widget_set_state_flags (self->stack_switch, GTK_STATE_FLAG_INSENSITIVE, TRUE);
-  gtk_widget_set_state_flags (self->stack_menu, GTK_STATE_FLAG_INSENSITIVE, TRUE);
-  gtk_widget_set_state_flags (self->pane, GTK_STATE_FLAG_INSENSITIVE, TRUE);
+  finance_window_prepare_new_transaction (self);
 }
 
 static void
-on_transaction_cancel_clicked (GtkButton  *button,
-                               gpointer   user_data)
+on_cancel_button_clicked (GtkButton *button,
+                          gpointer   user_data)
 {
   FinanceWindow *self = FINANCE_WINDOW (user_data);
 
   (void)button;
 
-  gtk_stack_set_visible_child (GTK_STACK (self->stack), self->transaction);
-
-  gtk_widget_set_state_flags (self->stack_switch, GTK_STATE_FLAG_NORMAL, TRUE);
-  gtk_widget_set_state_flags (self->stack_menu, GTK_STATE_FLAG_NORMAL, TRUE);
-  gtk_widget_set_state_flags (self->pane, GTK_STATE_FLAG_NORMAL, TRUE);
+  gtk_widget_set_sensitive (self->transaction, FALSE);
+  gtk_label_set_text (GTK_LABEL (self->title_label), _("Finance"));
+  hdy_header_bar_set_show_close_button (HDY_HEADER_BAR (self->header_bar_right), TRUE);
+  gtk_stack_set_visible_child_name (GTK_STACK (self->stack), "home");
 }
 
 static void
-on_pane_show_toggled (GtkToggleButton *toggle_button,
-                      gpointer        user_data)
+on_headerbar_squeezer_notify (GObject     *object,
+                              GParamSpec  *pspec,
+                              gpointer    user_data)
 {
   FinanceWindow *self = FINANCE_WINDOW (user_data);
 
-  gtk_revealer_set_reveal_child (GTK_REVEALER (self->revealer_panel),
-                                 gtk_toggle_button_get_active (toggle_button));
+  (void)pspec;
 
+  hdy_view_switcher_bar_set_reveal (HDY_VIEW_SWITCHER_BAR (self->view_switcher_bottom),
+                                    hdy_squeezer_get_visible_child (HDY_SQUEEZER (object))
+                                    != self->view_switcher_top);
 }
 
 static void
-on_pane_row_change_state (FinancePane *pane,
-                          gpointer     user_data)
+on_swipe_back_clicked (GtkButton *button,
+                       gpointer   user_data)
 {
   FinanceWindow *self = FINANCE_WINDOW (user_data);
 
-  if(finance_pane_get_num_rows_selected (pane))
-    {
-      gtk_stack_set_visible_child (GTK_STACK (self->stack_menu), self->box_selected);
+  (void)button;
 
-      gchar *format;
-
-      format = g_strdup_printf ("%d", finance_pane_get_num_rows_selected (pane));
-
-      gtk_label_set_text (GTK_LABEL (self->counter), format);
-
-      g_free (format);
-    }
-  else
-    {
-      gtk_stack_set_visible_child (GTK_STACK (self->stack_menu), self->box_menu);
-    }
+  hdy_leaflet_set_visible_child (HDY_LEAFLET (self->leaflet), self->content_left);
 }
 
 static void
-finance_window_constructed (GObject *object)
+on_swipe_forward_clicked (GtkButton *button,
+                          gpointer   user_data)
 {
-  FinanceWindow *self = FINANCE_WINDOW (object);
+  FinanceWindow *self = FINANCE_WINDOW (user_data);
 
+  (void)button;
 
-  g_settings_bind (self->settings, "left-panel",
-                   self->toggle_button_panel, "active",
-                   G_SETTINGS_BIND_DEFAULT);
-
-  G_OBJECT_CLASS (finance_window_parent_class)->constructed (object);
+  hdy_leaflet_set_visible_child (HDY_LEAFLET (self->leaflet), self->content);
 }
 
-static void
-finance_window_finalize (GObject *object)
-{
-  FinanceWindow *self = FINANCE_WINDOW (object);
-
-
-  G_OBJECT_CLASS (finance_window_parent_class)->finalize (object);
-}
 static void
 finance_window_dispose (GObject *object)
 {
@@ -189,61 +145,36 @@ finance_window_class_init (FinanceWindowClass *klass)
   g_type_ensure (FINANCE_TYPE_TRANSACTION);
   g_type_ensure (FINANCE_TYPE_TRANSACTIONS_VIEW);
 
-  G_OBJECT_CLASS (klass)->constructed = finance_window_constructed;
-  G_OBJECT_CLASS (klass)->finalize    = finance_window_finalize;
   G_OBJECT_CLASS (klass)->dispose     = finance_window_dispose;
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/gui/finance-window.ui");
 
   /* The Widgets */
-  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, header_bar);
-  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, stack_switch);
-  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, stack_menu);
-  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, box_menu);
-  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, box_selected);
-  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, counter);
-  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, toggle_button_panel);
-
-  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, pane);
-  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, revealer_panel);
-
+  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, content);
+  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, content_left);
+  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, header_bar_right);
+  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, header_bar_squeezer);
+  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, leaflet);
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, stack);
+  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, stack_transactions);
+  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, title_label);
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, transaction);
-
-  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, view_transactions);
-
+  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, view_switcher_bottom);
+  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, view_switcher_top);
 
   /* The CallBacks */
-  gtk_widget_class_bind_template_callback (widget_class, on_transaction_new_credit);
-  gtk_widget_class_bind_template_callback (widget_class, on_transaction_new_debit);
-  gtk_widget_class_bind_template_callback (widget_class, on_transaction_cancel_clicked);
-  gtk_widget_class_bind_template_callback (widget_class, on_pane_show_toggled);
-  gtk_widget_class_bind_template_callback (widget_class, on_pane_row_change_state);
-
+  gtk_widget_class_bind_template_callback (widget_class, on_add_credit_clicked);
+  gtk_widget_class_bind_template_callback (widget_class, on_add_debit_clicked);
+  gtk_widget_class_bind_template_callback (widget_class, on_cancel_button_clicked);
+  gtk_widget_class_bind_template_callback (widget_class, on_headerbar_squeezer_notify);
+  gtk_widget_class_bind_template_callback (widget_class, on_swipe_back_clicked);
+  gtk_widget_class_bind_template_callback (widget_class, on_swipe_forward_clicked);
 }
 
 static void
 finance_window_init (FinanceWindow *self)
 {
-  GApplication *app = g_application_get_default ();
-
-  static const GActionEntry entries[] = {
-    { "show-panel", on_pane_show_action_activated }
-
-  };
-
-  const gchar *show_panel[] = { "<CTRL>L", NULL};
-
-  g_action_map_add_action_entries (G_ACTION_MAP (self),
-                                   entries,
-                                   G_N_ELEMENTS (entries),
-                                   self);
-
-  self->settings = g_settings_new ("org.gnome.finance");
-
   gtk_widget_init_template (GTK_WIDGET (self));
 
-  gtk_application_set_accels_for_action (GTK_APPLICATION (app),
-                                         "win.show-panel",
-                                         show_panel);
+  self->settings = g_settings_new ("org.gnome.finance");
 }
