@@ -28,10 +28,6 @@ struct _FinancePreferencesWindow
   HdyPreferencesWindow parent_instance;
 
   /* The Widgets */
-  GtkWidget   *radio_international;
-  GtkWidget   *radio_local;
-  GtkWidget   *row_international;
-  GtkWidget   *row_local;
   GtkWidget   *spin_decimal_places;
   GtkWidget   *switch_amount;
   GtkWidget   *switch_currency_symbol;
@@ -41,18 +37,6 @@ struct _FinancePreferencesWindow
 };
 
 G_DEFINE_TYPE (FinancePreferencesWindow, finance_preferences_window, HDY_TYPE_PREFERENCES_WINDOW)
-
-static void
-on_currency_symbol_local (FinancePreferencesWindow *self)
-{
-  g_settings_set_enum (self->settings, "symbol-type", FINANCE_LOCAL);
-}
-
-static void
-on_currency_symbol_international (FinancePreferencesWindow *self)
-{
-  g_settings_set_enum (self->settings, "symbol-type", FINANCE_INTERNATIONAL);
-}
 
 static void
 finance_preferences_window_dispose (GObject *object)
@@ -73,34 +57,20 @@ finance_preferences_window_class_init (FinancePreferencesWindowClass *klass)
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/gui/finance-preferences-window.ui");
 
-  gtk_widget_class_bind_template_child (widget_class, FinancePreferencesWindow, radio_international);
-  gtk_widget_class_bind_template_child (widget_class, FinancePreferencesWindow, radio_local);
-  gtk_widget_class_bind_template_child (widget_class, FinancePreferencesWindow, row_international);
-  gtk_widget_class_bind_template_child (widget_class, FinancePreferencesWindow, row_local);
+  /* The Widgets */
   gtk_widget_class_bind_template_child (widget_class, FinancePreferencesWindow, spin_decimal_places);
   gtk_widget_class_bind_template_child (widget_class, FinancePreferencesWindow, switch_amount);
   gtk_widget_class_bind_template_child (widget_class, FinancePreferencesWindow, switch_currency_symbol);
   gtk_widget_class_bind_template_child (widget_class, FinancePreferencesWindow, switch_date);
 
   /* All signal */
-  gtk_widget_class_bind_template_callback (widget_class, on_currency_symbol_local);
-  gtk_widget_class_bind_template_callback (widget_class, on_currency_symbol_international);
+
 }
 
 static void
 finance_preferences_window_init (FinancePreferencesWindow *self)
 {
-  FinanceSymbol symbol;
-
   gtk_widget_init_template (GTK_WIDGET (self));
-
-  g_object_bind_property (self->switch_currency_symbol, "active",
-                          self->row_local, "sensitive",
-                          G_BINDING_DEFAULT);
-
-  g_object_bind_property (self->switch_currency_symbol, "active",
-                          self->row_international, "sensitive",
-                          G_BINDING_DEFAULT);
 
   self->settings = g_settings_new ("org.gnome.finance");
 
@@ -119,11 +89,4 @@ finance_preferences_window_init (FinancePreferencesWindow *self)
   g_settings_bind (self->settings, "currency-symbol",
                    self->switch_currency_symbol, "active",
                    G_SETTINGS_BIND_DEFAULT);
-
-  symbol = g_settings_get_enum (self->settings, "symbol-type");
-
-  if (symbol == FINANCE_LOCAL)
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (self->radio_local), TRUE);
-  else
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (self->radio_international), TRUE);
 }

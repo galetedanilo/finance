@@ -42,7 +42,7 @@ finance_utils_random_rgba_color (void)
    * By GNOME Human Interface Guidelines
    * See: https://gitlab.gnome.org/Community/Design/HIG-app-icons/blob/master/GNOME%20HIG.gpl
    */
-  int rgb[24][3] = {
+  int rgb[22][3] = {
     { 53, 132, 228},
     { 28, 113, 216},
     { 26,  95, 180},
@@ -62,14 +62,12 @@ finance_utils_random_rgba_color (void)
     {205, 171, 143},
     {181, 131,  90},
     { 99,  69,  44},
-    {255, 255, 255},
-    {246, 245, 244},
     {119, 118, 123},
     { 94,  92, 100},
     { 61,  56,  70},
   };
 
-  id = g_random_int_range (0, 23);
+  id = g_random_int_range (0, 21);
 
   color.red   = rgb [id] [0] / 255.;
   color.green = rgb [id] [1] / 255.;

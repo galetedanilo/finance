@@ -31,7 +31,7 @@ G_BEGIN_DECLS
 
 #define FINANCE_TYPE_TRANSACTION (finance_transaction_get_type())
 
-G_DECLARE_FINAL_TYPE (FinanceTransaction, finance_transaction, FINANCE, TRANSACTION, GtkBox)
+G_DECLARE_FINAL_TYPE (FinanceTransaction, finance_transaction, FINANCE, TRANSACTION, GtkGrid)
 
 GtkWidget *     finance_transaction_new                 (void);
 
@@ -101,6 +101,11 @@ void            finance_transaction_set_notes           (FinanceTransaction *sel
                                                          const gchar        *notes);
 
 void            finance_transaction_clear               (FinanceTransaction *self);
+
+gboolean        finance_transaction_get_mobile          (FinanceTransaction *self);
+
+void            finance_transaction_set_mobile          (FinanceTransaction *self,
+                                                         gboolean           mobile);
 
 G_END_DECLS
 

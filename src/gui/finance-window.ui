@@ -3,7 +3,7 @@
 <interface>
   <requires lib="gtk+" version="3.24"/>
   <requires lib="libhandy" version="0.0"/>
-  <object class="GtkPopoverMenu" id="hamburger_menu_popover">
+  <object class="GtkPopoverMenu" id="popover_menu_hamburger">
     <property name="can-focus">False</property>
     <child>
       <object class="GtkBox">
@@ -120,31 +120,31 @@
     </child>
   </object>
   <template class="FinanceWindow" parent="HdyApplicationWindow">
-    <property name="height-request">600</property>
     <property name="can-focus">False</property>
     <property name="window-position">center</property>
     <property name="default-width">900</property>
     <property name="default-height">600</property>
+    <property name="icon_name">gnome-finance</property>
+    <property name="title" translatable="yes">Finance</property>
     <child>
       <object class="HdyLeaflet" id="leaflet">
         <property name="visible">True</property>
         <property name="can-focus">False</property>
-        <property name="visible-child">content</property>
-        <property name="can-swipe-back">True</property>
+        <property name="visible-child">box_content</property>
         <child>
-          <object class="GtkBox" id="content_left">
+          <object class="GtkBox" id="box_content_left">
             <property name="visible">True</property>
-            <property name="sensitive" bind-source="transaction" bind-property="sensitive" bind-flags="invert-boolean"/>
             <property name="can-focus">False</property>
             <property name="orientation">vertical</property>
+            <property name="sensitive" bind-source="transaction" bind-property="sensitive" bind-flags="invert-boolean">True</property>
             <child>
-              <object class="GtkHeaderBar" id="header_bar_left">
+              <object class="HdyHeaderBar" id="header_bar_left">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="title" translatable="yes">Finance</property>
                 <property name="spacing">0</property>
                 <child>
-                  <object class="GtkButton" id="add_credit_button">
+                  <object class="GtkButton" id="button_add_credit">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
@@ -159,14 +159,14 @@
                       </object>
                     </child>
                     <child internal-child="accessible">
-                      <object class="AtkObject" id="add_credit_button-atkobject">
+                      <object class="AtkObject" id="button_add_credit-atkobject">
                         <property name="AtkObject::accessible-name" translatable="yes">Add a new credit</property>
                       </object>
                     </child>
                   </object>
                 </child>
                 <child>
-                  <object class="GtkButton" id="add_debit_button">
+                  <object class="GtkButton" id="button_add_debit">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
@@ -181,7 +181,7 @@
                       </object>
                     </child>
                     <child internal-child="accessible">
-                      <object class="AtkObject" id="add_debit_button-atkobject">
+                      <object class="AtkObject" id="button_add_debit-atkobject">
                         <property name="AtkObject::accessible-name" translatable="yes">Add a new debit</property>
                       </object>
                     </child>
@@ -191,11 +191,11 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="go_swipe_forward_button">
-                    <property name="visible" bind-source="leaflet" bind-property="folded" bind-flags="sync-create"/>
+                  <object class="GtkButton" id="button_go_swipe_forward">
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
                     <property name="tooltip-text" translatable="yes">Go forward</property>
+                    <property name="visible" bind-source="leaflet" bind-property="folded" bind-flags="sync-create">False</property>
                     <signal name="clicked" handler="on_swipe_forward_clicked" object="FinanceWindow" swapped="no"/>
                     <child>
                       <object class="GtkImage">
@@ -206,7 +206,7 @@
                       </object>
                     </child>
                     <child internal-child="accessible">
-                      <object class="AtkObject" id="go_swipe_forward_button-atkobject">
+                      <object class="AtkObject" id="button_go_swipe_forward-atkobject">
                         <property name="AtkObject::accessible-name" translatable="yes">Go forward</property>
                       </object>
                     </child>
@@ -217,12 +217,12 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkMenuButton" id="hamburger_menu_button">
+                  <object class="GtkMenuButton" id="menu_button_hamburger">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="focus-on-click">False</property>
                     <property name="receives-default">False</property>
-                    <property name="popover">hamburger_menu_popover</property>
+                    <property name="popover">popover_menu_hamburger</property>
                     <child>
                       <object class="GtkImage">
                         <property name="visible">True</property>
@@ -239,7 +239,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="deselect_all_button">
+                  <object class="GtkButton" id="button_deselect_all">
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
                     <property name="tooltip-text" translatable="yes">Deselect all</property>
@@ -253,7 +253,7 @@
                       </object>
                     </child>
                     <child internal-child="accessible">
-                      <object class="AtkObject" id="deselect_all_button-atkobject">
+                      <object class="AtkObject" id="button_deselect_all-atkobject">
                         <property name="AtkObject::accessible-name" translatable="yes">Deselect all</property>
                       </object>
                     </child>
@@ -264,7 +264,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLabel" id="counter_label">
+                  <object class="GtkLabel" id="label_counter">
                     <property name="can-focus">True</property>
                     <property name="label">count</property>
                   </object>
@@ -294,7 +294,7 @@
           </object>
         </child>
         <child>
-          <object class="GtkBox" id="content">
+          <object class="GtkBox" id="box_content">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="hexpand">True</property>
@@ -303,8 +303,8 @@
               <object class="HdyHeaderBar" id="header_bar_right">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="show-close-button">True</property>
                 <property name="centering-policy">strict</property>
+                <property name="show-close-button" bind-source="transaction" bind-property="sensitive" bind-flags="invert-boolean">True</property>
                 <child type="title">
                   <object class="HdySqueezer" id="header_bar_squeezer">
                     <property name="visible">True</property>
@@ -312,15 +312,15 @@
                     <property name="homogeneous">True</property>
                     <signal name="notify::visible-child" handler="on_headerbar_squeezer_notify" object="FinanceWindow" swapped="no"/>
                     <child>
-                      <object class="GtkStackSwitcher" id="view_switcher_top">
-                        <property name="visible" bind-source="transaction" bind-property="sensitive" bind-flags="invert-boolean">True</property>
+                      <object class="GtkStackSwitcher" id="stack_switcher_top">
+                        <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="homogeneous">True</property>
                         <property name="stack">stack</property>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="title_label">
+                      <object class="GtkLabel" id="label_title">
                         <property name="name">title_label</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
@@ -331,12 +331,12 @@
                   </object>
                 </child>
                 <child>
-                  <object class="GtkButton" id="go_swipe_back_button">
-                    <property name="visible" bind-source="leaflet" bind-property="folded">False</property>
-                    <property name="sensitive" bind-source="transaction" bind-property="sensitive" bind-flags="invert-boolean"/>
+                  <object class="GtkButton" id="button_go_swipe_back">
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
                     <property name="tooltip-text" translatable="yes">Go back</property>
+                    <property name="visible" bind-source="leaflet" bind-property="folded" bind-flags="sync-create">False</property>
+                    <property name="sensitive" bind-source="transaction" bind-property="sensitive" bind-flags="invert-boolean">True</property>
                     <signal name="clicked" handler="on_swipe_back_clicked" object="FinanceWindow" swapped="no"/>
                     <child>
                       <object class="GtkImage">
@@ -347,25 +347,25 @@
                       </object>
                     </child>
                     <child internal-child="accessible">
-                      <object class="AtkObject" id="go_swipe_back_button-atkobject">
+                      <object class="AtkObject" id="button_go_swipe_back-atkobject">
                         <property name="AtkObject::accessible-name" translatable="yes">Go Back</property>
                       </object>
                     </child>
                   </object>
                 </child>
                 <child>
-                  <object class="GtkButton" id="cancel_button">
+                  <object class="GtkButton" id="button_cancel">
                     <property name="label" translatable="yes">_Cancel</property>
                     <property name="width-request">70</property>
-                    <property name="visible" bind-source="transaction" bind-property="sensitive" bind-flags="default"/>
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
                     <property name="tooltip-text" translatable="yes">Cancel</property>
                     <property name="valign">center</property>
                     <property name="use-underline">True</property>
+                    <property name="visible" bind-source="transaction" bind-property="sensitive" bind-flags="sync-create">False</property>
                     <signal name="clicked" handler="on_cancel_button_clicked" object="FinanceWindow" swapped="no"/>
                     <child internal-child="accessible">
-                      <object class="AtkObject" id="cancel_button-atkobject">
+                      <object class="AtkObject" id="button_cancel-atkobject">
                         <property name="AtkObject::accessible-name" translatable="yes">Cancel</property>
                       </object>
                     </child>
@@ -378,18 +378,18 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="done_button">
+                  <object class="GtkButton" id="button_done">
                     <property name="label" translatable="yes">_Done</property>
                     <property name="width-request">70</property>
-                    <property name="visible" bind-source="transaction" bind-property="sensitive" bind-flags="default"/>
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
                     <property name="tooltip-text" translatable="yes">Done</property>
                     <property name="valign">center</property>
                     <property name="use-underline">True</property>
+                    <property name="visible" bind-source="transaction" bind-property="sensitive" bind-flags="sync-create">False</property>
                     <signal name="clicked" handler="on_done_button_clicked" object="FinanceWindow" swapped="no"/>
                     <child internal-child="accessible">
-                      <object class="AtkObject" id="done_button-atkobject">
+                      <object class="AtkObject" id="button_done-atkobject">
                         <property name="AtkObject::accessible-name" translatable="yes">Done</property>
                       </object>
                     </child>
@@ -432,10 +432,18 @@
                     <property name="can-focus">False</property>
                     <property name="transition-type">slide-down</property>
                     <child>
-                      <object class="FinanceTransaction" id="transaction">
+                      <object class="GtkScrolledWindow">
                         <property name="visible">True</property>
-                        <property name="sensitive">False</property>
                         <property name="can-focus">True</property>
+                        <property name="hscrollbar-policy">never</property>
+                        <child>
+                          <object class="FinanceTransaction" id="transaction">
+                            <property name="visible">True</property>
+                            <property name="sensitive">False</property>
+                            <property name="can-focus">True</property>
+                            <property name="mobile" bind-source="leaflet" bind-property="folded" bind-flags="sync-create">False</property>
+                          </object>
+                        </child>
                       </object>
                     </child>
                   </object>
@@ -466,9 +474,9 @@
             </child>
             <child>
               <object class="HdyViewSwitcherBar" id="view_switcher_bottom">
-                <property name="visible" bind-source="transaction" bind-property="sensitive" bind-flags="invert-boolean"/>
                 <property name="can-focus">False</property>
                 <property name="stack">stack</property>
+                <property name="visible" bind-source="transaction" bind-property="sensitive" bind-flags="invert-boolean">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -481,4 +489,10 @@
       </object>
     </child>
   </template>
+  <object class="HdyHeaderGroup">
+    <headerbars>
+      <headerbar name="header_bar_left"/>
+      <headerbar name="header_bar_right"/>
+    </headerbars>
+  </object>
 </interface>

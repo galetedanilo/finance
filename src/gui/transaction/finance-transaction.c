@@ -18,7 +18,6 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include <glib/gi18n.h>
 #include "finance-config.h"
 #include "finance-enums.h"
 
@@ -26,31 +25,36 @@
 
 struct _FinanceTransaction
 {
-  GtkBox    parent_instance;
+  GtkGrid   parent_instance;
 
   /* The widgets */
-  GtkWidget *image;
-  GtkWidget *name;
-  GtkWidget *amount;
-  GtkWidget *date;
-  GtkWidget *payee_name;
-  GtkWidget *payment;
-  GtkWidget *payment_info;
-  GtkWidget *category;
-  GtkWidget *repeat;
-  GtkWidget *frequency;
-  GtkWidget *frequency_number;
-  GtkWidget *frequency_date;
-  GtkWidget *notes_buffer;
+  GtkWidget *buffer_notes;
+  GtkWidget *combo_category;
+  GtkWidget *combo_frequency;
+  GtkWidget *combo_payment;
+  GtkWidget *combo_repeat;
+  GtkWidget *entry_amount;
+  GtkWidget *entry_date;
+  GtkWidget *entry_frequency_date;
+  GtkWidget *entry_name;
+  GtkWidget *entry_payee_name;
+  GtkWidget *entry_payment_info;
+  GtkWidget *image_icon;
+  GtkWidget *label_category;
+  GtkWidget *label_notes;
+  GtkWidget *label_payment;
+  GtkWidget *label_repeat;
+  GtkWidget *spin_frequency_number;
 
   GdkRGBA   *color;
   gchar     *icon;
   gchar     *notes;
+  gboolean  mobile;
 
   GSettings *settings;
 };
 
-G_DEFINE_TYPE (FinanceTransaction, finance_transaction, GTK_TYPE_BOX)
+G_DEFINE_TYPE (FinanceTransaction, finance_transaction, GTK_TYPE_GRID)
 
 enum {
   PROP_0,
@@ -68,17 +72,11 @@ enum {
   PROP_FREQUENCY_NUMBER,
   PROP_FREQUENCY_DATE,
   PROP_NOTES,
+  PROP_MOBILE,
   N_PROPS
 };
 
-enum {
-  CANCEL,
-  N_SIGNALS
-};
-
 static GParamSpec *properties [N_PROPS] = { NULL, };
-
-static guint signals[N_SIGNALS] = { 0, };
 
 static void
 create_icon (FinanceTransaction *self)
@@ -87,65 +85,99 @@ create_icon (FinanceTransaction *self)
 
   surface = finance_utils_create_circle (self->color, 140, self->icon);
 
-  gtk_image_set_from_surface (GTK_IMAGE (self->image), surface);
+  gtk_image_set_from_surface (GTK_IMAGE (self->image_icon), surface);
 
   g_clear_pointer (&surface, cairo_surface_destroy);
 }
 
 static void
-on_cancel_button_clicked (GtkButton *button,
-                          gpointer  user_data)
-{
-  FinanceTransaction *self = FINANCE_TRANSACTION (user_data);
-
-  (void)button;
-
-  g_signal_emit (self, signals[CANCEL], 0);
-}
-
-static void
-on_frequency_type_changed (GtkComboBox  *widget,
-                           gpointer     user_data)
+on_combo_frequency_changed (GtkComboBox *widget,
+                            gpointer     user_data)
 {
   FinanceTransaction *self = FINANCE_TRANSACTION (user_data);
 
   FinanceFrequency data = gtk_combo_box_get_active (GTK_COMBO_BOX (widget));
 
-  gtk_spin_button_set_value (GTK_SPIN_BUTTON (self->frequency_number), 2);
+  gtk_spin_button_set_value (GTK_SPIN_BUTTON (self->spin_frequency_number), 2);
 
-  gtk_entry_set_text (GTK_ENTRY (self->frequency_date), "");
+  gtk_entry_set_text (GTK_ENTRY (self->entry_frequency_date), "");
 
   switch (data)
     {
     case FINANCE_FOREVER:
-      gtk_widget_set_visible (self->frequency_number, FALSE);
-      gtk_widget_set_visible (self->frequency_date, FALSE);
+      gtk_widget_set_visible (self->spin_frequency_number, FALSE);
+      gtk_widget_set_visible (self->entry_frequency_date, FALSE);
       break;
 
     case FINANCE_N_OCCURRENCES:
-      gtk_widget_set_visible (self->frequency_number, TRUE);
-      gtk_widget_set_visible (self->frequency_date, FALSE);
+      gtk_widget_set_visible (self->spin_frequency_number, TRUE);
+      gtk_widget_set_visible (self->entry_frequency_date, FALSE);
       break;
 
     case FINANCE_UNTIL_DATE:
-      gtk_widget_set_visible (self->frequency_number, FALSE);
-      gtk_widget_set_visible (self->frequency_date, TRUE);
+      gtk_widget_set_visible (self->spin_frequency_number, FALSE);
+      gtk_widget_set_visible (self->entry_frequency_date, TRUE);
       break;
 
     }
 }
 
 static void
-on_repeat_changed (GtkComboBox  *widget,
-                   gpointer     user_data)
+on_combo_repeat_changed (GtkComboBox *widget,
+                         gpointer     user_data)
 {
   FinanceTransaction *self = FINANCE_TRANSACTION (user_data);
 
-  gtk_combo_box_set_active (GTK_COMBO_BOX (self->frequency), 0);
+  gtk_combo_box_set_active (GTK_COMBO_BOX (self->combo_frequency), 0);
 
-  gtk_widget_set_visible (self->frequency,
+  gtk_widget_set_visible (self->combo_frequency,
                           gtk_combo_box_get_active (widget));
 
+}
+
+static void
+finance_transaction_responsive_layout (FinanceTransaction *self)
+{
+  if (self->mobile)
+    {
+      gtk_widget_set_size_request (self->combo_category, -1, 40);
+      gtk_widget_set_size_request (self->combo_frequency, -1, 40);
+      gtk_widget_set_size_request (self->combo_payment, -1, 40);
+      gtk_widget_set_size_request (self->combo_repeat, -1, 40);
+      gtk_widget_set_size_request (self->entry_amount, -1, 40);
+      gtk_widget_set_size_request (self->entry_date, -1, 40);
+      gtk_widget_set_size_request (self->entry_frequency_date, -1, 40);
+      gtk_widget_set_size_request (self->entry_name, 300, 40);
+      gtk_widget_set_size_request (self->entry_payee_name, -1, 40);
+      gtk_widget_set_size_request (self->entry_payment_info, -1, 40);
+      gtk_widget_set_size_request (self->entry_date, -1, 40);
+      gtk_widget_set_visible (self->image_icon, FALSE);
+      gtk_widget_set_visible (self->label_category, FALSE);
+      gtk_widget_set_visible (self->label_notes, FALSE);
+      gtk_widget_set_visible (self->label_payment, FALSE);
+      gtk_widget_set_visible (self->label_repeat, FALSE);
+      gtk_widget_set_size_request (self->spin_frequency_number, -1, 40);
+
+      return;
+    }
+
+    gtk_widget_set_size_request (self->combo_category, -1, 50);
+    gtk_widget_set_size_request (self->combo_frequency, -1, 50);
+    gtk_widget_set_size_request (self->combo_payment, -1, 50);
+    gtk_widget_set_size_request (self->combo_repeat, -1, 50);
+    gtk_widget_set_size_request (self->entry_amount, -1, 50);
+    gtk_widget_set_size_request (self->entry_date, -1, 50);
+    gtk_widget_set_size_request (self->entry_frequency_date, -1, 50);
+    gtk_widget_set_size_request (self->entry_name, 400, 50);
+    gtk_widget_set_size_request (self->entry_payee_name, -1, 50);
+    gtk_widget_set_size_request (self->entry_payment_info, -1, 50);
+    gtk_widget_set_size_request (self->entry_date, -1, 50);
+    gtk_widget_set_visible (self->image_icon, TRUE);
+    gtk_widget_set_visible (self->label_category, TRUE);
+    gtk_widget_set_visible (self->label_notes, TRUE);
+    gtk_widget_set_visible (self->label_payment, TRUE);
+    gtk_widget_set_visible (self->label_repeat, TRUE);
+    gtk_widget_set_size_request (self->spin_frequency_number, -1, 50);
 }
 
 GtkWidget *
@@ -238,6 +270,10 @@ finance_transaction_get_property (GObject    *object,
       g_value_set_string (value, finance_transaction_get_notes (self));
       break;
 
+    case PROP_MOBILE:
+      g_value_set_boolean (value, finance_transaction_get_mobile (self));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -306,6 +342,10 @@ finance_transaction_set_property (GObject      *object,
       finance_transaction_set_notes (self, g_value_get_string (value));
       break;
 
+    case PROP_MOBILE:
+      finance_transaction_set_mobile (self, g_value_get_boolean (value));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -325,19 +365,6 @@ finance_transaction_class_init (FinanceTransactionClass *klass)
   object_class->dispose      = finance_transaction_dispose;
   object_class->get_property = finance_transaction_get_property;
   object_class->set_property = finance_transaction_set_property;
-
-  /**
-   * FinanceTransaction::cancel:
-   *
-   * Emitted when the cancel button is clicked
-   */
-  signals[CANCEL] = g_signal_new ("cancel",
-                                  FINANCE_TYPE_TRANSACTION,
-                                  G_SIGNAL_RUN_LAST,
-                                  0,
-                                  NULL, NULL, NULL,
-                                  G_TYPE_NONE,
-                                  0);
 
   /**
    * FinanceTransaction::icon:
@@ -487,29 +514,44 @@ finance_transaction_class_init (FinanceTransactionClass *klass)
                                                 NULL,
                                                 G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
+  /**
+   * FinanceTransaction::mobile:
+   *
+   * The transaction mobile
+   */
+  properties[PROP_MOBILE] = g_param_spec_boolean ("mobile",
+                                                  "Mobile",
+                                                  "The transaction mobile",
+                                                  FALSE,
+                                                  G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/transaction/finance-transaction.ui");
 
   /* The Widgets */
-  gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, image);
-  gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, name);
-  gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, amount);
-  gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, date);
-  gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, payee_name);
-  gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, payment);
-  gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, payment_info);
-  gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, category);
-  gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, repeat);
-  gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, frequency);
-  gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, frequency_number);
-  gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, frequency_date);
-  gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, notes_buffer);
+  gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, buffer_notes);
+  gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, combo_category);
+  gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, combo_frequency);
+  gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, combo_payment);
+  gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, combo_repeat);
+  gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, entry_amount);
+  gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, entry_date);
+  gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, entry_frequency_date);
+  gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, entry_name);
+  gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, entry_payee_name);
+  gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, entry_payment_info);
+  gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, image_icon);
+  gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, label_category);
+  gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, label_notes);
+  gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, label_payment);
+  gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, label_repeat);
+  gtk_widget_class_bind_template_child (widget_class, FinanceTransaction, spin_frequency_number);
 
   /* The CallBacks */
-  gtk_widget_class_bind_template_callback (widget_class, on_repeat_changed);
-  gtk_widget_class_bind_template_callback (widget_class, on_frequency_type_changed);
-  gtk_widget_class_bind_template_callback (widget_class, on_cancel_button_clicked);
+  gtk_widget_class_bind_template_callback (widget_class, on_combo_repeat_changed);
+  gtk_widget_class_bind_template_callback (widget_class, on_combo_frequency_changed);
+
 }
 
 static void
@@ -517,34 +559,36 @@ finance_transaction_init (FinanceTransaction *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
 
-  self->icon = g_strdup ("NW");
+  self->icon = g_strdup ("");
 
   self->color = finance_utils_random_rgba_color ();
+
+  create_icon (self);
 
   self->settings = g_settings_new ("org.gnome.finance");
 
   g_settings_bind (self->settings, "date",
-                   self->date, "formatting",
+                   self->entry_date, "formatting",
                    G_SETTINGS_BIND_GET);
 
   g_settings_bind (self->settings, "date",
-                   self->frequency_date, "formatting",
+                   self->entry_frequency_date, "formatting",
                    G_SETTINGS_BIND_GET);
 
   g_settings_bind (self->settings, "amount",
-                   self->amount, "formatting",
+                   self->entry_amount, "formatting",
                    G_SETTINGS_BIND_GET);
 
   g_settings_bind (self->settings, "decimal-places",
-                   self->amount, "decimal-places",
+                   self->entry_amount, "decimal-places",
                    G_SETTINGS_BIND_GET);
 
   g_settings_bind (self->settings, "currency-symbol",
-                   self->amount, "currency-symbol",
+                   self->entry_amount, "currency-symbol",
                    G_SETTINGS_BIND_GET);
 
   g_settings_bind (self->settings, "symbol-type",
-                   self->amount, "symbol",
+                   self->entry_amount, "symbol",
                    G_SETTINGS_BIND_GET);
 }
 
@@ -652,7 +696,7 @@ finance_transaction_get_name (FinanceTransaction *self)
 {
   g_return_val_if_fail (FINANCE_IS_TRANSACTION (self), NULL);
 
-  return gtk_entry_get_text (GTK_ENTRY (self->name));
+  return gtk_entry_get_text (GTK_ENTRY (self->entry_name));
 }
 
 /**
@@ -670,7 +714,7 @@ finance_transaction_set_name (FinanceTransaction *self,
 {
   g_return_if_fail (FINANCE_IS_TRANSACTION (self));
 
-  gtk_entry_set_text (GTK_ENTRY (self->name), name);
+  gtk_entry_set_text (GTK_ENTRY (self->entry_name), name);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_NAME]);
 }
@@ -690,7 +734,7 @@ finance_transaction_get_amount (FinanceTransaction *self)
 {
   g_return_val_if_fail (FINANCE_IS_TRANSACTION (self), 0.0);
 
-  return finance_entry_monetary_get_amount (FINANCE_ENTRY_MONETARY (self->amount));
+  return finance_entry_monetary_get_amount (FINANCE_ENTRY_MONETARY (self->entry_amount));
 }
 
 /**
@@ -708,7 +752,7 @@ finance_transaction_set_amount (FinanceTransaction *self,
 {
   g_return_if_fail (FINANCE_IS_TRANSACTION (self));
 
-  finance_entry_monetary_set_amount (FINANCE_ENTRY_MONETARY (self->amount), amount);
+  finance_entry_monetary_set_amount (FINANCE_ENTRY_MONETARY (self->entry_amount), amount);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_AMOUNT]);
 }
@@ -728,7 +772,7 @@ finance_transaction_get_date (FinanceTransaction *self)
 {
   g_return_val_if_fail (FINANCE_IS_TRANSACTION (self), NULL);
 
-  return finance_entry_date_get_date (FINANCE_ENTRY_DATE (self->date));
+  return finance_entry_date_get_date (FINANCE_ENTRY_DATE (self->entry_date));
 }
 
 /**
@@ -746,7 +790,7 @@ finance_transaction_set_date (FinanceTransaction *self,
 {
   g_return_if_fail (FINANCE_IS_TRANSACTION (self));
 
-  finance_entry_date_set_date (FINANCE_ENTRY_DATE (self->date), date);
+  finance_entry_date_set_date (FINANCE_ENTRY_DATE (self->entry_date), date);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_DATE]);
 }
@@ -768,7 +812,7 @@ finance_transaction_get_payee_name (FinanceTransaction *self)
 {
   g_return_val_if_fail (FINANCE_IS_TRANSACTION (self), NULL);
 
-  return gtk_entry_get_text (GTK_ENTRY (self->payee_name));
+  return gtk_entry_get_text (GTK_ENTRY (self->entry_payee_name));
 }
 
 /**
@@ -786,7 +830,7 @@ finance_transaction_set_payee_name (FinanceTransaction *self,
 {
   g_return_if_fail (FINANCE_IS_TRANSACTION (self));
 
-  gtk_entry_set_text (GTK_ENTRY (self->payee_name), payee_name);
+  gtk_entry_set_text (GTK_ENTRY (self->entry_payee_name), payee_name);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_PAYEE_NAME]);
 }
@@ -806,7 +850,7 @@ finance_transaction_get_payment (FinanceTransaction *self)
 {
   g_return_val_if_fail (FINANCE_IS_TRANSACTION (self), -1);
 
-  return gtk_combo_box_get_active (GTK_COMBO_BOX (self->payment));
+  return gtk_combo_box_get_active (GTK_COMBO_BOX (self->combo_payment));
 }
 
 /**
@@ -824,7 +868,7 @@ finance_transaction_set_payment (FinanceTransaction *self,
 {
   g_return_if_fail (FINANCE_IS_TRANSACTION (self));
 
-  gtk_combo_box_set_active (GTK_COMBO_BOX (self->payment), payment);
+  gtk_combo_box_set_active (GTK_COMBO_BOX (self->combo_payment), payment);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_PAYMENT]);
 }
@@ -846,7 +890,7 @@ finance_transaction_get_payment_info (FinanceTransaction *self)
 {
   g_return_val_if_fail (FINANCE_IS_TRANSACTION (self), NULL);
 
-  return gtk_entry_get_text (GTK_ENTRY (self->payment_info));
+  return gtk_entry_get_text (GTK_ENTRY (self->entry_payment_info));
 }
 
 /**
@@ -864,7 +908,7 @@ finance_transaction_set_payment_info (FinanceTransaction *self,
 {
   g_return_if_fail (FINANCE_IS_TRANSACTION (self));
 
-  gtk_entry_set_text (GTK_ENTRY (self->payment_info), payment_info);
+  gtk_entry_set_text (GTK_ENTRY (self->entry_payment_info), payment_info);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_PAYMENT_INFO]);
 }
@@ -884,7 +928,7 @@ finance_transaction_get_repeat (FinanceTransaction *self)
 {
   g_return_val_if_fail (FINANCE_IS_TRANSACTION (self), -1);
 
-  return gtk_combo_box_get_active (GTK_COMBO_BOX (self->repeat));
+  return gtk_combo_box_get_active (GTK_COMBO_BOX (self->combo_repeat));
 }
 
 /**
@@ -902,7 +946,7 @@ finance_transaction_set_repeat (FinanceTransaction *self,
 {
   g_return_if_fail (FINANCE_IS_TRANSACTION (self));
 
-  gtk_combo_box_set_active (GTK_COMBO_BOX (self->repeat), repeat);
+  gtk_combo_box_set_active (GTK_COMBO_BOX (self->combo_repeat), repeat);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_REPEAT]);
 }
@@ -922,7 +966,7 @@ finance_transaction_get_frequency (FinanceTransaction *self)
 {
   g_return_val_if_fail (FINANCE_IS_TRANSACTION (self), -1);
   
-  return gtk_combo_box_get_active (GTK_COMBO_BOX (self->frequency));
+  return gtk_combo_box_get_active (GTK_COMBO_BOX (self->combo_frequency));
 }
 
 /**
@@ -940,7 +984,7 @@ finance_transaction_set_frequency (FinanceTransaction *self,
 {
   g_return_if_fail (FINANCE_IS_TRANSACTION (self));
   
-  gtk_combo_box_set_active (GTK_COMBO_BOX (self->payment), frequency);
+  gtk_combo_box_set_active (GTK_COMBO_BOX (self->combo_frequency), frequency);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_FREQUENCY]);
 }
@@ -960,7 +1004,7 @@ finance_transaction_get_frequency_number (FinanceTransaction *self)
 {
   g_return_val_if_fail (FINANCE_IS_TRANSACTION (self), 0);
 
-  return (gint)gtk_spin_button_get_value (GTK_SPIN_BUTTON (self->frequency_number));
+  return (gint)gtk_spin_button_get_value (GTK_SPIN_BUTTON (self->spin_frequency_number));
 }
 
 /**
@@ -981,7 +1025,7 @@ finance_transaction_set_frequency_number (FinanceTransaction *self,
   if (frequency_number < 2)
     return;
 
-  gtk_spin_button_set_value (GTK_SPIN_BUTTON (self->frequency_number),
+  gtk_spin_button_set_value (GTK_SPIN_BUTTON (self->spin_frequency_number),
                              (gdouble)frequency_number);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_FREQUENCY_NUMBER]);
@@ -1002,7 +1046,7 @@ finance_transaction_get_frequency_date (FinanceTransaction *self)
 {
   g_return_val_if_fail (FINANCE_IS_TRANSACTION (self), NULL);
 
-  return finance_entry_date_get_date (FINANCE_ENTRY_DATE (self->frequency_date));
+  return finance_entry_date_get_date (FINANCE_ENTRY_DATE (self->entry_frequency_date));
 }
 
 /**
@@ -1020,7 +1064,7 @@ finance_transaction_set_frequency_date (FinanceTransaction *self,
 {
   g_return_if_fail (FINANCE_IS_TRANSACTION (self));
 
-  finance_entry_date_set_date (FINANCE_ENTRY_DATE (self->frequency_date), date);
+  finance_entry_date_set_date (FINANCE_ENTRY_DATE (self->entry_frequency_date), date);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_FREQUENCY_DATE]);
 }
@@ -1067,10 +1111,47 @@ finance_transaction_set_notes (FinanceTransaction *self,
 
   self->notes = g_strdup (notes);
 
-  gtk_text_buffer_set_text (GTK_TEXT_BUFFER (self->notes_buffer),
+  gtk_text_buffer_set_text (GTK_TEXT_BUFFER (self->buffer_notes),
                             self->notes, -1);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_NOTES]);
+}
+
+/**
+ * finance_transaction_get_mobile:
+ * @self: a #FinanceTransaction instance.
+ *
+ * Returns:
+ *
+ * Since: 1.0
+ */
+gboolean
+finance_transaction_get_mobile (FinanceTransaction *self)
+{
+  g_return_val_if_fail (FINANCE_IS_TRANSACTION (self), FALSE);
+
+  return self->mobile;
+}
+
+/**
+ * finance_transaction_set_mobile:
+ * @self: a #FinanceTransaction object.
+ * @mobile: a #gboolean to set it to.
+ *
+ *
+ * Since: 1.0
+ */
+void
+finance_transaction_set_mobile (FinanceTransaction  *self,
+                                gboolean            mobile)
+{
+  g_return_if_fail (FINANCE_IS_TRANSACTION (self));
+
+  self->mobile = mobile;
+
+  finance_transaction_responsive_layout (self);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_MOBILE]);
 }
 
 /**
@@ -1081,28 +1162,28 @@ finance_transaction_set_notes (FinanceTransaction *self,
  *
  * Since: 1.0
  */
-void
-finance_transaction_clear (FinanceTransaction *self)
-{
-  g_return_if_fail (FINANCE_IS_TRANSACTION (self));
+/* void */
+/* finance_transaction_clear (FinanceTransaction *self) */
+/* { */
+/*   g_return_if_fail (FINANCE_IS_TRANSACTION (self)); */
 
-  g_free (self->icon);
-  g_free (self->notes);
+/*   g_free (self->icon); */
+/*   g_free (self->notes); */
 
-  self->icon = g_strdup ("NT");
-  self->notes = g_strdup ("");
+/*   self->icon = g_strdup ("NT"); */
+/*   self->notes = g_strdup (""); */
 
-  self->color = finance_utils_random_rgba_color ();
-  gtk_text_buffer_set_text (GTK_TEXT_BUFFER (self->notes_buffer),
-                            self->notes, -1);
+/*   self->color = finance_utils_random_rgba_color (); */
+/*   gtk_text_buffer_set_text (GTK_TEXT_BUFFER (self->notes_buffer), */
+/*                             self->notes, -1); */
 
-  create_icon (self);
+/*   create_icon (self); */
 
-  gtk_entry_set_text (GTK_ENTRY (self->name), "");
-  gtk_entry_set_text (GTK_ENTRY (self->amount), "");
-  gtk_entry_set_text (GTK_ENTRY (self->date), "");
-  gtk_entry_set_text (GTK_ENTRY (self->payee_name), "");
-  gtk_combo_box_set_active (GTK_COMBO_BOX (self->payment), 0);
-  gtk_entry_set_text (GTK_ENTRY (self->payment_info), "");
-  gtk_combo_box_set_active (GTK_COMBO_BOX (self->repeat), 0);
-}
+/*   gtk_entry_set_text (GTK_ENTRY (self->name), ""); */
+/*   gtk_entry_set_text (GTK_ENTRY (self->amount), ""); */
+/*   gtk_entry_set_text (GTK_ENTRY (self->date), ""); */
+/*   gtk_entry_set_text (GTK_ENTRY (self->payee_name), ""); */
+/*   gtk_combo_box_set_active (GTK_COMBO_BOX (self->payment), 0); */
+/*   gtk_entry_set_text (GTK_ENTRY (self->payment_info), ""); */
+/*   gtk_combo_box_set_active (GTK_COMBO_BOX (self->repeat), 0); */
+/* } */

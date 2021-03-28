@@ -9,14 +9,6 @@
     <property name="step-increment">1</property>
     <property name="page-increment">10</property>
   </object>
-  <object class="GtkRadioButton" id="radiobutton1">
-    <property name="label" translatable="yes">radiobutton</property>
-    <property name="visible">True</property>
-    <property name="can-focus">True</property>
-    <property name="receives-default">False</property>
-    <property name="active">True</property>
-    <property name="draw-indicator">True</property>
-  </object>
   <template class="FinancePreferencesWindow" parent="HdyPreferencesWindow">
     <property name="can-focus">False</property>
     <property name="can-swipe-back">True</property>
@@ -106,44 +98,6 @@
                   <object class="GtkSwitch" id="switch_currency_symbol">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
-                  </object>
-                </child>
-              </object>
-            </child>
-            <child>
-              <object class="HdyActionRow" id="row_local">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="sensitive">False</property>
-                <property name="title" translatable="yes">Sets local currency symbol</property>
-                <property name="activatable-widget">radio_local</property>
-                <signal name="activated" handler="on_currency_symbol_local" swapped="yes" />
-                <child>
-                  <object class="GtkRadioButton" id="radio_local">
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">False</property>
-                    <property name="draw-indicator">True</property>
-                    <property name="group">radiobutton1</property>
-                  </object>
-                </child>
-              </object>
-            </child>
-            <child>
-              <object class="HdyActionRow" id="row_international">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="sensitive">False</property>
-                <property name="title" translatable="yes">Sets international currency symbol</property>
-                <property name="activatable-widget">radio_international</property>
-                <signal name="activated" handler="on_currency_symbol_international" swapped="yes" />
-                <child>
-                  <object class="GtkRadioButton" id="radio_international">
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">False</property>
-                    <property name="draw-indicator">True</property>
-                    <property name="group">radiobutton1</property>
                   </object>
                 </child>
               </object>
