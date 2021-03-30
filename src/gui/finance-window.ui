@@ -326,6 +326,9 @@
                         <property name="can-focus">False</property>
                         <property name="label">Finance</property>
                         <property name="ellipsize">end</property>
+                        <attributes>
+                          <attribute name="weight" value="bold"/>
+                        </attributes>
                       </object>
                     </child>
                   </object>
@@ -432,7 +435,7 @@
                     <property name="can-focus">False</property>
                     <property name="transition-type">slide-down</property>
                     <child>
-                      <object class="GtkScrolledWindow">
+                      <object class="GtkScrolledWindow" id="scrolled_window_transaction">
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="hscrollbar-policy">never</property>
@@ -489,10 +492,4 @@
       </object>
     </child>
   </template>
-  <object class="HdyHeaderGroup">
-    <headerbars>
-      <headerbar name="header_bar_left"/>
-      <headerbar name="header_bar_right"/>
-    </headerbars>
-  </object>
 </interface>
