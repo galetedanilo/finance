@@ -32,6 +32,8 @@ main (int   argc,
   bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
   textdomain (GETTEXT_PACKAGE);
 
+  g_set_application_name (_("Finance"));
+
   app = finance_application_new ();
 
   return g_application_run (G_APPLICATION (app), argc, argv);
