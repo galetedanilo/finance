@@ -32,6 +32,7 @@ struct _FinanceWindow
   GtkWidget   *header_bar_squeezer;
   GtkWidget   *label_title;
   GtkWidget   *leaflet;
+  GtkWidget   *scrolled_window_transaction;
   GtkWidget   *stack;
   GtkWidget   *stack_switcher_top;
   GtkWidget   *stack_transactions;
@@ -41,21 +42,9 @@ struct _FinanceWindow
   GSettings   *settings;
 };
 
+static void     finance_window_prepare_new_transaction      (FinanceWindow *self);
+
 G_DEFINE_TYPE (FinanceWindow, finance_window, HDY_TYPE_APPLICATION_WINDOW)
-
-static void
-finance_window_prepare_new_transaction (FinanceWindow *self)
-{
-  hdy_squeezer_set_child_enabled (HDY_SQUEEZER (self->header_bar_squeezer),
-                                  self->stack_switcher_top,
-                                  FALSE);
-
-  gtk_widget_set_sensitive (self->transaction, TRUE);
-  gtk_label_set_text (GTK_LABEL (self->label_title), _("New"));
-  hdy_leaflet_set_visible_child (HDY_LEAFLET (self->leaflet), self->box_content);
-  gtk_stack_set_visible_child_name (GTK_STACK (self->stack), "transactions");
-  gtk_stack_set_visible_child (GTK_STACK (self->stack_transactions), self->transaction);
-}
 
 static void
 on_add_credit_clicked (GtkButton *button,
@@ -88,8 +77,7 @@ on_cancel_button_clicked (GtkButton *button,
   (void)button;
 
   hdy_squeezer_set_child_enabled (HDY_SQUEEZER (self->header_bar_squeezer),
-                                  self->stack_switcher_top,
-                                  TRUE);
+                                  self->stack_switcher_top, TRUE);
 
   gtk_widget_set_sensitive (self->transaction, FALSE);
   gtk_label_set_text (GTK_LABEL (self->label_title), _("Finance"));
@@ -133,6 +121,19 @@ on_swipe_forward_clicked (GtkButton *button,
 }
 
 static void
+finance_window_prepare_new_transaction (FinanceWindow *self)
+{
+  hdy_squeezer_set_child_enabled (HDY_SQUEEZER (self->header_bar_squeezer),
+                                  self->stack_switcher_top, FALSE);
+
+  gtk_widget_set_sensitive (self->transaction, TRUE);
+  gtk_label_set_text (GTK_LABEL (self->label_title), _("New"));
+  hdy_leaflet_set_visible_child (HDY_LEAFLET (self->leaflet), self->box_content);
+  gtk_stack_set_visible_child_name (GTK_STACK (self->stack), "transactions");
+  gtk_stack_set_visible_child (GTK_STACK (self->stack_transactions), self->scrolled_window_transaction);
+}
+
+static void
 finance_window_dispose (GObject *object)
 {
   FinanceWindow *self = FINANCE_WINDOW (object);
@@ -162,6 +163,7 @@ finance_window_class_init (FinanceWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, header_bar_squeezer);
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, label_title);
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, leaflet);
+  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, scrolled_window_transaction);
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, stack);
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, stack_switcher_top);
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, stack_transactions);
@@ -181,6 +183,8 @@ static void
 finance_window_init (FinanceWindow *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  hdy_init();
 
   self->settings = g_settings_new ("org.gnome.finance");
 }
