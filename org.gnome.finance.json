@@ -1,5 +1,5 @@
 {
-    "app-id" : "org.gnome.finance",
+    "app-id" : "org.gnome.Finance",
     "runtime" : "org.gnome.Platform",
     "runtime-version" : "3.38",
     "sdk" : "org.gnome.Sdk",
@@ -49,7 +49,7 @@
             "sources" : [
                 {
                     "type" : "git",
-                    "url" : "file:///home/galetedanilo/Projects/Finance"
+                    "url" : "https://gitlab.gnome.org/galetedanilo/finance.git"
                 }
             ]
         }

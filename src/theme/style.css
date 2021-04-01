@@ -49,7 +49,6 @@ checkbutton.row-check {
 .preferences list > row {
   border-right: 1px solid #CCC;
   border-left: 1px solid #CCC;
-  padding: 1em;
 }
 
 .preferences list > row:first-child {

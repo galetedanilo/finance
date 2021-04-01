@@ -150,7 +150,7 @@ finance_window_class_init (FinanceWindowClass *klass)
 
   g_type_ensure (FINANCE_TYPE_PANE);
   g_type_ensure (FINANCE_TYPE_TRANSACTION);
-  g_type_ensure (FINANCE_TYPE_TRANSACTIONS_VIEW);
+  g_type_ensure (FINANCE_TYPE_VIEW_TRANSACTIONS);
 
   G_OBJECT_CLASS (klass)->dispose     = finance_window_dispose;
 

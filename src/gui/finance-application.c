@@ -286,6 +286,7 @@ finance_application_startup (GApplication *app)
                                          "app.quit",
                                          quit_accels);
 
+
   G_APPLICATION_CLASS (finance_application_parent_class)->startup (app);
 }
 
@@ -304,5 +305,5 @@ finance_application_class_init (FinanceApplicationClass *klass)
 static void
 finance_application_init (FinanceApplication *self)
 {
-  g_set_application_name (_("Finance"));
+
 }
