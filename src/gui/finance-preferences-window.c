@@ -93,7 +93,7 @@ finance_preferences_window_class_init (FinancePreferencesWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, FinancePreferencesWindow, switch_currency_symbol);
   gtk_widget_class_bind_template_child (widget_class, FinancePreferencesWindow, switch_date);
 
-  /* All signal */
+  /* The CallBacks */
   gtk_widget_class_bind_template_callback (widget_class, on_currency_symbol_international_toggled);
   gtk_widget_class_bind_template_callback (widget_class, on_currency_symbol_local_toggled);
 }
