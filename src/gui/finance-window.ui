@@ -430,25 +430,9 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkStack" id="stack_transactions">
+                  <object class="FinanceViewTransactions" id="view_transactions">
                     <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="transition-type">slide-down</property>
-                    <child>
-                      <object class="GtkScrolledWindow" id="scrolled_window_transaction">
-                        <property name="visible">True</property>
-                        <property name="can-focus">True</property>
-                        <property name="hscrollbar-policy">never</property>
-                        <child>
-                          <object class="FinanceTransaction" id="transaction">
-                            <property name="visible">True</property>
-                            <property name="sensitive">False</property>
-                            <property name="can-focus">True</property>
-                            <property name="mobile" bind-source="leaflet" bind-property="folded" bind-flags="sync-create">False</property>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
+                    <property name="can-focus">True</property>
                   </object>
                   <packing>
                     <property name="name">transactions</property>
@@ -467,6 +451,21 @@
                     <property name="title" translatable="yes">Graphics</property>
                     <property name="position">2</property>
                   </packing>
+                </child>
+                <child>
+                  <object class="GtkScrolledWindow" id="scrolled_window_transaction">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="hscrollbar-policy">never</property>
+                    <child>
+                      <object class="FinanceTransaction" id="transaction">
+                        <property name="visible">True</property>
+                        <property name="sensitive">False</property>
+                        <property name="can-focus">True</property>
+                        <property name="mobile" bind-source="leaflet" bind-property="folded" bind-flags="sync-create">False</property>
+                      </object>
+                    </child>
+                  </object>
                 </child>
               </object>
               <packing>
