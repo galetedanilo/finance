@@ -95,8 +95,10 @@ finance_utils_create_circle (const GdkRGBA  *color,
                              gint           arc_size,
                              const gchar    *str)
 {
-  cairo_surface_t *surface;
-  cairo_t         *cr;
+  cairo_text_extents_t  extents;
+  cairo_surface_t       *surface;
+  cairo_t               *cr;
+  double                x, y;
 
   surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, arc_size, arc_size);
   cr = cairo_create (surface);
@@ -121,10 +123,14 @@ finance_utils_create_circle (const GdkRGBA  *color,
                          color->alpha);
   cairo_fill (cr);
 
-  cairo_move_to (cr, (arc_size * 0.2285), (arc_size * 0.6214));
+  cairo_text_extents (cr, str, &extents);
+  x = arc_size/2-(extents.width/2 + extents.x_bearing);
+  y = arc_size/2-(extents.height/2 + extents.y_bearing);
 
-  cairo_text_path (cr, str);
+  cairo_move_to (cr, x, y);
+
   cairo_set_source_rgb (cr, 1, 1, 1);
+  cairo_show_text (cr, str);
   cairo_fill (cr);
 
   cairo_destroy (cr);
