@@ -269,13 +269,14 @@ finance_pane_row_class_init (FinancePaneRowClass *klass)
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/pane/finance-pane-row.ui");
 
+  /* The Widgets */
   gtk_widget_class_bind_template_child (widget_class, FinancePaneRow, image);
   gtk_widget_class_bind_template_child (widget_class, FinancePaneRow, title);
   gtk_widget_class_bind_template_child (widget_class, FinancePaneRow, amount);
   gtk_widget_class_bind_template_child (widget_class, FinancePaneRow, revealer);
   gtk_widget_class_bind_template_child (widget_class, FinancePaneRow, check);
 
-  /* All signals */
+  /* The CallBacks */
   gtk_widget_class_bind_template_callback (widget_class, on_row_state_flags_changed);
   gtk_widget_class_bind_template_callback (widget_class, on_check_toggled);
 }
