@@ -131,12 +131,13 @@ finance_pane_class_init (FinancePaneClass *klass)
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/pane/finance-pane.ui");
 
+  /* The Widgets */
   gtk_widget_class_bind_template_child (widget_class, FinancePane, list);
   gtk_widget_class_bind_template_child (widget_class, FinancePane, search);
   gtk_widget_class_bind_template_child (widget_class, FinancePane, sort_ascending);
   gtk_widget_class_bind_template_child (widget_class, FinancePane, sort_descending);
 
-  /* All signals */
+  /* The CallBacks */
   gtk_widget_class_bind_template_callback (widget_class, on_list_box_row_activated);
   gtk_widget_class_bind_template_callback (widget_class, on_pane_search_changed);
   gtk_widget_class_bind_template_callback (widget_class, on_sort_ascending_clicked);
@@ -159,31 +160,13 @@ finance_pane_init (FinancePane *self)
                               (GtkListBoxSortFunc)listbox_sort_func,
                               (gpointer) self,
                               FALSE);
+}
 
+void
+finance_pane_add_row (FinancePane *self,
+                      GtkWidget   *row)
+{
+  g_return_if_fail (FINANCE_IS_PANE (self));
 
-  //this is a test
-  GtkWidget *row = finance_pane_row_new ();
-
-  finance_pane_row_set_icon (row, "TR");
-  finance_pane_row_set_title (row, "Transaction Name Title");
-  finance_pane_row_set_amount (row, "R$2,540.45");
-  gtk_list_box_insert (GTK_LIST_BOX (self->list), row, -1);
-
-  row = finance_pane_row_new ();
-  finance_pane_row_set_icon (row, "BC");
-  finance_pane_row_set_title (row, "New Home");
-  finance_pane_row_set_amount (row, "R$2,540.45");
-  gtk_list_box_insert (GTK_LIST_BOX (self->list), row, -1);
-
-  row = finance_pane_row_new ();
-  finance_pane_row_set_icon (row, "VT");
-  finance_pane_row_set_title (row, "View System");
-  finance_pane_row_set_amount (row, "R$2,540.45");
-  gtk_list_box_insert (GTK_LIST_BOX (self->list), row, -1);
-
-  row = finance_pane_row_new ();
-  finance_pane_row_set_icon (row, "BA");
-  finance_pane_row_set_title (row, "Bank");
-  finance_pane_row_set_amount (row, "R$2,540.45");
   gtk_list_box_insert (GTK_LIST_BOX (self->list), row, -1);
 }
