@@ -393,7 +393,7 @@ finance_entry_monetary_class_init (FinanceEntryMonetaryClass *klass)
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/transaction/finance-entry-monetary.ui");
 
-  /* All Signals */
+  /* The CallBacks */
   gtk_widget_class_bind_template_callback (widget_class, on_automatic_monetary_formatting);
 }
 
