@@ -284,10 +284,11 @@ finance_entry_date_class_init (FinanceEntryDateClass *klass)
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/transaction/finance-entry-date.ui");
 
+  /* The Widgets */
   gtk_widget_class_bind_template_child (widget_class, FinanceEntryDate, calendar);
   gtk_widget_class_bind_template_child (widget_class, FinanceEntryDate, popover);
 
-  /* All Signals */
+  /* The CallBacks */
   gtk_widget_class_bind_template_callback (widget_class, on_calendar_day_selected);
   gtk_widget_class_bind_template_callback (widget_class, on_entry_date_icon_press);
   gtk_widget_class_bind_template_callback (widget_class, on_automatic_date_formatting);
