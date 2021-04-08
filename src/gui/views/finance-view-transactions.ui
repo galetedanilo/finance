@@ -9,10 +9,10 @@
       <object class="GtkSearchEntry" id="search_entry">
         <property name="visible">True</property>
         <property name="can-focus">True</property>
-        <property name="margin-start">5</property>
-        <property name="margin-end">5</property>
-        <property name="margin-top">5</property>
-        <property name="margin-bottom">5</property>
+        <property name="margin-start">15</property>
+        <property name="margin-end">15</property>
+        <property name="margin-top">8</property>
+        <property name="margin-bottom">8</property>
         <property name="primary-icon-name">edit-find-symbolic</property>
         <property name="primary-icon-activatable">False</property>
         <property name="primary-icon-sensitive">False</property>

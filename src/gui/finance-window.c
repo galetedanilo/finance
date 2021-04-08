@@ -19,6 +19,7 @@
 #include <glib/gi18n.h>
 #include "finance-config.h"
 
+#include "finance-view.h"
 #include "finance-window.h"
 
 struct _FinanceWindow
@@ -32,6 +33,7 @@ struct _FinanceWindow
   GtkWidget   *header_bar_squeezer;
   GtkWidget   *label_title;
   GtkWidget   *leaflet;
+  GtkWidget   *pane;
   GtkWidget   *scrolled_window_transaction;
   GtkWidget   *stack;
   GtkWidget   *stack_switcher_top;
@@ -40,6 +42,7 @@ struct _FinanceWindow
   GtkWidget   *view_transactions;
 
   GSettings   *settings;
+  GObject     *controller_transactions;
 };
 
 static void     finance_window_prepare_new_transaction      (FinanceWindow *self);
@@ -141,6 +144,7 @@ finance_window_dispose (GObject *object)
   FinanceWindow *self = FINANCE_WINDOW (object);
 
   g_clear_object (&self->settings);
+  g_clear_object (&self->controller_transactions);
 
   G_OBJECT_CLASS (finance_window_parent_class)->dispose (object);
 }
@@ -165,6 +169,7 @@ finance_window_class_init (FinanceWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, header_bar_squeezer);
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, label_title);
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, leaflet);
+  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, pane);
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, scrolled_window_transaction);
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, stack);
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, stack_switcher_top);
@@ -189,4 +194,11 @@ finance_window_init (FinanceWindow *self)
   hdy_init();
 
   self->settings = g_settings_new ("org.gnome.finance");
+
+  self->controller_transactions = g_object_new (FINANCE_TYPE_CONTROLLER_TRANSACTIONS,
+                                                "pane", self->pane,
+                                                "view", self->view_transactions,
+                                                NULL);
+
+  finance_controller_transactions_startup (self->controller_transactions);
 }

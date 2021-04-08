@@ -18,26 +18,50 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+#include "finance-view.h"
 #include "finance-view-transactions.h"
 
 struct _FinanceViewTransactions
 {
-  GtkBox parent_instance;
-};
+  GtkBox    parent_instance;
 
-G_DEFINE_TYPE (FinanceViewTransactions, finance_view_transactions, GTK_TYPE_BOX)
+  /* The Widgets */
+  GtkWidget *flow_box;
+};
 
 enum {
   PROP_0,
   N_PROPS
 };
 
+static void     finance_view_interface_init       (FinanceViewInterface *iface);
+
 static GParamSpec *properties [N_PROPS];
+
+
+G_DEFINE_TYPE_WITH_CODE (FinanceViewTransactions, finance_view_transactions, GTK_TYPE_BOX,
+                         G_IMPLEMENT_INTERFACE (FINANCE_TYPE_VIEW, finance_view_interface_init))
+
+/* FinanceView implementation */
+static void
+finance_view_transactions_insert_child (FinanceView *view,
+                                        GtkWidget   *child)
+{
+  FinanceViewTransactions *self = FINANCE_VIEW_TRANSACTIONS (view);
+
+  gtk_flow_box_insert (GTK_FLOW_BOX (self->flow_box), child, -1);
+}
 
 GtkWidget *
 finance_view_transactions_new (void)
 {
   return g_object_new (FINANCE_TYPE_VIEW_TRANSACTIONS, NULL);
+}
+
+static void
+finance_view_interface_init (FinanceViewInterface *iface)
+{
+  iface->insert_child = finance_view_transactions_insert_child;
 }
 
 static void
@@ -81,14 +105,21 @@ finance_view_transactions_set_property (GObject      *object,
 static void
 finance_view_transactions_class_init (FinanceViewTransactionsClass *klass)
 {
-  GObjectClass *object_class = G_OBJECT_CLASS (klass);
+  GObjectClass    *object_class = G_OBJECT_CLASS (klass);
+  GtkWidgetClass  *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->finalize = finance_view_transactions_finalize;
-  object_class->get_property = finance_view_transactions_get_property;
-  object_class->set_property = finance_view_transactions_set_property;
+  object_class->finalize      = finance_view_transactions_finalize;
+  object_class->get_property  = finance_view_transactions_get_property;
+  object_class->set_property  = finance_view_transactions_set_property;
+
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/views/finance-view-transactions.ui");
+
+  /* The Widgets */
+  gtk_widget_class_bind_template_child (widget_class, FinanceViewTransactions, flow_box);
 }
 
 static void
 finance_view_transactions_init (FinanceViewTransactions *self)
 {
+  gtk_widget_init_template (GTK_WIDGET (self));
 }

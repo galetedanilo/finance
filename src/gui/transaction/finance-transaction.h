@@ -100,12 +100,12 @@ const gchar *   finance_transaction_get_notes           (FinanceTransaction *sel
 void            finance_transaction_set_notes           (FinanceTransaction *self,
                                                          const gchar        *notes);
 
-void            finance_transaction_clear               (FinanceTransaction *self);
-
 gboolean        finance_transaction_get_mobile          (FinanceTransaction *self);
 
 void            finance_transaction_set_mobile          (FinanceTransaction *self,
                                                          gboolean           mobile);
+
+void            finance_transaction_create_new          (FinanceTransaction *self);
 
 G_END_DECLS
 

@@ -1,6 +1,6 @@
-/* finance-window.h
+/* finance-view.c
  *
- * Copyright 2020 galetedanilo
+ * Copyright 2021 Danilo Fernandes Galete <galetedanilo@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,25 +14,25 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef __FINANCE_WINDOW_H__
-#define __FINANCE_WINDOW_H__
+#include "finance-view.h"
 
-#include <gtk/gtk.h>
-#include <handy.h>
+G_DEFINE_INTERFACE (FinanceView, finance_view, G_TYPE_OBJECT)
 
-#include "finance-controller-transactions.h"
-#include "finance-pane.h"
-#include "finance-transaction.h"
-#include "finance-view-transactions.h"
+static void
+finance_view_default_init (FinanceViewInterface *iface)
+{
+}
 
-G_BEGIN_DECLS
+void
+finance_view_insert_child (FinanceView  *view,
+                           GtkWidget    *widget)
+{
+  g_return_if_fail (FINANCE_IS_VIEW (view));
+  g_return_if_fail (FINANCE_VIEW_GET_IFACE (view)->insert_child);
 
-#define FINANCE_TYPE_WINDOW (finance_window_get_type())
-
-G_DECLARE_FINAL_TYPE (FinanceWindow, finance_window, FINANCE, WINDOW, HdyApplicationWindow)
-
-G_END_DECLS
-
-#endif /* __FINANCE_WINDOW_H__ */
+  FINANCE_VIEW_GET_IFACE (view)->insert_child (view, widget);
+}

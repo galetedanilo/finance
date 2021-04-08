@@ -9,12 +9,14 @@ built_sources = gnome.mkenums(
 )
 
 finance_incs = [
+  include_directories('core'),
   include_directories('gui'),
   include_directories('theme'),
   include_directories('utils'),
 ]
 
 sources = files()
+subdir('core')
 subdir('gui')
 subdir('theme')
 subdir('utils')

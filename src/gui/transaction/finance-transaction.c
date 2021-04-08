@@ -138,6 +138,12 @@ on_combo_repeat_changed (GtkComboBox *widget,
 static void
 finance_transaction_responsive_layout (FinanceTransaction *self)
 {
+  gtk_widget_set_visible (self->image_icon, !self->mobile);
+  gtk_widget_set_visible (self->label_category, !self->mobile);
+  gtk_widget_set_visible (self->label_notes, !self->mobile);
+  gtk_widget_set_visible (self->label_payment, !self->mobile);
+  gtk_widget_set_visible (self->label_repeat, !self->mobile);
+
   if (self->mobile)
     {
       gtk_widget_set_size_request (self->combo_category, -1, 40);
@@ -151,11 +157,6 @@ finance_transaction_responsive_layout (FinanceTransaction *self)
       gtk_widget_set_size_request (self->entry_payee_name, -1, 40);
       gtk_widget_set_size_request (self->entry_payment_info, -1, 40);
       gtk_widget_set_size_request (self->entry_date, -1, 40);
-      gtk_widget_set_visible (self->image_icon, FALSE);
-      gtk_widget_set_visible (self->label_category, FALSE);
-      gtk_widget_set_visible (self->label_notes, FALSE);
-      gtk_widget_set_visible (self->label_payment, FALSE);
-      gtk_widget_set_visible (self->label_repeat, FALSE);
       gtk_widget_set_size_request (self->spin_frequency_number, -1, 40);
 
       return;
@@ -172,11 +173,6 @@ finance_transaction_responsive_layout (FinanceTransaction *self)
     gtk_widget_set_size_request (self->entry_payee_name, -1, 50);
     gtk_widget_set_size_request (self->entry_payment_info, -1, 50);
     gtk_widget_set_size_request (self->entry_date, -1, 50);
-    gtk_widget_set_visible (self->image_icon, TRUE);
-    gtk_widget_set_visible (self->label_category, TRUE);
-    gtk_widget_set_visible (self->label_notes, TRUE);
-    gtk_widget_set_visible (self->label_payment, TRUE);
-    gtk_widget_set_visible (self->label_repeat, TRUE);
     gtk_widget_set_size_request (self->spin_frequency_number, -1, 50);
 }
 
@@ -373,7 +369,7 @@ finance_transaction_class_init (FinanceTransactionClass *klass)
    */
   properties[PROP_ICON] = g_param_spec_string ("icon",
                                                "Icon",
-                                               "TThe two letters that are part of the icon image",
+                                               "The two letters that are part of the icon image",
                                                NULL,
                                                G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
@@ -559,7 +555,7 @@ finance_transaction_init (FinanceTransaction *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
 
-  self->icon = g_strdup ("");
+  self->icon = g_strdup ("NW");
 
   self->color = finance_utils_random_rgba_color ();
 
@@ -1121,7 +1117,9 @@ finance_transaction_set_notes (FinanceTransaction *self,
  * finance_transaction_get_mobile:
  * @self: a #FinanceTransaction instance.
  *
- * Returns:
+ * Gets whether the mobile layout is in its “on” or “off” state.
+ *
+ * Returns: %TRUE if the mobile layout is active, and %FALSE otherwise.
  *
  * Since: 1.0
  */
@@ -1138,6 +1136,7 @@ finance_transaction_get_mobile (FinanceTransaction *self)
  * @self: a #FinanceTransaction object.
  * @mobile: a #gboolean to set it to.
  *
+ * Change mobile layout states. %TRUE if the mobile layout is active, and %FALSE otherwise.
  *
  * Since: 1.0
  */
@@ -1155,35 +1154,39 @@ finance_transaction_set_mobile (FinanceTransaction  *self,
 }
 
 /**
- * finance_transaction_clear:
+ * finance_transaction_create_new:
  * @self: a #FinanceTransaction object.
  *
- * Clears all data entry fields.
+ * Clears all data entry fields to create a new transaction.
  *
  * Since: 1.0
  */
-/* void */
-/* finance_transaction_clear (FinanceTransaction *self) */
-/* { */
-/*   g_return_if_fail (FINANCE_IS_TRANSACTION (self)); */
+void
+finance_transaction_create_new (FinanceTransaction *self)
+{
+  g_return_if_fail (FINANCE_IS_TRANSACTION (self));
 
-/*   g_free (self->icon); */
-/*   g_free (self->notes); */
+  g_free (self->icon);
+  g_free (self->notes);
 
-/*   self->icon = g_strdup ("NT"); */
-/*   self->notes = g_strdup (""); */
+  gdk_rgba_free (self->color);
 
-/*   self->color = finance_utils_random_rgba_color (); */
-/*   gtk_text_buffer_set_text (GTK_TEXT_BUFFER (self->notes_buffer), */
-/*                             self->notes, -1); */
+  self->icon = g_strdup ("NW");
+  self->notes = g_strdup ("");
 
-/*   create_icon (self); */
+  self->color = finance_utils_random_rgba_color ();
 
-/*   gtk_entry_set_text (GTK_ENTRY (self->name), ""); */
-/*   gtk_entry_set_text (GTK_ENTRY (self->amount), ""); */
-/*   gtk_entry_set_text (GTK_ENTRY (self->date), ""); */
-/*   gtk_entry_set_text (GTK_ENTRY (self->payee_name), ""); */
-/*   gtk_combo_box_set_active (GTK_COMBO_BOX (self->payment), 0); */
-/*   gtk_entry_set_text (GTK_ENTRY (self->payment_info), ""); */
-/*   gtk_combo_box_set_active (GTK_COMBO_BOX (self->repeat), 0); */
-/* } */
+  create_icon (self);
+
+  gtk_text_buffer_set_text (GTK_TEXT_BUFFER (self->buffer_notes),
+                            self->notes, -1);
+
+  gtk_combo_box_set_active (GTK_COMBO_BOX (self->combo_payment), 0);
+  gtk_combo_box_set_active (GTK_COMBO_BOX (self->combo_repeat), 0);
+
+  gtk_entry_set_text (GTK_ENTRY (self->entry_amount), "");
+  gtk_entry_set_text (GTK_ENTRY (self->entry_date), "");
+  gtk_entry_set_text (GTK_ENTRY (self->entry_name), "");
+  gtk_entry_set_text (GTK_ENTRY (self->entry_payee_name), "");
+  gtk_entry_set_text (GTK_ENTRY (self->entry_payment_info), "");
+}
