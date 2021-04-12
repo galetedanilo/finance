@@ -74,7 +74,7 @@ filter_string (FinanceEntryMonetary *self)
 }
 
 static void
-on_automatic_monetary_formatting (GtkEditable *editable,
+on_monetary_automatic_formatting (GtkEditable *editable,
                                   const gchar *text,
                                   gint        length,
                                   gint        *position,
@@ -87,7 +87,7 @@ on_automatic_monetary_formatting (GtkEditable *editable,
   if (g_unichar_type (aux_num) == G_UNICODE_DECIMAL_NUMBER)
     {
       g_signal_handlers_block_by_func (editable,
-                                       (gpointer) on_automatic_monetary_formatting,
+                                       (gpointer) on_monetary_automatic_formatting,
                                        user_data);
 
       gtk_editable_insert_text (editable,
@@ -114,7 +114,7 @@ on_automatic_monetary_formatting (GtkEditable *editable,
         }
 
       g_signal_handlers_unblock_by_func (editable,
-                                         (gpointer) on_automatic_monetary_formatting,
+                                         (gpointer) on_monetary_automatic_formatting,
                                          user_data);
     }
 
@@ -151,13 +151,13 @@ on_monetary_formatting (FinanceEntryMonetary *self)
     }
 
   g_signal_handlers_block_by_func (self,
-                                   (gpointer) on_automatic_monetary_formatting,
+                                   (gpointer) on_monetary_automatic_formatting,
                                    self);
 
   gtk_entry_set_text (GTK_ENTRY (self), money);
 
   g_signal_handlers_unblock_by_func (self,
-                                     (gpointer) on_automatic_monetary_formatting,
+                                     (gpointer) on_monetary_automatic_formatting,
                                      self);
 }
 
@@ -391,10 +391,10 @@ finance_entry_monetary_class_init (FinanceEntryMonetaryClass *klass)
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/transaction/finance-entry-monetary.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/transaction/entries/finance-entry-monetary.ui");
 
   /* The CallBacks */
-  gtk_widget_class_bind_template_callback (widget_class, on_automatic_monetary_formatting);
+  gtk_widget_class_bind_template_callback (widget_class, on_monetary_automatic_formatting);
 }
 
 static void
@@ -488,9 +488,9 @@ finance_entry_monetary_set_formatting (FinanceEntryMonetary *self,
   self->is_formatting = is_formatting;
 
   if (self->is_formatting)
-    g_signal_handlers_unblock_by_func (self, on_automatic_monetary_formatting, self);
+    g_signal_handlers_unblock_by_func (self, on_monetary_automatic_formatting, self);
   else
-    g_signal_handlers_block_by_func (self, on_automatic_monetary_formatting, self);
+    g_signal_handlers_block_by_func (self, on_monetary_automatic_formatting, self);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_FORMATTING]);
 }
@@ -579,6 +579,7 @@ finance_entry_monetary_set_currency_symbol (FinanceEntryMonetary  *self,
  * finance_entry_monetary_get_symbol:
  * @self: a #FinanceEntryMonetary instance.
  *
+ * Returns the type of currency symbol in use.
  *
  * Returns: a #FinanceSymbol.
  *

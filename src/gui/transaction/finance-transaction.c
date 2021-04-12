@@ -1178,6 +1178,9 @@ finance_transaction_create_new (FinanceTransaction *self)
 
   create_icon (self);
 
+  //Do not forget
+  finance_entry_monetary_set_amount (FINANCE_ENTRY_MONETARY (self->entry_amount), 0.0);
+
   gtk_text_buffer_set_text (GTK_TEXT_BUFFER (self->buffer_notes),
                             self->notes, -1);
 

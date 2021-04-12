@@ -162,11 +162,22 @@ finance_pane_init (FinancePane *self)
                               FALSE);
 }
 
+/**
+ * finance_pane_prepend_row:
+ * @self: a #FinancePane instance.
+ * @row: a #GtkWidget to add.
+ *
+ * Prepend a widget to the list. If a sort function is set,
+ * the widget will actually be inserted at the calculated position
+ * and this function has the same effect of gtk_container_add().
+ *
+ * Since: 1.0
+ */
 void
-finance_pane_add_row (FinancePane *self,
-                      GtkWidget   *row)
+finance_pane_prepend_row (FinancePane *self,
+                          GtkWidget   *row)
 {
   g_return_if_fail (FINANCE_IS_PANE (self));
 
-  gtk_list_box_insert (GTK_LIST_BOX (self->list), row, -1);
+  gtk_list_box_prepend (GTK_LIST_BOX (self->list), row);
 }

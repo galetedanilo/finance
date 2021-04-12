@@ -33,7 +33,7 @@ G_DECLARE_FINAL_TYPE (FinancePane, finance_pane, FINANCE, PANE, GtkBox)
 
 GtkWidget *   finance_pane_new                    (void);
 
-void          finance_pane_add_row                (FinancePane  *self,
+void          finance_pane_prepend_row            (FinancePane  *self,
                                                    GtkWidget    *row);
 
 G_END_DECLS

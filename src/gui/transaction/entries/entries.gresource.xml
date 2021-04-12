@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/org/gnome/finance/transaction/entries">
+    <file compressed="true">finance-entry-date.ui</file>
+    <file compressed="true">finance-entry-monetary.ui</file>
+  </gresource>
+</gresources>    

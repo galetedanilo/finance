@@ -139,7 +139,7 @@ finance_controller_transactions_class_init (FinanceControllerTransactionsClass *
 static void
 finance_controller_transactions_init (FinanceControllerTransactions *self)
 {
-  self->child = g_ptr_array_new
+  //self->child = g_ptr_array_new
 }
 
 void
@@ -154,6 +154,6 @@ finance_controller_transactions_startup (FinanceControllerTransactions *self)
         finance_pane_row_set_title (row, "Transaction Name Title");
         finance_pane_row_set_amount (row, "R$2,540.45");
 
-      finance_pane_add_row (FINANCE_PANE (self->pane), row);
+      finance_pane_prepend_row (FINANCE_PANE (self->pane), row);
     }
 }
