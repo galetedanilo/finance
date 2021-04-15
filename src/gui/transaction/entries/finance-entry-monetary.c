@@ -41,9 +41,9 @@ G_DEFINE_TYPE (FinanceEntryMonetary, finance_entry_monetary, GTK_TYPE_ENTRY)
 enum {
   PROP_0,
   PROP_AMOUNT,
-  PROP_FORMATTING,
-  PROP_DECIMAL_PLACES,
   PROP_CURRENCY_SYMBOL,
+  PROP_DECIMAL_PLACES,
+  PROP_FORMATTING,
   PROP_SYMBOL,
   N_PROPS,
 };
@@ -260,16 +260,16 @@ finance_entry_monetary_get_property (GObject    *object,
       g_value_set_double (value, finance_entry_monetary_get_amount (self));
       break;
 
-    case PROP_FORMATTING:
-      g_value_set_boolean (value, finance_entry_monetary_get_formatting (self));
+    case PROP_CURRENCY_SYMBOL:
+      g_value_set_boolean (value, finance_entry_monetary_get_currency_symbol (self));
       break;
 
     case PROP_DECIMAL_PLACES:
       g_value_set_int (value, finance_entry_monetary_get_decimal_places (self));
       break;
 
-    case PROP_CURRENCY_SYMBOL:
-      g_value_set_boolean (value, finance_entry_monetary_get_currency_symbol (self));
+    case PROP_FORMATTING:
+      g_value_set_boolean (value, finance_entry_monetary_get_formatting (self));
       break;
 
     case PROP_SYMBOL:
@@ -296,16 +296,16 @@ finance_entry_monetary_set_property (GObject      *object,
       finance_entry_monetary_set_amount (self, g_value_get_double (value));
       break;
 
-    case PROP_FORMATTING:
-      finance_entry_monetary_set_formatting (self, g_value_get_boolean (value));
+    case PROP_CURRENCY_SYMBOL:
+      finance_entry_monetary_set_currency_symbol (self, g_value_get_boolean (value));
       break;
 
     case PROP_DECIMAL_PLACES:
       finance_entry_monetary_set_decimal_places (self, g_value_get_int (value));
       break;
 
-    case PROP_CURRENCY_SYMBOL:
-      finance_entry_monetary_set_currency_symbol (self, g_value_get_boolean (value));
+    case PROP_FORMATTING:
+      finance_entry_monetary_set_formatting (self, g_value_get_boolean (value));
       break;
 
     case PROP_SYMBOL:
@@ -342,16 +342,17 @@ finance_entry_monetary_class_init (FinanceEntryMonetaryClass *klass)
                                                  G_MAXDOUBLE,
                                                  0.0,
                                                  G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
   /**
-   * FinanceEntryMonetary::formatting:
+   * FinanceEntryMonetary::currency-symbol:
    *
-   * Enable automatic monetary formatting
+   * Enable automatic currency symbol
    */
-  properties[PROP_FORMATTING] = g_param_spec_boolean ("formatting",
-                                                      "Enable automatic monetary formatting",
-                                                      "Enable automatic monetary formatting",
-                                                      TRUE,
-                                                      G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+  properties[PROP_CURRENCY_SYMBOL] = g_param_spec_boolean ("currency-symbol",
+                                                           "Enable automatic currency symbol",
+                                                           "Enable automatic currency symbol",
+                                                           FALSE,
+                                                           G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
    * FinanceEntryMonetary::decimal-places:
@@ -367,17 +368,18 @@ finance_entry_monetary_class_init (FinanceEntryMonetaryClass *klass)
                                                       G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinanceEntryMonetary::currency-symbol:
+   * FinanceEntryMonetary::formatting:
    *
-   * Enable automatic currency symbol
+   * Enable automatic monetary formatting
    */
-  properties[PROP_CURRENCY_SYMBOL] = g_param_spec_boolean ("currency-symbol",
-                                                           "Enable automatic currency symbol",
-                                                           "Enable automatic currency symbol",
-                                                           FALSE,
-                                                           G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+  properties[PROP_FORMATTING] = g_param_spec_boolean ("formatting",
+                                                      "Enable automatic monetary formatting",
+                                                      "Enable automatic monetary formatting",
+                                                      TRUE,
+                                                      G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
-    /**
+
+  /**
    * FinanceEntryMonetary::symbol-type:
    *
    * Sets currency symbol is local or international

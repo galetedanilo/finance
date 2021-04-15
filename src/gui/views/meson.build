@@ -1,3 +1,5 @@
+finance_incs += include_directories('children')
+
 built_sources += gnome.compile_resources(
   'views-resources',
   'views.gresource.xml',
@@ -6,6 +8,7 @@ built_sources += gnome.compile_resources(
 
 sources += files(
   'finance-view.c',
-  'finance-view-child.c',
   'finance-view-transactions.c',
 )
+
+subdir('children')

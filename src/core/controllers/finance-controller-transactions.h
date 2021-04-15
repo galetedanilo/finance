@@ -26,7 +26,7 @@
 #include "finance-pane.h"
 #include "finance-pane-row.h"
 #include "finance-view.h"
-#include "finance-view-child.h"
+#include "finance-child-summary.h"
 
 G_BEGIN_DECLS
 

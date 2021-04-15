@@ -25,6 +25,7 @@ G_DEFINE_INTERFACE (FinanceView, finance_view, G_TYPE_OBJECT)
 static void
 finance_view_default_init (FinanceViewInterface *iface)
 {
+  (void)iface;
 }
 
 void

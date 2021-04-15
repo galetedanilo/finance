@@ -23,7 +23,7 @@
 
 #include <gtk/gtk.h>
 
-#include "finance-view-child.h"
+#include "finance-child-summary.h"
 
 G_BEGIN_DECLS
 

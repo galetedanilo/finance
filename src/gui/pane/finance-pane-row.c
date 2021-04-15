@@ -27,11 +27,11 @@ struct _FinancePaneRow
   GtkListBoxRow   parent_instance;
 
   /* The Widgets */
-  GtkWidget       *image;
-  GtkWidget       *title;
   GtkWidget       *amount;
-  GtkWidget       *revealer;
   GtkWidget       *check;
+  GtkWidget       *image;
+  GtkWidget       *revealer;
+  GtkWidget       *title;
 
   GdkRGBA         *color;
   gchar           *icon;
@@ -41,11 +41,11 @@ G_DEFINE_TYPE (FinancePaneRow, finance_pane_row, GTK_TYPE_LIST_BOX_ROW)
 
 enum {
   PROP_0,
-  PROP_ICON,
-  PROP_COLOR,
-  PROP_TITLE,
   PROP_AMOUNT,
+  PROP_COLOR,
+  PROP_ICON,
   PROP_SELECTED,
+  PROP_TITLE,
   N_PROPS,
 };
 
@@ -124,24 +124,24 @@ finance_pane_row_get_property (GObject    *object,
 
   switch (prop_id)
     {
-    case PROP_ICON:
-      g_value_set_string (value, finance_pane_row_get_icon (self));
+    case PROP_AMOUNT:
+      g_value_set_string (value, finance_pane_row_get_amount (self));
       break;
 
     case PROP_COLOR:
       g_value_set_boxed (value, finance_pane_row_get_color (self));
       break;
 
-    case PROP_TITLE:
-      g_value_set_string (value, finance_pane_row_get_title (self));
-      break;
-
-    case PROP_AMOUNT:
-      g_value_set_string (value, finance_pane_row_get_amount (self));
+    case PROP_ICON:
+      g_value_set_string (value, finance_pane_row_get_icon (self));
       break;
 
     case PROP_SELECTED:
       g_value_set_boolean (value, finance_pane_row_is_selected (self));
+      break;
+
+    case PROP_TITLE:
+      g_value_set_string (value, finance_pane_row_get_title (self));
       break;
 
     default:
@@ -160,20 +160,20 @@ finance_pane_row_set_property (GObject      *object,
 
   switch (prop_id)
     {
-    case PROP_ICON:
-      finance_pane_row_set_icon (self, g_value_get_string (value));
+    case PROP_AMOUNT:
+      finance_pane_row_set_amount (self, g_value_get_string (value));
       break;
 
     case PROP_COLOR:
       finance_pane_row_set_color (self, g_value_get_boxed (value));
       break;
 
-    case PROP_TITLE:
-      finance_pane_row_set_title (self, g_value_get_string (value));
+    case PROP_ICON:
+      finance_pane_row_set_icon (self, g_value_get_string (value));
       break;
 
-    case PROP_AMOUNT:
-      finance_pane_row_set_amount (self, g_value_get_string (value));
+    case PROP_TITLE:
+      finance_pane_row_set_title (self, g_value_get_string (value));
       break;
 
     case PROP_SELECTED:
@@ -211,15 +211,15 @@ finance_pane_row_class_init (FinancePaneRowClass *klass)
                                   0);
 
   /**
-   * FinancePaneRow::icon:
+   * FinancePaneRow::amount:
    *
-   * The two letters that are part of the icon image
+   * The pane row amount
    */
-  properties[PROP_ICON] = g_param_spec_string ("icon",
-                                               "Icon",
-                                               "The two letters that are part of the icon image",
-                                               NULL,
-                                               G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+  properties[PROP_AMOUNT] =  g_param_spec_string ("amount",
+                                                  "Amount",
+                                                  "The pane row amount",
+                                                  NULL,
+                                                  G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
    * FinancePaneRow::color:
@@ -233,6 +233,17 @@ finance_pane_row_class_init (FinancePaneRowClass *klass)
                                                G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
+   * FinancePaneRow::icon:
+   *
+   * The two letters that are part of the icon image
+   */
+  properties[PROP_ICON] = g_param_spec_string ("icon",
+                                               "Icon",
+                                               "The two letters that are part of the icon image",
+                                               NULL,
+                                               G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
+  /**
    * FinancePaneRow::title:
    *
    * The pane row title
@@ -242,17 +253,6 @@ finance_pane_row_class_init (FinancePaneRowClass *klass)
                                                 "The pane row title",
                                                 NULL,
                                                 G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
-
-  /**
-   * FinancePaneRow::amount:
-   *
-   * The pane row amount
-   */
-  properties[PROP_AMOUNT] =  g_param_spec_string ("amount",
-                                                  "Amount",
-                                                  "The pane row amount",
-                                                  NULL,
-                                                  G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
    * FinancePaneRow::selected

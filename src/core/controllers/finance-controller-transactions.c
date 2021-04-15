@@ -27,8 +27,6 @@ struct _FinanceControllerTransactions
   /* The Objects */
   GObject   *pane;
   GObject   *view_transactions;
-  GPtrArray *childs;
-  GPtrArray *rows;
 
 };
 
@@ -145,14 +143,21 @@ finance_controller_transactions_init (FinanceControllerTransactions *self)
 void
 finance_controller_transactions_startup (FinanceControllerTransactions *self)
 {
-    for(int x = 0; x < 2; x++)
+    for(int x = 0; x < 200; x++)
     {
         //this is a test
+        GtkWidget *summary = finance_child_summary_new ();
         GtkWidget *row = finance_pane_row_new ();
 
         finance_pane_row_set_icon (row, "TR");
         finance_pane_row_set_title (row, "Transaction Name Title");
         finance_pane_row_set_amount (row, "R$2,540.45");
+
+      finance_child_summary_set_name (summary, "Teste");
+
+      finance_view_insert_child (FINANCE_VIEW (self->view_transactions), summary);
+
+
 
       finance_pane_prepend_row (FINANCE_PANE (self->pane), row);
     }

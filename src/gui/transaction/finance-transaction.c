@@ -58,21 +58,21 @@ G_DEFINE_TYPE (FinanceTransaction, finance_transaction, GTK_TYPE_GRID)
 
 enum {
   PROP_0,
-  PROP_ICON,
-  PROP_COLOR,
-  PROP_NAME,
   PROP_AMOUNT,
+  //PROP_CATEGORY,
+  PROP_COLOR,
   PROP_DATE,
+  PROP_FREQUENCY,
+  PROP_FREQUENCY_DATE,
+  PROP_FREQUENCY_NUMBER,
+  PROP_ICON,
+  PROP_MOBILE,
+  PROP_NAME,
+  PROP_NOTES,
   PROP_PAYEE_NAME,
   PROP_PAYMENT,
   PROP_PAYMENT_INFO,
-  //PROP_CATEGORY,
   PROP_REPEAT,
-  PROP_FREQUENCY,
-  PROP_FREQUENCY_NUMBER,
-  PROP_FREQUENCY_DATE,
-  PROP_NOTES,
-  PROP_MOBILE,
   N_PROPS
 };
 
@@ -214,24 +214,44 @@ finance_transaction_get_property (GObject    *object,
 
   switch (prop_id)
     {
-    case PROP_ICON:
-      g_value_set_string (value, finance_transaction_get_icon (self));
+    case PROP_AMOUNT:
+      g_value_set_double (value, finance_transaction_get_amount (self));
       break;
 
     case PROP_COLOR:
       g_value_set_boxed (value, finance_transaction_get_color (self));
       break;
 
+    case PROP_DATE:
+      g_value_set_boxed (value, finance_transaction_get_date (self));
+      break;
+
+    case PROP_FREQUENCY:
+      g_value_set_enum (value, finance_transaction_get_frequency (self));
+      break;
+
+    case PROP_FREQUENCY_DATE:
+      g_value_set_boxed (value,finance_transaction_get_frequency_date (self));
+      break;
+
+    case PROP_FREQUENCY_NUMBER:
+      g_value_set_int (value, finance_transaction_get_frequency_number (self));
+      break;
+
+    case PROP_ICON:
+      g_value_set_string (value, finance_transaction_get_icon (self));
+      break;
+
+    case PROP_MOBILE:
+      g_value_set_boolean (value, finance_transaction_get_mobile (self));
+      break;
+
     case PROP_NAME:
       g_value_set_string (value, finance_transaction_get_name (self));
       break;
 
-    case PROP_AMOUNT:
-      g_value_set_double (value, finance_transaction_get_amount (self));
-      break;
-
-    case PROP_DATE:
-      g_value_set_boxed (value, finance_transaction_get_date (self));
+    case PROP_NOTES:
+      g_value_set_string (value, finance_transaction_get_notes (self));
       break;
 
     case PROP_PAYEE_NAME:
@@ -250,26 +270,6 @@ finance_transaction_get_property (GObject    *object,
       g_value_set_enum (value, finance_transaction_get_repeat (self));
       break;
 
-    case PROP_FREQUENCY:
-      g_value_set_enum (value, finance_transaction_get_frequency (self));
-      break;
-
-    case PROP_FREQUENCY_NUMBER:
-      g_value_set_int (value, finance_transaction_get_frequency_number (self));
-      break;
-
-    case PROP_FREQUENCY_DATE:
-      g_value_set_boxed (value,finance_transaction_get_frequency_date (self));
-      break;
-
-    case PROP_NOTES:
-      g_value_set_string (value, finance_transaction_get_notes (self));
-      break;
-
-    case PROP_MOBILE:
-      g_value_set_boolean (value, finance_transaction_get_mobile (self));
-      break;
-
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -286,24 +286,44 @@ finance_transaction_set_property (GObject      *object,
 
   switch (prop_id)
     {
-    case PROP_ICON:
-      finance_transaction_set_icon (self, g_value_get_string (value));
+    case PROP_AMOUNT:
+      finance_transaction_set_amount (self, g_value_get_double (value));
       break;
 
     case PROP_COLOR:
       finance_transaction_set_color (self, g_value_get_boxed (value));
       break;
 
+    case PROP_DATE:
+      finance_transaction_set_date (self, g_value_get_boxed (value));
+      break;
+
+    case PROP_FREQUENCY:
+      finance_transaction_set_frequency (self, g_value_get_enum (value));
+      break;
+
+    case PROP_FREQUENCY_DATE:
+      finance_transaction_set_frequency_date (self, g_value_get_boxed (value));
+      break;
+
+    case PROP_FREQUENCY_NUMBER:
+      finance_transaction_set_frequency_number (self, g_value_get_int (value));
+      break;
+
+    case PROP_ICON:
+      finance_transaction_set_icon (self, g_value_get_string (value));
+      break;
+
+    case PROP_MOBILE:
+      finance_transaction_set_mobile (self, g_value_get_boolean (value));
+      break;
+
     case PROP_NAME:
       finance_transaction_set_name (self, g_value_get_string (value));
       break;
 
-    case PROP_AMOUNT:
-      finance_transaction_set_amount (self, g_value_get_double (value));
-      break;
-
-    case PROP_DATE:
-      finance_transaction_set_date (self, g_value_get_boxed (value));
+    case PROP_NOTES:
+      finance_transaction_set_notes (self, g_value_get_string (value));
       break;
 
     case PROP_PAYEE_NAME:
@@ -320,26 +340,6 @@ finance_transaction_set_property (GObject      *object,
       
     case PROP_REPEAT:
       finance_transaction_set_repeat (self, g_value_get_enum (value));
-      break;
-
-    case PROP_FREQUENCY:
-      finance_transaction_set_frequency (self, g_value_get_enum (value));
-      break;
-
-    case PROP_FREQUENCY_NUMBER:
-      finance_transaction_set_frequency_number (self, g_value_get_int (value));
-      break;
-
-    case PROP_FREQUENCY_DATE:
-      finance_transaction_set_frequency_date (self, g_value_get_boxed (value));
-      break;
-
-    case PROP_NOTES:
-      finance_transaction_set_notes (self, g_value_get_string (value));
-      break;
-
-    case PROP_MOBILE:
-      finance_transaction_set_mobile (self, g_value_get_boolean (value));
       break;
 
     default:
@@ -363,39 +363,6 @@ finance_transaction_class_init (FinanceTransactionClass *klass)
   object_class->set_property = finance_transaction_set_property;
 
   /**
-   * FinanceTransaction::icon:
-   *
-   * The two letters that are part of the icon image
-   */
-  properties[PROP_ICON] = g_param_spec_string ("icon",
-                                               "Icon",
-                                               "The two letters that are part of the icon image",
-                                               NULL,
-                                               G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
-
-  /**
-   * FinanceTransaction::color:
-   *
-   * The background color of the icon
-   */
-  properties[PROP_COLOR] = g_param_spec_boxed ("color",
-                                               "Color",
-                                               "The background color of the icon",
-                                               GDK_TYPE_RGBA,
-                                               G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
-
-  /**
-   * FinanceTransaction::name:
-   *
-   * The transaction name
-   */
-  properties[PROP_NAME] = g_param_spec_string ("name",
-                                               "Name",
-                                               "The transaction name",
-                                               NULL,
-                                               G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
-
-  /**
    * FinanceTransaction::amount:
    *
    * The transaction amount
@@ -409,6 +376,17 @@ finance_transaction_class_init (FinanceTransactionClass *klass)
                                                   G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
+   * FinanceTransaction::color:
+   *
+   * The background color of the icon
+   */
+  properties[PROP_COLOR] = g_param_spec_boxed ("color",
+                                               "Color",
+                                               "The background color of the icon",
+                                               GDK_TYPE_RGBA,
+                                               G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
+  /**
    * FinanceTransaction::date:
    *
    * The transaction date
@@ -418,6 +396,86 @@ finance_transaction_class_init (FinanceTransactionClass *klass)
                                               "The transaction date",
                                               G_TYPE_DATE_TIME,
                                               G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * FinanceTransaction::frequency:
+   *
+   * The transaction frequency
+   */
+  properties[PROP_FREQUENCY] = g_param_spec_enum ("frequency",
+                                                  "Frequency",
+                                                  "The transaction frequency",
+                                                  FINANCE_TYPE_FREQUENCY,
+                                                  FINANCE_FOREVER,
+                                                  G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * FinanceTransaction::frequency_date:
+   *
+   * The date of the financial transaction frequency
+   */
+  properties[PROP_FREQUENCY_DATE] = g_param_spec_boxed ("frequency-date",
+                                                        "Fequency date",
+                                                        "The date of the financial transaction frequency",
+                                                        G_TYPE_DATE_TIME,
+                                                        G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * FinanceTransaction::frequency_number:
+   *
+   * The number of frequency of transactions
+   */
+  properties[PROP_FREQUENCY_NUMBER] = g_param_spec_int ("frequency-number",
+                                                        "Frequency Number",
+                                                        "The number of frequency of transactions",
+                                                        2, 365, 2,
+                                                        G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
+
+  /**
+   * FinanceTransaction::icon:
+   *
+   * The two letters that are part of the icon image
+   */
+  properties[PROP_ICON] = g_param_spec_string ("icon",
+                                               "Icon",
+                                               "The two letters that are part of the icon image",
+                                               NULL,
+                                               G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * FinanceTransaction::mobile:
+   *
+   * The transaction mobile
+   */
+  properties[PROP_MOBILE] = g_param_spec_boolean ("mobile",
+                                                  "Mobile",
+                                                  "The transaction mobile",
+                                                  FALSE,
+                                                  G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * FinanceTransaction::name:
+   *
+   * The transaction name
+   */
+  properties[PROP_NAME] = g_param_spec_string ("name",
+                                               "Name",
+                                               "The transaction name",
+                                               NULL,
+                                               G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * FinanceTransaction::notes:
+   *
+   * The transaction notes information
+   */
+  properties[PROP_NOTES] = g_param_spec_string ("notes",
+                                                "Notes",
+                                                "The transaction notes information",
+                                                NULL,
+                                                G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
 
   /**
    * FinanceTransaction::payee_name:
@@ -464,62 +522,6 @@ finance_transaction_class_init (FinanceTransactionClass *klass)
                                                FINANCE_TYPE_REPEAT,
                                                FINANCE_NO_REPEAT,
                                                G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
-
-  /**
-   * FinanceTransaction::frequency:
-   *
-   * The transaction frequency
-   */
-  properties[PROP_FREQUENCY] = g_param_spec_enum ("frequency",
-                                                  "Frequency",
-                                                  "The transaction frequency",
-                                                  FINANCE_TYPE_FREQUENCY,
-                                                  FINANCE_FOREVER,
-                                                  G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
-
-  /**
-   * FinanceTransaction::frequency_number:
-   *
-   * The number of frequency of transactions
-   */
-  properties[PROP_FREQUENCY_NUMBER] = g_param_spec_int ("frequency-number",
-                                                        "Frequency Number",
-                                                        "The number of frequency of transactions",
-                                                        2, 365, 2,
-                                                        G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
-
-  /**
-   * FinanceTransaction::frequency_date:
-   *
-   * The date of the financial transaction frequency
-   */
-  properties[PROP_FREQUENCY_DATE] = g_param_spec_boxed ("frequency-date",
-                                                        "Fequency date",
-                                                        "The date of the financial transaction frequency",
-                                                        G_TYPE_DATE_TIME,
-                                                        G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
-
-  /**
-   * FinanceTransaction::notes:
-   *
-   * The transaction notes information
-   */
-  properties[PROP_NOTES] = g_param_spec_string ("notes",
-                                                "Notes",
-                                                "The transaction notes information",
-                                                NULL,
-                                                G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
-
-  /**
-   * FinanceTransaction::mobile:
-   *
-   * The transaction mobile
-   */
-  properties[PROP_MOBILE] = g_param_spec_boolean ("mobile",
-                                                  "Mobile",
-                                                  "The transaction mobile",
-                                                  FALSE,
-                                                  G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
