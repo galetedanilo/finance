@@ -32,7 +32,7 @@ struct _FinanceEntryDate
 
   GDateTime   *date_time;
 
-  gboolean    is_formatting;
+  gboolean    formatting;
 };
 
 G_DEFINE_TYPE (FinanceEntryDate, finance_entry_date, GTK_TYPE_ENTRY)
@@ -297,15 +297,15 @@ finance_entry_date_class_init (FinanceEntryDateClass *klass)
 static void
 finance_entry_date_init (FinanceEntryDate *self)
 {
-  self->date_time     = g_date_time_new_now_local ();
-  self->is_formatting = TRUE;
+  self->date_time   = g_date_time_new_now_local ();
+  self->formatting  = TRUE;
 
   gtk_widget_init_template (GTK_WIDGET (self));
 }
 
 /**
  * finance_entry_date_get_date:
- * @self: a #FinanceEntryDate instance.
+ * @self: a #FinanceEntryDate
  *
  * Get the value of the date.
  *
@@ -323,7 +323,7 @@ finance_entry_date_get_date (FinanceEntryDate *self)
 
 /**
  * finance_entry_date_set_date:
- * @self: a #FinanceEntryDate object.
+ * @self: a #FinanceEntryDate
  * @date: a valid #GDateTime.
  *
  * Set the value of the entry date.
@@ -348,7 +348,7 @@ finance_entry_date_set_date (FinanceEntryDate *self,
 
 /**
  * finance_entry_date_get_formatting:
- * @self: a #FinanceEntryDate instance.
+ * @self: a #FinanceEntryDate
  *
  * Gets whether the formatting is in its “on” or “off” state.
  *
@@ -361,13 +361,13 @@ finance_entry_date_get_formatting (FinanceEntryDate *self)
 {
   g_return_val_if_fail (FINANCE_IS_ENTRY_DATE (self), FALSE);
 
-  return self->is_formatting;
+  return self->formatting;
 }
 
 /**
  * finance_entry_date_set_formatting:
- * @self: a #FinanceEntryDate object.
- * @is_formatting: %TRUE if formatting should be active, and %FALSE otherwise.
+ * @self: a #FinanceEntryDate
+ * @formatting: %TRUE if formatting should be active, and %FALSE otherwise.
  *
  * Change automatic date formatting states. %TRUE if formatting should be active, and %FALSE otherwise.
  *
@@ -375,16 +375,16 @@ finance_entry_date_get_formatting (FinanceEntryDate *self)
  */
 void
 finance_entry_date_set_formatting (FinanceEntryDate *self,
-                                   gboolean         is_formatting)
+                                   gboolean         formatting)
 {
   g_return_if_fail (FINANCE_IS_ENTRY_DATE (self));
 
-  if (self->is_formatting == is_formatting)
+  if (self->formatting == formatting)
     return;
 
-  self->is_formatting = is_formatting;
+  self->formatting = formatting;
 
-  if (self->is_formatting)
+  if (self->formatting)
     g_signal_handlers_unblock_by_func (self, on_automatic_date_formatting, self);
   else
     g_signal_handlers_block_by_func (self, on_automatic_date_formatting, self);
