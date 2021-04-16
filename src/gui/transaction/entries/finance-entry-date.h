@@ -39,7 +39,7 @@ void              finance_entry_date_set_date         (FinanceEntryDate *self,
 gboolean          finance_entry_date_get_formatting   (FinanceEntryDate *self);
 
 void              finance_entry_date_set_formatting   (FinanceEntryDate *self,
-                                                       gboolean         is_formatting);
+                                                       gboolean         formatting);
 
 G_END_DECLS
 
