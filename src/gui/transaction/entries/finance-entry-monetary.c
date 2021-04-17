@@ -30,8 +30,8 @@ struct _FinanceEntryMonetary
   gdouble     amount;
   gint        decimal_value;
 
-  gboolean    is_formatting;
-  gboolean    is_currency_symbol;
+  gboolean    formatting;
+  gboolean    currency_symbol;
 
   FinanceSymbol symbol;
 };
@@ -131,7 +131,7 @@ on_monetary_formatting (FinanceEntryMonetary *self)
   if (!gtk_entry_get_text_length (GTK_ENTRY (self)))
     return;
 
-  if (self->is_currency_symbol)
+  if (self->currency_symbol)
     {
       if (self->symbol == FINANCE_LOCAL)
         {
@@ -177,7 +177,7 @@ finance_entry_monetary_focus_in_event (GtkWidget      *widget,
 
   gtk_entry_set_alignment (GTK_ENTRY (self), 1);
 
-  if (self->is_formatting && self->amount == 0.0)
+  if (self->formatting && self->amount == 0.0)
     {
 
       switch (self->decimal_value)
@@ -227,7 +227,7 @@ finance_entry_monetary_focus_out_event (GtkWidget     *widget,
 
   if (gtk_entry_get_text_length (GTK_ENTRY (self)))
     {
-      if (!self->is_formatting)
+      if (!self->formatting)
         self->amount = g_strtod (gtk_entry_get_text (GTK_ENTRY (self)), NULL);
       else
         filter_string (self);
@@ -402,18 +402,18 @@ finance_entry_monetary_class_init (FinanceEntryMonetaryClass *klass)
 static void
 finance_entry_monetary_init (FinanceEntryMonetary *self)
 {
-  self->is_currency_symbol  = FALSE;
-  self->is_formatting       = TRUE;
-  self->amount              = 0.0;
-  self->decimal_value       = 1;
-  self->symbol              = FINANCE_LOCAL;
+  self->currency_symbol = FALSE;
+  self->formatting      = TRUE;
+  self->amount          = 0.0;
+  self->decimal_value   = 1;
+  self->symbol          = FINANCE_LOCAL;
 
   gtk_widget_init_template (GTK_WIDGET (self));
 }
 
 /**
  * finance_entr_monetary_get_amount:
- * @self: a #FinanceEntryMonetary instance.
+ * @self: a #FinanceEntryMonetary
  *
  * Gets the amount value in #FinanceEntryMonetary.
  *
@@ -431,7 +431,7 @@ finance_entry_monetary_get_amount (FinanceEntryMonetary *self)
 
 /**
  * finance_entry_monetary_set_amount:
- * @self: a #FinanceEntryMonetary object.
+ * @self: a #FinanceEntryMonetary
  * @amount: a #gdouble to set it to.
  *
  * Sets amount value in #FinanceEntryMonetary.
@@ -452,54 +452,48 @@ finance_entry_monetary_set_amount (FinanceEntryMonetary *self,
 }
 
 /**
- * finance_entry_monetary_get_formatting:
- * @self: a #FinanceEntryMonetary instance.
+ * finance_entry_manetary_get_currency_symbol:
+ * @self: a #FinanceEntryMonetary
  *
- * Gets whether the formatting is in its “on” or “off” state.
+ * Gets whether the currency symbol is in its “on” or “off” state.
  *
- * Returns: %TRUE if the automatic date formatting is active, and %FALSE otherwise.
+ * Returns: %TRUE if the currency symbol is active, and %FALSE otherwise.
  *
  * Since: 1.0
  */
 gboolean
-finance_entry_monetary_get_formatting (FinanceEntryMonetary *self)
+finance_entry_monetary_get_currency_symbol (FinanceEntryMonetary *self)
 {
   g_return_val_if_fail (FINANCE_IS_ENTRY_MONETARY (self), FALSE);
 
-  return self->is_formatting;
+  return self->currency_symbol;
 }
 
 /**
- * finance_entry_monetary_set_formatting:
- * @self: a #FinanceEntryMonetary object.
- * @is_formatting: %TRUE if formatting should be active, and %FALSE otherwise.
+ * finance_entry_monetary_set_currency_symbol:
+ * @self: a #FinanceEntryMonetary
+ * @currency_symbol: %TRUE if currency symbol should be active, and %FALSE otherwise.
  *
- * Change automatic monetary formatting states. %TRUE if formatting should be active, and %FALSE otherwise.
+ * Change currency symbol states. %TRUE if currency symbol should be active, and %FALSE otherwise.
  *
  * Since: 1.0
  */
 void
-finance_entry_monetary_set_formatting (FinanceEntryMonetary *self,
-                                       gboolean             is_formatting)
+finance_entry_monetary_set_currency_symbol (FinanceEntryMonetary  *self,
+                                            gboolean              currency_symbol)
 {
   g_return_if_fail (FINANCE_IS_ENTRY_MONETARY (self));
 
-  if (self->is_formatting == is_formatting)
-    return;
+  self->currency_symbol = currency_symbol;
 
-  self->is_formatting = is_formatting;
+  on_monetary_formatting (self);
 
-  if (self->is_formatting)
-    g_signal_handlers_unblock_by_func (self, on_monetary_automatic_formatting, self);
-  else
-    g_signal_handlers_block_by_func (self, on_monetary_automatic_formatting, self);
-
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_FORMATTING]);
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_CURRENCY_SYMBOL]);
 }
 
 /**
  * finance_entry_monetary_get_decimal_places:
- * @self: a #FinanceEntryMonetary instance.
+ * @self: a #FinanceEntryMonetary
  *
  * Returns the current precision of monetary value.
  *
@@ -517,7 +511,7 @@ finance_entry_monetary_get_decimal_places (FinanceEntryMonetary *self)
 
 /**
  * finance_entry_monetary_set_decimal_places:
- * @self: a #FinanceEntryMonetary object.
+ * @self: a #FinanceEntryMonetary
  * @value: a #gint.
  *
  * Sets the number of digits to the right of a decimal point.
@@ -538,48 +532,54 @@ finance_entry_monetary_set_decimal_places (FinanceEntryMonetary *self,
 }
 
 /**
- * finance_entry_manetary_get_currency_symbol:
- * @self: a #FinanceEntryMonetary instance.
+ * finance_entry_monetary_get_formatting:
+ * @self: a #FinanceEntryMonetary
  *
- * Gets whether the currency symbol is in its “on” or “off” state.
+ * Gets whether the formatting is in its “on” or “off” state.
  *
- * Returns: %TRUE if the currency symbol is active, and %FALSE otherwise.
+ * Returns: %TRUE if the automatic date formatting is active, and %FALSE otherwise.
  *
  * Since: 1.0
  */
 gboolean
-finance_entry_monetary_get_currency_symbol (FinanceEntryMonetary *self)
+finance_entry_monetary_get_formatting (FinanceEntryMonetary *self)
 {
   g_return_val_if_fail (FINANCE_IS_ENTRY_MONETARY (self), FALSE);
 
-  return self->is_currency_symbol;
+  return self->formatting;
 }
 
 /**
- * finance_entry_monetary_set_currency_symbol:
- * @self: a #FinanceEntryMonetary object.
- * @is_currency_symbol: %TRUE if currency symbol should be active, and %FALSE otherwise.
+ * finance_entry_monetary_set_formatting:
+ * @self: a #FinanceEntryMonetary
+ * @formatting: %TRUE if formatting should be active, and %FALSE otherwise.
  *
- * Change currency symbol states. %TRUE if currency symbol should be active, and %FALSE otherwise.
+ * Change automatic monetary formatting states. %TRUE if formatting should be active, and %FALSE otherwise.
  *
  * Since: 1.0
  */
 void
-finance_entry_monetary_set_currency_symbol (FinanceEntryMonetary  *self,
-                                            gboolean              is_currency_symbol)
+finance_entry_monetary_set_formatting (FinanceEntryMonetary *self,
+                                       gboolean             formatting)
 {
   g_return_if_fail (FINANCE_IS_ENTRY_MONETARY (self));
 
-  self->is_currency_symbol = is_currency_symbol;
+  if (self->formatting == formatting)
+    return;
 
-  on_monetary_formatting (self);
+  self->formatting = formatting;
 
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_CURRENCY_SYMBOL]);
+  if (self->formatting)
+    g_signal_handlers_unblock_by_func (self, on_monetary_automatic_formatting, self);
+  else
+    g_signal_handlers_block_by_func (self, on_monetary_automatic_formatting, self);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_FORMATTING]);
 }
 
 /**
  * finance_entry_monetary_get_symbol:
- * @self: a #FinanceEntryMonetary instance.
+ * @self: a #FinanceEntryMonetary
  *
  * Returns the type of currency symbol in use.
  *
@@ -597,7 +597,7 @@ finance_entry_monetary_get_symbol (FinanceEntryMonetary *self)
 
 /**
  * finance_entry_monetary_set_symbol:
- * @self: a #FinanceEntryMonetary object.
+ * @self: a #FinanceEntryMonetary
  * @symbol: a #FinanceSymbol.
  *
  * Sets currency symbol is local or international.
