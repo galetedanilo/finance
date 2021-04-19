@@ -281,7 +281,7 @@
               </packing>
             </child>
             <child>
-              <object class="FinancePane" id="pane">
+              <object class="FinanceLeftPanel" id="left_panel">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
               </object>

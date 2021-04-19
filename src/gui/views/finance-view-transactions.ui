@@ -18,6 +18,8 @@
               <object class="GtkFlowBox" id="flow_box">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
+                <property name="valign">start</property>
+                <property name="max-children-per-line">100</property>
               </object>
             </child>
           </object>

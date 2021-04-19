@@ -1,4 +1,4 @@
-/* finance-pane.c
+/* finance-left-panel.c
  *
  * Copyright 2021 galetedanilo <galetedanilo@gmail.com>
  *
@@ -18,9 +18,9 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include "finance-pane.h"
+#include "finance-left-panel.h"
 
-struct _FinancePane
+struct _FinanceLeftPanel
 {
   GtkBox      parent_instance;
 
@@ -33,15 +33,15 @@ struct _FinancePane
   GtkSortType sort;
 };
 
-G_DEFINE_TYPE (FinancePane, finance_pane, GTK_TYPE_BOX)
+G_DEFINE_TYPE (FinanceLeftPanel, finance_left_panel, GTK_TYPE_BOX)
 
 static gboolean
 listbox_list_func (GtkListBoxRow  *row,
                    gpointer       user_data)
 {
-  FinancePane *self = FINANCE_PANE (user_data);
+  FinanceLeftPanel *self = FINANCE_LEFT_PANEL (user_data);
 
-  if (strcasestr (finance_pane_row_get_title (FINANCE_PANE_ROW (row)),
+  if (strcasestr (finance_transaction_row_get_title (FINANCE_TRANSACTION_ROW (row)),
                   gtk_entry_get_text (GTK_ENTRY (self->search))))
     return TRUE;
 
@@ -54,30 +54,21 @@ listbox_sort_func (GtkListBoxRow *row1,
                    GtkListBoxRow *row2,
                    gpointer       user_data)
 {
-  FinancePane *self = FINANCE_PANE (user_data);
+  FinanceLeftPanel *self = FINANCE_LEFT_PANEL (user_data);
 
   if (self->sort == GTK_SORT_ASCENDING)
-    return strcasecmp (finance_pane_row_get_title (FINANCE_PANE_ROW (row1)),
-                       finance_pane_row_get_title (FINANCE_PANE_ROW (row2)));
+    return strcasecmp (finance_transaction_row_get_title (FINANCE_TRANSACTION_ROW (row1)),
+                       finance_transaction_row_get_title (FINANCE_TRANSACTION_ROW (row2)));
 
-  return -1 * strcasecmp (finance_pane_row_get_title (FINANCE_PANE_ROW (row1)),
-                          finance_pane_row_get_title (FINANCE_PANE_ROW (row2)));
+  return -1 * strcasecmp (finance_transaction_row_get_title (FINANCE_TRANSACTION_ROW (row1)),
+                          finance_transaction_row_get_title (FINANCE_TRANSACTION_ROW (row2)));
 }
 
 static void
-on_list_box_row_activated (GtkListBox    *box,
-                           GtkListBoxRow *row,
-                           gpointer      user_data)
+on_left_panel_search_changed (GtkSearchEntry *entry,
+                              gpointer        user_data)
 {
-  FinancePane *self = FINANCE_PANE (user_data);
-}
-
-
-static void
-on_pane_search_changed (GtkSearchEntry  *entry,
-                        gpointer        user_data)
-{
-  FinancePane *self = FINANCE_PANE (user_data);
+  FinanceLeftPanel *self = FINANCE_LEFT_PANEL (user_data);
 
   (void)entry;
 
@@ -85,10 +76,18 @@ on_pane_search_changed (GtkSearchEntry  *entry,
 }
 
 static void
+on_list_box_row_activated (GtkListBox    *box,
+                           GtkListBoxRow *row,
+                           gpointer      user_data)
+{
+  FinanceLeftPanel *self = FINANCE_LEFT_PANEL (user_data);
+}
+
+static void
 on_sort_ascending_clicked (GtkButton *button,
                            gpointer   user_data)
 {
-  FinancePane *self = FINANCE_PANE (user_data);
+  FinanceLeftPanel *self = FINANCE_LEFT_PANEL (user_data);
 
   (void)button;
 
@@ -104,7 +103,7 @@ static void
 on_sort_descending_clicked (GtkButton *button,
                             gpointer   user_data)
 {
-  FinancePane *self = FINANCE_PANE (user_data);
+  FinanceLeftPanel *self = FINANCE_LEFT_PANEL (user_data);
 
   (void)button;
 
@@ -117,35 +116,35 @@ on_sort_descending_clicked (GtkButton *button,
 }
 
 GtkWidget *
-finance_pane_new (void)
+finance_left_panel_new (void)
 {
-  return g_object_new (FINANCE_TYPE_PANE, NULL);
+  return g_object_new (FINANCE_TYPE_LEFT_PANEL, NULL);
 }
 
 static void
-finance_pane_class_init (FinancePaneClass *klass)
+finance_left_panel_class_init (FinanceLeftPanelClass *klass)
 {
   GtkWidgetClass  *widget_class = GTK_WIDGET_CLASS (klass);
 
-  g_type_ensure (FINANCE_TYPE_PANE_ROW);
+  g_type_ensure (FINANCE_TYPE_TRANSACTION_ROW);
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/pane/finance-pane.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/panel/finance-left-panel.ui");
 
   /* The Widgets */
-  gtk_widget_class_bind_template_child (widget_class, FinancePane, list);
-  gtk_widget_class_bind_template_child (widget_class, FinancePane, search);
-  gtk_widget_class_bind_template_child (widget_class, FinancePane, sort_ascending);
-  gtk_widget_class_bind_template_child (widget_class, FinancePane, sort_descending);
+  gtk_widget_class_bind_template_child (widget_class, FinanceLeftfPanel, list);
+  gtk_widget_class_bind_template_child (widget_class, FinanceLeftfPanel, search);
+  gtk_widget_class_bind_template_child (widget_class, FinanceLeftfPanel, sort_ascending);
+  gtk_widget_class_bind_template_child (widget_class, FinanceLeftfPanel, sort_descending);
 
   /* The CallBacks */
   gtk_widget_class_bind_template_callback (widget_class, on_list_box_row_activated);
-  gtk_widget_class_bind_template_callback (widget_class, on_pane_search_changed);
+  gtk_widget_class_bind_template_callback (widget_class, on_left_panel_search_changed);
   gtk_widget_class_bind_template_callback (widget_class, on_sort_ascending_clicked);
   gtk_widget_class_bind_template_callback (widget_class, on_sort_descending_clicked);
 }
 
 static void
-finance_pane_init (FinancePane *self)
+finance_left_panel_init (FinanceLeftPanel *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
 
@@ -163,9 +162,9 @@ finance_pane_init (FinancePane *self)
 }
 
 /**
- * finance_pane_prepend_row:
- * @self: a #FinancePane instance.
- * @row: a #GtkWidget to add.
+ * finance_left_panel_prepend_row:
+ * @self: a #FinanceLeftPanel
+ * @row: a #GtkWidget to add
  *
  * Prepend a widget to the list. If a sort function is set,
  * the widget will actually be inserted at the calculated position
@@ -174,10 +173,10 @@ finance_pane_init (FinancePane *self)
  * Since: 1.0
  */
 void
-finance_pane_prepend_row (FinancePane *self,
-                          GtkWidget   *row)
+finance_left_panel_prepend_row (FinancePane *self,
+                                GtkWidget   *row)
 {
-  g_return_if_fail (FINANCE_IS_PANE (self));
+  g_return_if_fail (FINANCE_IS_LEFT_PANEL (self));
 
   gtk_list_box_prepend (GTK_LIST_BOX (self->list), row);
 }

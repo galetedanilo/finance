@@ -3,8 +3,8 @@
 <interface>
   <requires lib="gtk+" version="3.24"/>
   <template class="FinanceChildSummary" parent="GtkButton">
-    <property name="width-request">150</property>
-    <property name="height-request">80</property>
+    <property name="width-request">200</property>
+    <property name="height-request">200</property>
     <property name="visible">True</property>
     <property name="can-focus">True</property>
     <property name="receives-default">False</property>
@@ -17,6 +17,8 @@
           <object class="GtkImage" id="image_icon">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
+            <property name="hexpand">True</property>
+            <property name="vexpand">True</property>
           </object>
           <packing>
             <property name="left-attach">0</property>
@@ -28,7 +30,10 @@
           <object class="GtkLabel" id="label_amount">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
-            <property name="label" translatable="yes">Amount</property>
+            <property name="halign">center</property>
+            <property name="hexpand">True</property>
+            <property name="vexpand">True</property>
+            <property name="label" translatable="yes">Amount dlaod galodlaogaodo</property>
             <property name="ellipsize">end</property>
           </object>
           <packing>
@@ -40,7 +45,9 @@
           <object class="GtkLabel" id="label_date">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
-            <property name="label" translatable="yes">Transaction Date</property>
+            <property name="hexpand">True</property>
+            <property name="vexpand">True</property>
+            <property name="label" translatable="yes">Transaction Dateddddddddddddddddddddddddd</property>
             <property name="ellipsize">end</property>
           </object>
           <packing>
@@ -52,6 +59,8 @@
           <object class="GtkLabel" id="label_name">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
+            <property name="hexpand">True</property>
+            <property name="vexpand">True</property>
             <property name="label" translatable="yes">Transaction Name</property>
             <property name="ellipsize">end</property>
           </object>
@@ -65,6 +74,8 @@
           <object class="GtkLabel" id="label_payee_name">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
+            <property name="hexpand">True</property>
+            <property name="vexpand">True</property>
             <property name="label" translatable="yes">Payee Name</property>
             <property name="ellipsize">end</property>
           </object>
@@ -78,6 +89,8 @@
           <object class="GtkLabel" id="label_payment">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
+            <property name="hexpand">True</property>
+            <property name="vexpand">True</property>
             <property name="label" translatable="yes">Payment</property>
             <property name="ellipsize">end</property>
           </object>
@@ -91,6 +104,8 @@
           <object class="GtkLabel" id="label_category">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
+            <property name="hexpand">True</property>
+            <property name="vexpand">True</property>
             <property name="label" translatable="yes">Category</property>
             <property name="ellipsize">end</property>
           </object>
@@ -104,6 +119,8 @@
           <object class="GtkLabel">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
+            <property name="hexpand">True</property>
+            <property name="vexpand">True</property>
             <property name="label" translatable="yes">Repeat</property>
             <property name="ellipsize">end</property>
           </object>
@@ -116,6 +133,8 @@
           <object class="GtkLabel" id="label_repeat">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
+            <property name="hexpand">True</property>
+            <property name="vexpand">True</property>
             <property name="label" translatable="yes">label</property>
             <property name="ellipsize">end</property>
           </object>

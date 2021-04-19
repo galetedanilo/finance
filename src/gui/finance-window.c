@@ -33,7 +33,7 @@ struct _FinanceWindow
   GtkWidget   *header_bar_squeezer;
   GtkWidget   *label_title;
   GtkWidget   *leaflet;
-  GtkWidget   *pane;
+  GtkWidget   *left_panel;
   GtkWidget   *scrolled_window_transaction;
   GtkWidget   *stack;
   GtkWidget   *stack_switcher_top;
@@ -154,7 +154,7 @@ finance_window_class_init (FinanceWindowClass *klass)
 {
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  g_type_ensure (FINANCE_TYPE_PANE);
+  g_type_ensure (FINANCE_TYPE_LEFT_PANEL);
   g_type_ensure (FINANCE_TYPE_TRANSACTION);
   g_type_ensure (FINANCE_TYPE_VIEW_TRANSACTIONS);
 
@@ -169,7 +169,7 @@ finance_window_class_init (FinanceWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, header_bar_squeezer);
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, label_title);
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, leaflet);
-  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, pane);
+  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, left_panel);
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, scrolled_window_transaction);
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, stack);
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, stack_switcher_top);

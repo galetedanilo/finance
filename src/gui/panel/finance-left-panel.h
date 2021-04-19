@@ -1,4 +1,4 @@
-/* finance-pane.h
+/* finance-left-panel.h
  *
  * Copyright 2021 galetedanilo <galetedanilo@gmail.com>
  *
@@ -18,24 +18,24 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef __FINANCE_PANE_H__
-#define __FINANCE_PANE_H__
+#ifndef __FINANCE_LEFT_PANEL_H__
+#define __FINANCE_LEFT_PANEL_H__
 
 #include <gtk/gtk.h>
 
-#include "finance-pane-row.h"
+#include "finance-transaction-row.h"
 
 G_BEGIN_DECLS
 
-#define FINANCE_TYPE_PANE (finance_pane_get_type ())
+#define FINANCE_TYPE_LEFT_PANEL (finance_left_panel_get_type ())
 
-G_DECLARE_FINAL_TYPE (FinancePane, finance_pane, FINANCE, PANE, GtkBox)
+G_DECLARE_FINAL_TYPE (FinanceLeftPanel, finance_left_panel, FINANCE, LEFT_PANEL, GtkBox)
 
-GtkWidget *   finance_pane_new                    (void);
+GtkWidget *   finance_left_panel_new              (void);
 
-void          finance_pane_prepend_row            (FinancePane  *self,
-                                                   GtkWidget    *row);
+void          finance_left_panel_prepend_row      (FinanceLeftPanel *self,
+                                                   GtkWidget        *row);
 
 G_END_DECLS
 
-#endif /* __FINANCE_PANE_H__ */
+#endif /* __FINANCE_LEFT_PANE_H__ */

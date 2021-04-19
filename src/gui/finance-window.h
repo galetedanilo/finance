@@ -23,7 +23,7 @@
 #include <handy.h>
 
 #include "finance-controller-transactions.h"
-#include "finance-pane.h"
+#include "finance-panel.h"
 #include "finance-transaction.h"
 #include "finance-view-transactions.h"
 

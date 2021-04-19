@@ -20,6 +20,19 @@
 
 #include "finance-enum-types.h"
 
+// /**
+//  * FinanceTransaction:
+//  * @FINANCE_CREDIT:
+//  * @FINANCE_DEBIT:
+//  *
+//  * Enum with available transactions type
+//  */
+// typedef enum
+// {
+//   FINANCE_CREDIT,
+//   FINANCE_DEBIT,
+// } FinanceTransaction;
+
 /**
  * FinanceRepeat:
  * @FINANCE_NO_REPEAT:

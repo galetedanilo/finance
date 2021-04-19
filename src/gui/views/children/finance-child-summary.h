@@ -31,52 +31,57 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (FinanceChildSummary, finance_child_summary, FINANCE, CHILD_SUMMARY, GtkButton)
 
-GtkWidget *     finance_child_summary_new           (void);
+GtkWidget *     finance_child_summary_new                 (void);
 
-const gchar *   finance_child_summary_get_icon      (FinanceChildSummary *self);
+gdouble         finance_child_summary_get_amount          (FinanceChildSummary *self);
 
-void            finance_child_summary_set_icon      (FinanceChildSummary *self,
-                                                     const gchar         *icon);
+void            finance_child_summary_set_amount          (FinanceChildSummary *self,
+                                                           double               amount);
 
-GdkRGBA *       finance_child_summary_get_color     (FinanceChildSummary *self);
+const gchar *   finance_child_summary_get_amount_string   (FinanceChildSummary *self);
 
-void            finance_child_summary_set_color     (FinanceChildSummary *self,
-                                                     const GdkRGBA       *color);
+void            finance_child_summary_set_amount_string   (FinanceChildSummary *self,
+                                                           const gchar         *amount);
 
-const gchar *   finance_child_summary_get_name      (FinanceChildSummary *self);
+const gchar *   finance_child_summary_get_category        (FinanceChildSummary *self);
 
-void            finance_child_summary_set_name      (FinanceChildSummary *self,
-                                                     const gchar         *name);
+void            finance_child_summary_set_category        (FinanceChildSummary *self,
+                                                           const gchar         *category);
 
-const gchar *   finance_child_summary_get_amount    (FinanceChildSummary *self);
+GdkRGBA *       finance_child_summary_get_color           (FinanceChildSummary *self);
 
-void            finance_child_summary_set_amount    (FinanceChildSummary *self,
-                                                     const gchar         *amount);
+void            finance_child_summary_set_color           (FinanceChildSummary *self,
+                                                           const GdkRGBA       *color);
 
-const gchar *   finance_child_summary_get_date      (FinanceChildSummary *self);
+gboolean        finance_child_summary_get_currency_symbol (FinanceChildSummary  *self);
 
-void            finance_child_summary_set_date      (FinanceChildSummary *self,
-                                                     const gchar         *date);
+void            finance_child_summary_set_currency_symbol (FinanceChildSummary *self,
+                                                           gboolean             currency_symbol);
 
-const gchar *   finance_child_summary_get_payee_name(FinanceChildSummary *self);
+void            finance_child_summary_set_date            (FinanceChildSummary *self,
+                                                           GDateTime           *date);
 
-void            finance_child_summary_set_payee_name(FinanceChildSummary *self,
-                                                     const gchar         *payee_name);
+const gchar *   finance_child_summary_get_icon            (FinanceChildSummary *self);
 
-const gchar *   finance_child_summary_get_payment   (FinanceChildSummary *self);
+void            finance_child_summary_set_icon            (FinanceChildSummary *self,
+                                                           const gchar         *icon);
 
-void            finance_child_summary_set_payment   (FinanceChildSummary *self,
-                                                     const gchar         *payment);
+const gchar *   finance_child_summary_get_name            (FinanceChildSummary *self);
 
-const gchar *   finance_child_summary_get_category  (FinanceChildSummary *self);
+void            finance_child_summary_set_name            (FinanceChildSummary *self,
+                                                           const gchar         *name);
 
-void            finance_child_summary_set_category  (FinanceChildSummary *self,
-                                                     const gchar         *category);
+void            finance_child_summary_set_payee_name      (FinanceChildSummary *self,
+                                                           const gchar         *payee_name);
 
-const gchar *   finance_child_summary_get_repeat    (FinanceChildSummary *self);
+void            finance_child_summary_set_payment         (FinanceChildSummary *self,
+                                                           gint                 payment);
 
-void            finance_child_summary_set_repeat    (FinanceChildSummary *self,
-                                                     const gchar         *repeat);
+void            finance_child_summary_set_repeat          (FinanceChildSummary *self,
+                                                           gint                 repeat);
+
+void            finance_child_summary_set_symbol          (FinanceChildSummary *self,
+                                                           gint                 symbol);
 
 G_END_DECLS
 
