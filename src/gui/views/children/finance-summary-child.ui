@@ -2,7 +2,7 @@
 <!-- Generated with glade 3.38.2 -->
 <interface>
   <requires lib="gtk+" version="3.24"/>
-  <template class="FinanceChildSummary" parent="GtkButton">
+  <template class="FinanceSummaryChild" parent="GtkButton">
     <property name="width-request">200</property>
     <property name="height-request">200</property>
     <property name="visible">True</property>
@@ -33,7 +33,7 @@
             <property name="halign">center</property>
             <property name="hexpand">True</property>
             <property name="vexpand">True</property>
-            <property name="label" translatable="yes">Amount dlaod galodlaogaodo</property>
+            <property name="label" translatable="yes">Amount</property>
             <property name="ellipsize">end</property>
           </object>
           <packing>
@@ -47,7 +47,7 @@
             <property name="can-focus">False</property>
             <property name="hexpand">True</property>
             <property name="vexpand">True</property>
-            <property name="label" translatable="yes">Transaction Dateddddddddddddddddddddddddd</property>
+            <property name="label" translatable="yes">Transaction Date</property>
             <property name="ellipsize">end</property>
           </object>
           <packing>

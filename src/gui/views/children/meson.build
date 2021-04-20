@@ -5,5 +5,5 @@ built_sources += gnome.compile_resources(
 )
 
 sources += files(
-  'finance-child-summary.c',
+  'finance-summary-child.c',
 )

@@ -23,9 +23,9 @@
 #include <handy.h>
 
 #include "finance-controller-transactions.h"
-#include "finance-panel.h"
+#include "finance-left-panel.h"
 #include "finance-transaction.h"
-#include "finance-view-transactions.h"
+#include "finance-transaction-view.h"
 
 G_BEGIN_DECLS
 

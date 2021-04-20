@@ -430,12 +430,12 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="FinanceViewTransactions" id="view_transactions">
+                  <object class="FinanceTransactionView" id="transaction_view">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                   </object>
                   <packing>
-                    <property name="name">transactions</property>
+                    <property name="name">transaction_view</property>
                     <property name="title" translatable="yes">Transactions</property>
                     <property name="position">1</property>
                   </packing>

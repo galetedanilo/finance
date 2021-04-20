@@ -24,17 +24,18 @@
 
 struct _FinanceTransactionRow
 {
-  GtkListBoxRow   parent_instance;
+  GtkListBoxRow parent_instance;
 
   /* The Widgets */
-  GtkWidget       *amount;
-  GtkWidget       *check;
-  GtkWidget       *image;
-  GtkWidget       *revealer;
-  GtkWidget       *title;
+  GtkWidget     *check_button;
+  GtkWidget     *image_icon;
+  GtkWidget     *label_amount;
+  GtkWidget     *label_title;
+  GtkWidget     *revealer_check;
 
-  GdkRGBA         *color;
-  gchar           *icon;
+
+  GdkRGBA       *color;
+  gchar         *icon;
 };
 
 G_DEFINE_TYPE (FinanceTransactionRow, finance_transaction_row, GTK_TYPE_LIST_BOX_ROW)
@@ -64,6 +65,15 @@ create_icon (FinanceTransactionRow *self)
   g_clear_pointer (&surface, cairo_surface_destroy);
 }
 
+static void
+on_check_button_toggled (GtkToggleButton *togglebutton,
+                         gpointer         user_data)
+{
+  FinanceTransactionRow *self = FINANCE_TRANSACTION_ROW (user_data);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SELECTED]);
+}
+
 /*
  * Show the check button, when the mouse is over the row.
  */
@@ -76,11 +86,10 @@ on_row_state_flags_changed (GtkWidget     *object,
 
   flags = gtk_widget_get_state_flags (object);
 
-  if (!gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (self->check)))
-    {
-      gtk_revealer_set_reveal_child (GTK_REVEALER (self->revealer),
-                                     (flags & GTK_STATE_FLAG_PRELIGHT) != 0);
-    }
+  if (!gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (self->check_button)))
+    gtk_revealer_set_reveal_child (GTK_REVEALER (self->revealer_check),
+                                   (flags & GTK_STATE_FLAG_PRELIGHT) != 0);
+
 }
 
 GtkWidget *
@@ -249,16 +258,17 @@ finance_transaction_row_class_init (FinanceTransactionRowClass *klass)
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/pane/rows/finance-transaction-row.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/panel/rows/finance-transaction-row.ui");
 
   /* The Widgets */
-  gtk_widget_class_bind_template_child (widget_class, FinanceTransactionRow, image);
-  gtk_widget_class_bind_template_child (widget_class, FinanceTransactionRow, title);
-  gtk_widget_class_bind_template_child (widget_class, FinanceTransactionRow, amount);
-  gtk_widget_class_bind_template_child (widget_class, FinanceTransactionRow, revealer);
-  gtk_widget_class_bind_template_child (widget_class, FinanceTransactionRow, check);
+  gtk_widget_class_bind_template_child (widget_class, FinanceTransactionRow, check_button);
+  gtk_widget_class_bind_template_child (widget_class, FinanceTransactionRow, image_icon);
+  gtk_widget_class_bind_template_child (widget_class, FinanceTransactionRow, label_amount);
+  gtk_widget_class_bind_template_child (widget_class, FinanceTransactionRow, label_title);
+  gtk_widget_class_bind_template_child (widget_class, FinanceTransactionRow, revealer_check);
 
   /* The CallBacks */
+  gtk_widget_class_bind_template_callback (widget_class, on_check_button_toggled);
   gtk_widget_class_bind_template_callback (widget_class, on_row_state_flags_changed);
 }
 
@@ -270,6 +280,88 @@ finance_transaction_row_init (FinanceTransactionRow *self)
   self->color = finance_utils_random_rgba_color ();
 
   self->icon = g_strdup ("NW");
+}
+
+/**
+ * finance_transaction_row_get_amount:
+ * @self: a #FinanceTransactionRow
+ *
+ * Returns the amount as a string
+ *
+ * Returns: The amount as a string, or %NULL.
+ * This string points to internally allocated storage in the object
+ * and must not be freed, modified or stored.
+ *
+ * Since: 1.0
+ */
+const gchar *
+finance_transaction_row_get_amount (FinanceTransactionRow *self)
+{
+  g_return_val_if_fail (FINANCE_IS_TRANSACTION_ROW (self), NULL);
+
+  return gtk_label_get_text (GTK_LABEL (self->label_amount));
+}
+
+/**
+ * finance_transaction_row_set_amount:
+ * @self: a #FinanceTransactionRow
+ * @amount: the amount to set, as a string
+ *
+ * Sets the amount, replacing the current contents
+ *
+ * Since: 1.0
+ */
+void
+finance_transaction_row_set_amount (FinanceTransactionRow *self,
+                                    const gchar           *amount)
+{
+  g_return_if_fail (FINANCE_IS_TRANSACTION_ROW (self));
+
+  gtk_label_set_text (GTK_LABEL (self->label_amount), amount);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_AMOUNT]);
+}
+
+/**
+ * finance_transaction_row_get_color:
+ * @self: a #FinanceTransactionRow
+ *
+ * Returns the background color of the icon
+ *
+ * Returns: (transfer none): a #GdkRGBA with the color
+ *
+ * Since: 1.0
+ */
+GdkRGBA *
+finance_transaction_row_get_color (FinanceTransactionRow *self)
+{
+  g_return_val_if_fail (FINANCE_IS_TRANSACTION_ROW (self), NULL);
+
+  return self->color;
+}
+
+/**
+ * finance_transaction_row_set_color:
+ * @self: a #FinanceTransactionRow
+ * @color: a #GdkRGBA
+ *
+ * Sets the background color of the icon.
+ *
+ * Since: 1.0
+ */
+void
+finance_transaction_row_set_color (FinanceTransactionRow *self,
+                                   const GdkRGBA         *color)
+{
+  g_return_if_fail (FINANCE_IS_TRANSACTION_ROW (self));
+
+  g_clear_pointer (&self->color, gdk_rgba_free);
+
+  self->color = gdk_rgba_copy (color);
+
+  create_icon (self);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_COLOR]);
 }
 
 /**
@@ -318,45 +410,41 @@ finance_transaction_row_set_icon (FinanceTransactionRow *self,
 }
 
 /**
- * finance_transaction_row_get_color:
+ * finance_transaction_row_get_selected:
  * @self: a #FinanceTransactionRow
  *
- * Returns the background color of the icon
+ * Returns whether the row is in its “on” or “off” state
  *
- * Returns: (transfer none): a #GdkRGBA with the color
+ * Returns: #TRUE if the row is selected, and #FALSE otherwise
  *
  * Since: 1.0
  */
-GdkRGBA *
-finance_transaction_row_get_color (FinanceTransactionRow *self)
+gboolean
+finance_transaction_row_get_selected (FinanceTransactionRow *self)
 {
-  g_return_val_if_fail (FINANCE_IS_TRANSACTION_ROW (self), NULL);
+  g_return_val_if_fail (FINANCE_IS_TRANSACTION_ROW (self), FALSE);
 
-  return self->color;
+  return gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (self->check_button));
 }
 
 /**
- * finance_transaction_row_set_color:
+ * finance_transaction_row_set_selected:
  * @self: a #FinanceTransactionRow
- * @color: a #GdkRGBA
+ * @selected: #TRUE if row is to be selected, and #FALSE otherwise
  *
- * Sets the background color of the icon.
+ * Changes the state of #FinanceTransactionRow to the desired one
  *
  * Since: 1.0
  */
 void
-finance_transaction_row_set_color (FinanceTransactionRow *self,
-                                   const GdkRGBA         *color)
+finance_transaction_row_set_selected (FinanceTransactionRow *self,
+                                      gboolean               selected)
 {
   g_return_if_fail (FINANCE_IS_TRANSACTION_ROW (self));
 
-  g_clear_pointer (&self->color, gdk_rgba_free);
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (self->check_button), selected);
 
-  self->color = gdk_rgba_copy (color);
-
-  create_icon (self);
-
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_COLOR]);
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SELECTED]);
 }
 
 /**
@@ -376,7 +464,7 @@ finance_transaction_row_get_title (FinanceTransactionRow *self)
 {
   g_return_val_if_fail (FINANCE_IS_TRANSACTION_ROW (self), NULL);
 
-  return gtk_label_get_text (GTK_LABEL (self->title));
+  return gtk_label_get_text (GTK_LABEL (self->label_title));
 }
 
 /**
@@ -394,85 +482,7 @@ finance_transaction_row_set_title (FinanceTransactionRow *self,
 {
   g_return_if_fail (FINANCE_IS_TRANSACTION_ROW (self));
 
-  gtk_label_set_text (GTK_LABEL (self->title), title);
+  gtk_label_set_text (GTK_LABEL (self->label_title), title);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_TITLE]);
-}
-
-/**
- * finance_transaction_row_get_amount:
- * @self: a #FinanceTransactionRow
- *
- * Returns the amount as a string
- *
- * Returns: The amount as a string, or %NULL.
- * This string points to internally allocated storage in the object
- * and must not be freed, modified or stored.
- *
- * Since: 1.0
- */
-const gchar *
-finance_transaction_row_get_amount (FinanceTransactionRow *self)
-{
-  g_return_val_if_fail (FINANCE_IS_TRANSACTION_ROW (self), NULL);
-
-  return gtk_label_get_text (GTK_LABEL (self->amount));
-}
-
-/**
- * finance_transaction_row_set_amount:
- * @self: a #FinanceTransactionRow
- * @amount: the amount to set, as a string
- *
- * Sets the amount, replacing the current contents
- *
- * Since: 1.0
- */
-void
-finance_transaction_row_set_amount (FinanceTransactionRow *self,
-                                    const gchar           *amount)
-{
-  g_return_if_fail (FINANCE_IS_TRANSACTION_ROW (self));
-
-  gtk_label_set_text (GTK_LABEL (self->amount), amount);
-
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_AMOUNT]);
-}
-
-/**
- * finance_transaction_row_get_selected:
- * @self: a #FinanceTransactionRow
- *
- * Returns whether the row is in its “on” or “off” state
- *
- * Returns: #TRUE if the row is selected, and #FALSE otherwise
- *
- * Since: 1.0
- */
-gboolean
-finance_transaction_row_get_selected (FinanceTransactionRow *self)
-{
-  g_return_val_if_fail (FINANCE_IS_TRANSACTION_ROW (self), FALSE);
-
-  return gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (self->check));
-}
-
-/**
- * finance_transaction_row_set_selected:
- * @self: a #FinanceTransactionRow
- * @selected: #TRUE if row is to be selected, and #FALSE otherwise
- *
- * Changes the state of #FinanceTransactionRow to the desired one
- *
- * Since: 1.0
- */
-void
-finance_transaction_row_set_selected (FinanceTransactionRow *self,
-                                      gboolean               selected)
-{
-  g_return_if_fail (FINANCE_IS_TRANSACTION_ROW (self));
-
-  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (self->check), selected);
-
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SELECTED]);
 }

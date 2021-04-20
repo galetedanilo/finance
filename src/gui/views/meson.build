@@ -8,7 +8,7 @@ built_sources += gnome.compile_resources(
 
 sources += files(
   'finance-view.c',
-  'finance-view-transactions.c',
+  'finance-transaction-view.c',
 )
 
 subdir('children')

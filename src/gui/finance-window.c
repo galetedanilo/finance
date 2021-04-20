@@ -156,7 +156,7 @@ finance_window_class_init (FinanceWindowClass *klass)
 
   g_type_ensure (FINANCE_TYPE_LEFT_PANEL);
   g_type_ensure (FINANCE_TYPE_TRANSACTION);
-  g_type_ensure (FINANCE_TYPE_VIEW_TRANSACTIONS);
+  g_type_ensure (FINANCE_TYPE_TRANSACTION_VIEW);
 
   G_OBJECT_CLASS (klass)->dispose     = finance_window_dispose;
 
@@ -196,7 +196,7 @@ finance_window_init (FinanceWindow *self)
   self->settings = g_settings_new ("org.gnome.finance");
 
   self->controller_transactions = g_object_new (FINANCE_TYPE_CONTROLLER_TRANSACTIONS,
-                                                "pane", self->pane,
+                                                "pane", self->left_panel,
                                                 "view", self->view_transactions,
                                                 NULL);
 

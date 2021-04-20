@@ -1,4 +1,4 @@
-/* finance-child-summary.c
+/* finance-summary-child.c
  *
  * Copyright 2021 galetedanilo <galetedanilo@gmail.com>
  *
@@ -20,11 +20,11 @@
 
 #include <glib/gi18n.h>
 
-#include "finance-child-summary.h"
+#include "finance-summary-child.h"
 
 #include "finance-enums.h"
 
-struct _FinanceChildSummary
+struct _FinanceSummaryChild
 {
   GtkButton parent_instance;
 
@@ -49,7 +49,7 @@ struct _FinanceChildSummary
   FinanceSymbol symbol;
 };
 
-G_DEFINE_TYPE (FinanceChildSummary, finance_child_summary, GTK_TYPE_BUTTON)
+G_DEFINE_TYPE (FinanceSummaryChild, finance_summary_child, GTK_TYPE_BUTTON)
 
 enum {
   PROP_0,
@@ -71,7 +71,7 @@ enum {
 static GParamSpec *properties [N_PROPS] = { NULL, };
 
 static void
-create_icon (FinanceChildSummary *self)
+create_icon (FinanceSummaryChild *self)
 {
   cairo_surface_t *surface;
 
@@ -83,67 +83,67 @@ create_icon (FinanceChildSummary *self)
 }
 
 GtkWidget *
-finance_child_summary_new (void)
+finance_summary_child_new (void)
 {
-  return g_object_new (FINANCE_TYPE_CHILD_SUMMARY, NULL);
+  return g_object_new (FINANCE_TYPE_SUMMARY_CHILD, NULL);
 }
 
 static void
-finance_child_summary_finalize (GObject *object)
+finance_summary_child_finalize (GObject *object)
 {
-  FinanceChildSummary *self = (FinanceChildSummary *)object;
+  FinanceSummaryChild *self = (FinanceSummaryChild *)object;
 
   g_clear_pointer (&self->icon, g_free);
 
-  G_OBJECT_CLASS (finance_child_summary_parent_class)->finalize (object);
+  G_OBJECT_CLASS (finance_summary_child_parent_class)->finalize (object);
 }
 
 static void
-finance_child_summary_dispose (GObject *object)
+finance_summary_child_dispose (GObject *object)
 {
-  FinanceChildSummary *self = (FinanceChildSummary *)object;
+  FinanceSummaryChild *self = (FinanceSummaryChild *)object;
 
   g_clear_pointer (&self->color, gdk_rgba_free);
 
-  G_OBJECT_CLASS (finance_child_summary_parent_class)->dispose (object);
+  G_OBJECT_CLASS (finance_summary_child_parent_class)->dispose (object);
 }
 
 static void
-finance_child_summary_get_property (GObject    *object,
+finance_summary_child_get_property (GObject    *object,
                                     guint       prop_id,
                                     GValue     *value,
                                     GParamSpec *pspec)
 {
-  FinanceChildSummary *self = FINANCE_CHILD_SUMMARY (object);
+  FinanceSummaryChild *self = FINANCE_SUMMARY_CHILD (object);
 
   switch (prop_id)
     {
     case PROP_AMOUNT:
-      g_value_set_double (value, finance_child_summary_get_amount (self));
+      g_value_set_double (value, finance_summary_child_get_amount (self));
       break;
 
     case PROP_AMOUNT_STRING:
-      g_value_set_string (value, finance_child_summary_get_amount_string (self));
+      g_value_set_string (value, finance_summary_child_get_amount_string (self));
       break;
 
     case PROP_CATEGORY:
-      g_value_set_string (value, finance_child_summary_get_category (self));
+      g_value_set_string (value, finance_summary_child_get_category (self));
       break;
 
     case PROP_COLOR:
-      g_value_set_boxed (value, finance_child_summary_get_color (self));
+      g_value_set_boxed (value, finance_summary_child_get_color (self));
       break;
 
     case PROP_CURRENCY_SYMBOL:
-      g_value_set_boolean (value, finance_child_summary_get_currency_symbol (self));
+      g_value_set_boolean (value, finance_summary_child_get_currency_symbol (self));
       break;
 
     case PROP_ICON:
-      g_value_set_string (value, finance_child_summary_get_icon (self));
+      g_value_set_string (value, finance_summary_child_get_icon (self));
       break;
 
     case PROP_NAME:
-      g_value_set_string (value, finance_child_summary_get_name (self));
+      g_value_set_string (value, finance_summary_child_get_name (self));
       break;
 
     default:
@@ -153,61 +153,61 @@ finance_child_summary_get_property (GObject    *object,
 }
 
 static void
-finance_child_summary_set_property (GObject      *object,
+finance_summary_child_set_property (GObject      *object,
                                     guint         prop_id,
                                     const GValue *value,
                                     GParamSpec   *pspec)
 {
-  FinanceChildSummary *self = FINANCE_CHILD_SUMMARY (object);
+  FinanceSummaryChild *self = FINANCE_SUMMARY_CHILD (object);
 
   switch (prop_id)
     {
     case PROP_AMOUNT:
-      finance_child_summary_set_amount (self, g_value_get_double (value));
+      finance_summary_child_set_amount (self, g_value_get_double (value));
       break;
 
     case PROP_AMOUNT_STRING:
-      finance_child_summary_set_amount_string (self, g_value_get_string (value));
+      finance_summary_child_set_amount_string (self, g_value_get_string (value));
       break;
 
     case PROP_CATEGORY:
-      finance_child_summary_set_category (self, g_value_get_string (value));
+      finance_summary_child_set_category (self, g_value_get_string (value));
       break;
 
     case PROP_COLOR:
-      finance_child_summary_set_color (self, g_value_get_boxed (value));
+      finance_summary_child_set_color (self, g_value_get_boxed (value));
       break;
 
     case PROP_CURRENCY_SYMBOL:
-      finance_child_summary_set_currency_symbol (self, g_value_get_boolean (value));
+      finance_summary_child_set_currency_symbol (self, g_value_get_boolean (value));
       break;
 
     case PROP_DATE:
-      finance_child_summary_set_date (self, g_value_get_boxed (value));
+      finance_summary_child_set_date (self, g_value_get_boxed (value));
       break;
 
     case PROP_ICON:
-      finance_child_summary_set_icon (self, g_value_get_string (value));
+      finance_summary_child_set_icon (self, g_value_get_string (value));
       break;
 
     case PROP_NAME:
-      finance_child_summary_set_name (self, g_value_get_string (value));
+      finance_summary_child_set_name (self, g_value_get_string (value));
       break;
 
     case PROP_PAYEE_NAME:
-      finance_child_summary_set_payee_name (self, g_value_get_string (value));
+      finance_summary_child_set_payee_name (self, g_value_get_string (value));
       break;
 
     case PROP_PAYMENT:
-      finance_child_summary_set_payment (self, g_value_get_enum (value));
+      finance_summary_child_set_payment (self, g_value_get_enum (value));
       break;
 
     case PROP_REPEAT:
-      finance_child_summary_set_repeat (self, g_value_get_enum (value));
+      finance_summary_child_set_repeat (self, g_value_get_enum (value));
       break;
 
     case PROP_SYMBOL:
-      finance_child_summary_set_symbol (self, g_value_get_enum (value));
+      finance_summary_child_set_symbol (self, g_value_get_enum (value));
       break;
 
     default:
@@ -217,18 +217,18 @@ finance_child_summary_set_property (GObject      *object,
 }
 
 static void
-finance_child_summary_class_init (FinanceChildSummaryClass *klass)
+finance_summary_child_class_init (FinanceSummaryChildClass *klass)
 {
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->finalize      = finance_child_summary_finalize;
-  object_class->dispose       = finance_child_summary_dispose;
-  object_class->get_property  = finance_child_summary_get_property;
-  object_class->set_property  = finance_child_summary_set_property;
+  object_class->finalize      = finance_summary_child_finalize;
+  object_class->dispose       = finance_summary_child_dispose;
+  object_class->get_property  = finance_summary_child_get_property;
+  object_class->set_property  = finance_summary_child_set_property;
 
   /**
-   * FinanceChildSummary::amount:
+   * FinanceSummaryChild::amount:
    *
    * The transaction amount
    */
@@ -241,7 +241,7 @@ finance_child_summary_class_init (FinanceChildSummaryClass *klass)
                                                   G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinanceChildSummary::amount_string:
+   * FinanceSummaryChild::amount_string:
    *
    * The transaction amount as a string
    */
@@ -252,7 +252,7 @@ finance_child_summary_class_init (FinanceChildSummaryClass *klass)
                                                         G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinanceChildSummary::category:
+   * FinanceSummaryChild::category:
    *
    * The transaction category
    */
@@ -263,7 +263,7 @@ finance_child_summary_class_init (FinanceChildSummaryClass *klass)
                                                    G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinanceChildSummary::color:
+   * FinanceSummaryChild::color:
    *
    * The background color of the icon
    */
@@ -274,7 +274,7 @@ finance_child_summary_class_init (FinanceChildSummaryClass *klass)
                                                G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinanceChildSummary::currency-symbol:
+   * FinanceSummaryChild::currency-symbol:
    *
    * Enable automatic currency symbol
    */
@@ -285,7 +285,7 @@ finance_child_summary_class_init (FinanceChildSummaryClass *klass)
                                                            G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinanceChildSummary::date:
+   * FinanceSummaryChild::date:
    *
    * The transaction date
    */
@@ -296,7 +296,7 @@ finance_child_summary_class_init (FinanceChildSummaryClass *klass)
                                               G_PARAM_WRITABLE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinanceChildSummary::icon:
+   * FinanceSummaryChild::icon:
    *
    * The two letters that are part of the icon image
    */
@@ -307,7 +307,7 @@ finance_child_summary_class_init (FinanceChildSummaryClass *klass)
                                                G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinanceChildSummary::name:
+   * FinanceSummaryChild::name:
    *
    * The transaction name
    */
@@ -318,7 +318,7 @@ finance_child_summary_class_init (FinanceChildSummaryClass *klass)
                                                G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinanceChildSummary::payee_name:
+   * FinanceSummaryChild::payee_name:
    *
    * The transaction payee name
    */
@@ -329,7 +329,7 @@ finance_child_summary_class_init (FinanceChildSummaryClass *klass)
                                                      G_PARAM_WRITABLE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinanceChildSummary::payment:
+   * FinanceSummaryChild::payment:
    *
    * The payment method of the transaction
    */
@@ -342,7 +342,7 @@ finance_child_summary_class_init (FinanceChildSummaryClass *klass)
 
 
   /**
-   * FinanceChildSummary::repeat:
+   * FinanceSummaryChild::repeat:
    *
    * The transaction repeat type
    */
@@ -354,7 +354,7 @@ finance_child_summary_class_init (FinanceChildSummaryClass *klass)
                                                G_PARAM_WRITABLE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinanceChildSummary::symbol:
+   * FinanceSummaryChild::symbol:
    *
    * Sets currency symbol is local or international
    */
@@ -367,21 +367,21 @@ finance_child_summary_class_init (FinanceChildSummaryClass *klass)
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/views/children/finance-child-summary.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/views/children/finance-summary-child.ui");
 
   /* The Widgets */
-  gtk_widget_class_bind_template_child (widget_class, FinanceChildSummary, image_icon);
-  gtk_widget_class_bind_template_child (widget_class, FinanceChildSummary, label_amount);
-  gtk_widget_class_bind_template_child (widget_class, FinanceChildSummary, label_category);
-  gtk_widget_class_bind_template_child (widget_class, FinanceChildSummary, label_date);
-  gtk_widget_class_bind_template_child (widget_class, FinanceChildSummary, label_name);
-  gtk_widget_class_bind_template_child (widget_class, FinanceChildSummary, label_payee_name);
-  gtk_widget_class_bind_template_child (widget_class, FinanceChildSummary, label_payment);
-  gtk_widget_class_bind_template_child (widget_class, FinanceChildSummary, label_repeat);
+  gtk_widget_class_bind_template_child (widget_class, FinanceSummaryChild, image_icon);
+  gtk_widget_class_bind_template_child (widget_class, FinanceSummaryChild, label_amount);
+  gtk_widget_class_bind_template_child (widget_class, FinanceSummaryChild, label_category);
+  gtk_widget_class_bind_template_child (widget_class, FinanceSummaryChild, label_date);
+  gtk_widget_class_bind_template_child (widget_class, FinanceSummaryChild, label_name);
+  gtk_widget_class_bind_template_child (widget_class, FinanceSummaryChild, label_payee_name);
+  gtk_widget_class_bind_template_child (widget_class, FinanceSummaryChild, label_payment);
+  gtk_widget_class_bind_template_child (widget_class, FinanceSummaryChild, label_repeat);
 }
 
 static void
-finance_child_summary_init (FinanceChildSummary *self)
+finance_summary_child_init (FinanceSummaryChild *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
 
@@ -391,8 +391,8 @@ finance_child_summary_init (FinanceChildSummary *self)
 }
 
 /**
- * finance_child_summary_get_amount:
- * @self: a #FinanceChildSummary
+ * finance_summary_child_get_amount:
+ * @self: a #FinanceSummaryChild
  *
  * Gets transaction amount
  *
@@ -401,15 +401,15 @@ finance_child_summary_init (FinanceChildSummary *self)
  * Since: 1.0
  */
 gdouble
-finance_child_summary_get_amount (FinanceChildSummary *self)
+finance_summary_child_get_amount (FinanceSummaryChild *self)
 {
-  g_return_val_if_fail (FINANCE_IS_CHILD_SUMMARY (self), 0.0);
+  g_return_val_if_fail (FINANCE_IS_SUMMARY_CHILD (self), 0.0);
 
   return self->amount;
 }
 /**
- * finance_child_summary_set_amount:
- * @self: a #FinanceChildSummary
+ * finance_summary_child_set_amount:
+ * @self: a #FinanceSummaryChild
  * @amount:
  *
  * Sets transaction amount
@@ -417,10 +417,10 @@ finance_child_summary_get_amount (FinanceChildSummary *self)
  * Since: 1.0
  */
 void
-finance_child_summary_set_amount (FinanceChildSummary *self,
+finance_summary_child_set_amount (FinanceSummaryChild *self,
                                   gdouble              amount)
 {
-  g_return_if_fail (FINANCE_IS_CHILD_SUMMARY (self));
+  g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
 
   self->amount = amount;
 
@@ -428,8 +428,8 @@ finance_child_summary_set_amount (FinanceChildSummary *self,
 }
 
 /**
- * finance_child_summary_get_amount_string:
- * @self: a #FinanceChildSummary
+ * finance_summary_child_get_amount_string:
+ * @self: a #FinanceSummaryChild
  *
  * Returns the transaction amount as a string
  *
@@ -440,16 +440,16 @@ finance_child_summary_set_amount (FinanceChildSummary *self,
  * Since: 1.0
  */
 const gchar *
-finance_child_summary_get_amount_string (FinanceChildSummary *self)
+finance_summary_child_get_amount_string (FinanceSummaryChild *self)
 {
-  g_return_val_if_fail (FINANCE_IS_CHILD_SUMMARY (self), NULL);
+  g_return_val_if_fail (FINANCE_IS_SUMMARY_CHILD (self), NULL);
 
   return gtk_label_get_text (GTK_LABEL (self->label_amount));
 }
 
 /**
- * finance_child_summary_set_amount_string:
- * @self: a #FinanceChildSummary
+ * finance_summary_child_set_amount_string:
+ * @self: a #FinanceSummaryChild
  * @amount: a amount to set, as a string
  *
  * Sets transaction amount
@@ -457,10 +457,10 @@ finance_child_summary_get_amount_string (FinanceChildSummary *self)
  * Since: 1.0
  */
 void
-finance_child_summary_set_amount_string (FinanceChildSummary *self,
+finance_summary_child_set_amount_string (FinanceSummaryChild *self,
                                          const gchar         *amount)
 {
-  g_return_if_fail (FINANCE_IS_CHILD_SUMMARY (self));
+  g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
 
   gtk_label_set_text (GTK_LABEL (self->label_amount), amount);
 
@@ -468,8 +468,8 @@ finance_child_summary_set_amount_string (FinanceChildSummary *self,
 }
 
 /**
- * finance_child_summary_get_category:
- * @self: a #FinanceChildSummary
+ * finance_summary_child_get_category:
+ * @self: a #FinanceSummaryChild
  *
  * Returns the transaction category
  *
@@ -480,16 +480,16 @@ finance_child_summary_set_amount_string (FinanceChildSummary *self,
  * Since: 1.0
  */
 const gchar *
-finance_child_summary_get_category (FinanceChildSummary *self)
+finance_summary_child_get_category (FinanceSummaryChild *self)
 {
-  g_return_val_if_fail (FINANCE_IS_CHILD_SUMMARY (self), NULL);
+  g_return_val_if_fail (FINANCE_IS_SUMMARY_CHILD (self), NULL);
 
   return gtk_label_get_text (GTK_LABEL (self->label_category));
 }
 
 /**
- * finance_child_summary_set_category:
- * @self: a #FinanceChildSummary
+ * finance_summary_child_set_category:
+ * @self: a #FinanceSummaryChild
  * @category: a category to set, as a string
  *
  * Sets the category method of the transaction
@@ -497,10 +497,10 @@ finance_child_summary_get_category (FinanceChildSummary *self)
  * Since: 1.0
  */
 void
-finance_child_summary_set_category (FinanceChildSummary *self,
+finance_summary_child_set_category (FinanceSummaryChild *self,
                                     const gchar         *category)
 {
-  g_return_if_fail (FINANCE_IS_CHILD_SUMMARY (self));
+  g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
 
   gtk_label_set_text (GTK_LABEL (self->label_category), category);
 
@@ -508,8 +508,8 @@ finance_child_summary_set_category (FinanceChildSummary *self,
 }
 
 /**
- * finance_child_summary_get_color:
- * @self: a #FinanceChildSummary
+ * finance_summary_child_get_color:
+ * @self: a #FinanceSummaryChild
  *
  * Returns the background color of the icon
  *
@@ -518,16 +518,16 @@ finance_child_summary_set_category (FinanceChildSummary *self,
  * Since: 1.0
  */
 GdkRGBA *
-finance_child_summary_get_color (FinanceChildSummary *self)
+finance_summary_child_get_color (FinanceSummaryChild *self)
 {
-  g_return_val_if_fail (FINANCE_IS_CHILD_SUMMARY (self), NULL);
+  g_return_val_if_fail (FINANCE_IS_SUMMARY_CHILD (self), NULL);
 
   return self->color;
 }
 
 /**
- * finance_child_summary_set_color:
- * @self: a #FinanceChildSummary
+ * finance_summary_child_set_color:
+ * @self: a #FinanceSummaryChild
  * @color: a #GdkRGBA
  *
  * Sets the background color of the icon
@@ -535,10 +535,10 @@ finance_child_summary_get_color (FinanceChildSummary *self)
  * Since: 1.0
  */
 void
-finance_child_summary_set_color (FinanceChildSummary *self,
+finance_summary_child_set_color (FinanceSummaryChild *self,
                                  const GdkRGBA       *color)
 {
-  g_return_if_fail (FINANCE_IS_CHILD_SUMMARY (self));
+  g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
 
   g_clear_pointer (&self->color, gdk_rgba_free);
 
@@ -550,8 +550,8 @@ finance_child_summary_set_color (FinanceChildSummary *self,
 }
 
 /**
- * finance_child_summary_get_currency_symbol:
- * @self: a #FinanceChildSummary
+ * finance_summary_child_get_currency_symbol:
+ * @self: a #FinanceSummaryChild
  *
  * Gets whether the currency symbol is in its “on” or “off” state
  *
@@ -560,16 +560,16 @@ finance_child_summary_set_color (FinanceChildSummary *self,
  * Since: 1.0
  */
 gboolean
-finance_child_summary_get_currency_symbol (FinanceChildSummary  *self)
+finance_summary_child_get_currency_symbol (FinanceSummaryChild  *self)
 {
-  g_return_val_if_fail (FINANCE_IS_CHILD_SUMMARY (self), FALSE);
+  g_return_val_if_fail (FINANCE_IS_SUMMARY_CHILD (self), FALSE);
 
   return self->currency_symbol;
 }
 
 /**
- * finance_child_summary_set_currency_symbol:
- * @self: a #FinanceChildSummary
+ * finance_summary_child_set_currency_symbol:
+ * @self: a #FinanceSummaryChild
  * @currency_symbol: %TRUE if currency symbol should be active, and %FALSE otherwise
  *
  * Change currency symbol states. %TRUE if currency symbol should be active, and %FALSE otherwise
@@ -577,10 +577,10 @@ finance_child_summary_get_currency_symbol (FinanceChildSummary  *self)
  * Since: 1.0
  */
 void
-finance_child_summary_set_currency_symbol (FinanceChildSummary  *self,
+finance_summary_child_set_currency_symbol (FinanceSummaryChild  *self,
                                            gboolean             currency_symbol)
 {
-  g_return_if_fail (FINANCE_IS_CHILD_SUMMARY (self));
+  g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
 
   if (self->currency_symbol == currency_symbol)
     return;
@@ -591,8 +591,8 @@ finance_child_summary_set_currency_symbol (FinanceChildSummary  *self,
 }
 
 /**
- * finance_child_summary_set_date:
- * @self: a #FinanceChildSummary
+ * finance_summary_child_set_date:
+ * @self: a #FinanceSummaryChild
  * @date: a valid date, as a #GDateTime
  *
  * Sets the date of the financial transaction
@@ -600,10 +600,10 @@ finance_child_summary_set_currency_symbol (FinanceChildSummary  *self,
  * Since: 1.0
  */
 void
-finance_child_summary_set_date (FinanceChildSummary *self,
+finance_summary_child_set_date (FinanceSummaryChild *self,
                                 GDateTime           *date)
 {
-  g_return_if_fail (FINANCE_IS_CHILD_SUMMARY (self));
+  g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
 
   gchar *format_date;
 
@@ -617,8 +617,8 @@ finance_child_summary_set_date (FinanceChildSummary *self,
 }
 
 /**
- * finance_child_summary_get_icon:
- * @self: a #FinanceChildSummary
+ * finance_summary_child_get_icon:
+ * @self: a #FinanceSummaryChild
  *
  * Returns the two letters that are part of the icon image
  *
@@ -629,16 +629,16 @@ finance_child_summary_set_date (FinanceChildSummary *self,
  * Since: 1.0
  */
 const gchar *
-finance_child_summary_get_icon (FinanceChildSummary *self)
+finance_summary_child_get_icon (FinanceSummaryChild *self)
 {
-  g_return_val_if_fail (FINANCE_IS_CHILD_SUMMARY (self), NULL);
+  g_return_val_if_fail (FINANCE_IS_SUMMARY_CHILD (self), NULL);
 
   return self->icon;
 }
 
 /**
- * finance_child_summary_set_icon:
- * @self: a #FinanceChildSummary
+ * finance_summary_child_set_icon:
+ * @self: a #FinanceSummaryChild
  * @icon: the icon to set, as a two-letter string
  *
  * Sets the two letters that are part of the icon image,
@@ -647,10 +647,10 @@ finance_child_summary_get_icon (FinanceChildSummary *self)
  * Since:1.0
  */
 void
-finance_child_summary_set_icon (FinanceChildSummary *self,
+finance_summary_child_set_icon (FinanceSummaryChild *self,
                                 const gchar         *icon)
 {
-  g_return_if_fail (FINANCE_IS_CHILD_SUMMARY (self));
+  g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
 
   g_clear_pointer (&self->icon, g_free);
 
@@ -662,8 +662,8 @@ finance_child_summary_set_icon (FinanceChildSummary *self,
 }
 
 /**
- * finance_child_summary_get_name:
- * @self: a #FinanceChildSummary
+ * finance_summary_child_get_name:
+ * @self: a #FinanceSummaryChild
  *
  * Returns the transaction name
  *
@@ -674,16 +674,16 @@ finance_child_summary_set_icon (FinanceChildSummary *self,
  * Since: 1.0
  */
 const gchar *
-finance_child_summary_get_name (FinanceChildSummary *self)
+finance_summary_child_get_name (FinanceSummaryChild *self)
 {
-  g_return_val_if_fail (FINANCE_IS_CHILD_SUMMARY (self), NULL);
+  g_return_val_if_fail (FINANCE_IS_SUMMARY_CHILD (self), NULL);
 
   return gtk_label_get_text (GTK_LABEL (self->label_name));
 }
 
 /**
- * finance_child_summary_set_name:
- * @self: a #FinanceChildSummary
+ * finance_summary_child_set_name:
+ * @self: a #FinanceSummaryChild
  * @name: the name to set, as a string
  *
  * Sets the transaction name, replacing the current contents.
@@ -691,10 +691,10 @@ finance_child_summary_get_name (FinanceChildSummary *self)
  * Since: 1.0
  */
 void
-finance_child_summary_set_name (FinanceChildSummary *self,
+finance_summary_child_set_name (FinanceSummaryChild *self,
                                 const gchar         *name)
 {
-  g_return_if_fail (FINANCE_IS_CHILD_SUMMARY (self));
+  g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
 
   gtk_label_set_text (GTK_LABEL (self->label_name), name);
 
@@ -702,8 +702,8 @@ finance_child_summary_set_name (FinanceChildSummary *self,
 }
 
 /**
- * finance_child_summary_set_payee_name:
- * @self: a #FinanceChildSummary
+ * finance_summary_child_set_payee_name:
+ * @self: a #FinanceSummaryChild
  * @payee_name: a payee name to set, as a string
  *
  * Sets the transaction payee name, replacing the current contents
@@ -711,10 +711,10 @@ finance_child_summary_set_name (FinanceChildSummary *self,
  * Since: 1.0
  */
 void
-finance_child_summary_set_payee_name (FinanceChildSummary *self,
+finance_summary_child_set_payee_name (FinanceSummaryChild *self,
                                       const gchar         *payee_name)
 {
-  g_return_if_fail (FINANCE_IS_CHILD_SUMMARY (self));
+  g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
 
   gtk_label_set_text (GTK_LABEL (self->label_payee_name), payee_name);
 
@@ -722,8 +722,8 @@ finance_child_summary_set_payee_name (FinanceChildSummary *self,
 }
 
 /**
- * finance_child_summary_set_payment:
- * @self: a #FinanceChildSummary
+ * finance_summary_child_set_payment:
+ * @self: a #FinanceSummaryChild
  * @payment: a #FinancePayment
  *
  * Sets the payment method of the transaction
@@ -731,10 +731,10 @@ finance_child_summary_set_payee_name (FinanceChildSummary *self,
  * Since: 1.0
  */
 void
-finance_child_summary_set_payment (FinanceChildSummary *self,
+finance_summary_child_set_payment (FinanceSummaryChild *self,
                                    gint                 payment)
 {
-  g_return_if_fail (FINANCE_IS_CHILD_SUMMARY (self));
+  g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
 
   switch (payment)
     {
@@ -780,8 +780,8 @@ finance_child_summary_set_payment (FinanceChildSummary *self,
 }
 
 /**
- * finance_child_summary_set_repeat:
- * @self: a #FinanceChildSummary
+ * finance_summary_child_set_repeat:
+ * @self: a #FinanceSummaryChild
  * @repeat: a #FinanceRepeat
  *
  * Sets the repeat transaction.
@@ -789,10 +789,10 @@ finance_child_summary_set_payment (FinanceChildSummary *self,
  * Since: 1.0
  */
 void
-finance_child_summary_set_repeat (FinanceChildSummary *self,
+finance_summary_child_set_repeat (FinanceSummaryChild *self,
                                   gint                 repeat)
 {
-  g_return_if_fail (FINANCE_IS_CHILD_SUMMARY (self));
+  g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
 
   switch (repeat)
     {
@@ -830,8 +830,8 @@ finance_child_summary_set_repeat (FinanceChildSummary *self,
 }
 
 /**
- * finance_child_summary_set_symbol:
- * @self: a #FinanceChildSummary
+ * finance_summary_child_set_symbol:
+ * @self: a #FinanceSummaryChild
  * @symbol: a #FinanceSymbol
  *
  * Sets currency symbol is local or international
@@ -839,10 +839,10 @@ finance_child_summary_set_repeat (FinanceChildSummary *self,
  * Since: 1.0
  */
 void
-finance_child_summary_set_symbol (FinanceChildSummary *self,
+finance_summary_child_set_symbol (FinanceSummaryChild *self,
                                   gint                 symbol)
 {
-  g_return_if_fail (FINANCE_IS_CHILD_SUMMARY (self));
+  g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
 
   self->symbol = symbol;
 

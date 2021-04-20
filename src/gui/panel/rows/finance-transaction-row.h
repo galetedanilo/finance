@@ -33,30 +33,30 @@ G_DECLARE_FINAL_TYPE (FinanceTransactionRow, finance_transaction_row, FINANCE, T
 
 GtkWidget *     finance_transaction_row_new               (void);
 
-const gchar *   finance_transaction_row_get_icon          (FinanceTransactionRow *self);
+const gchar *   finance_transaction_row_get_amount        (FinanceTransactionRow *self);
 
-void            finance_transaction_row_set_icon          (FinanceTransactionRow *self,
-                                                           const gchar           *icon);
+void            finance_transaction_row_set_amount        (FinanceTransactionRow *self,
+                                                           const gchar           *amount);
 
 GdkRGBA *       finance_transaction_row_get_color         (FinanceTransactionRow *self);
 
 void            finance_transaction_row_set_color         (FinanceTransactionRow *self,
                                                            const GdkRGBA         *color);
 
-const gchar *   finance_transaction_row_get_title         (FinanceTransactionRow *self);
+const gchar *   finance_transaction_row_get_icon          (FinanceTransactionRow *self);
 
-void            finance_transaction_row_set_title         (FinanceTransactionRow *self,
-                                                           const gchar           *title);
-
-const gchar *   finance_transaction_row_get_amount        (FinanceTransactionRow *self);
-
-void            finance_transaction_row_set_amount        (FinanceTransactionRow *self,
-                                                           const gchar           *amount);
+void            finance_transaction_row_set_icon          (FinanceTransactionRow *self,
+                                                           const gchar           *icon);
 
 gboolean        finance_transaction_row_get_selected      (FinanceTransactionRow *self);
 
 void            finance_transaction_row_set_selected      (FinanceTransactionRow *self,
                                                            gboolean               selected);
+
+const gchar *   finance_transaction_row_get_title         (FinanceTransactionRow *self);
+
+void            finance_transaction_row_set_title         (FinanceTransactionRow *self,
+                                                           const gchar           *title);
 
 G_END_DECLS
 

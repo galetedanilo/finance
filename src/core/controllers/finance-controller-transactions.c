@@ -117,7 +117,7 @@ finance_controller_transactions_class_init (FinanceControllerTransactionsClass *
   properties[PROP_PANE] = g_param_spec_object ("pane",
                                                "The Pane",
                                                "The left pane in the main window",
-                                               FINANCE_TYPE_PANE,
+                                               FINANCE_TYPE_LEFT_PANEL,
                                                G_PARAM_READWRITE);
 
     /**
@@ -146,8 +146,8 @@ finance_controller_transactions_startup (FinanceControllerTransactions *self)
       for(int x = 0; x < 5; x++)
     {
         //this is a test
-        GtkWidget *summary = finance_child_summary_new ();
-        GtkWidget *row = finance_pane_row_new ();
+        GtkWidget *summary = finance_summary_child_new ();
+        GtkWidget *row = finance_transaction_row_new ();
       GdkRGBA *color = finance_utils_random_rgba_color ();
 
       g_object_bind_property ((gpointer)summary,
@@ -173,22 +173,22 @@ finance_controller_transactions_startup (FinanceControllerTransactions *self)
                                 "amount",
                                 G_BINDING_DEFAULT);
 
-      finance_child_summary_set_color (FINANCE_CHILD_SUMMARY (summary),
+      finance_summary_child_set_color (FINANCE_SUMMARY_CHILD (summary),
                                        color);
 
-      finance_child_summary_set_icon (FINANCE_CHILD_SUMMARY (summary), "ID");
+      finance_summary_child_set_icon (FINANCE_SUMMARY_CHILD (summary), "ID");
 
-      finance_child_summary_set_name (FINANCE_CHILD_SUMMARY (summary),
+      finance_summary_child_set_name (FINANCE_SUMMARY_CHILD (summary),
                                       "Cadastro para Teste");
 
-      finance_child_summary_set_amount_string (FINANCE_CHILD_SUMMARY (summary),
+      finance_summary_child_set_amount_string (FINANCE_SUMMARY_CHILD (summary),
                                                "R$ 500,00");
 
       finance_view_insert_child (FINANCE_VIEW (self->view_transactions), summary);
 
 
 
-      finance_pane_prepend_row (FINANCE_PANE (self->pane), row);
+      finance_left_panel_prepend_row (FINANCE_LEFT_PANEL (self->pane), row);
 
       g_clear_pointer (&color, gdk_rgba_free);
     }

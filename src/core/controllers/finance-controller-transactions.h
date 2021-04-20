@@ -23,9 +23,9 @@
 
 #include <glib-object.h>
 
-#include "finance-child-summary.h"
-#include "finance-pane.h"
-#include "finance-pane-row.h"
+#include "finance-left-panel.h"
+#include "finance-summary-child.h"
+#include "finance-transaction-row.h"
 #include "finance-view.h"
 #include "finance-utils.h"
 

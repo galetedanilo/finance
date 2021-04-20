@@ -1,4 +1,4 @@
-/* finance-view-transactions.h
+/* finance-transaction-view.h
  *
  * Copyright 2021 galetedanilo <galetedanilo@gmail.com>
  *
@@ -18,21 +18,21 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef __FINANCE_VIEW_TRANSACTIONS_H__
-#define __FINANCE_VIEW_TRANSACTIONS_H__
+#ifndef __FINANCE_TRANSACTION_VIEW_H__
+#define __FINANCE_TRANSACTION_VIEW_H__
 
 #include <gtk/gtk.h>
 
-#include "finance-child-summary.h"
+#include "finance-summary-child.h"
 
 G_BEGIN_DECLS
 
-#define FINANCE_TYPE_VIEW_TRANSACTIONS (finance_view_transactions_get_type())
+#define FINANCE_TYPE_TRANSACTION_VIEW (finance_transaction_view_get_type())
 
-G_DECLARE_FINAL_TYPE (FinanceViewTransactions, finance_view_transactions, FINANCE, VIEW_TRANSACTIONS, GtkBox)
+G_DECLARE_FINAL_TYPE (FinanceTransactionView, finance_transaction_view, FINANCE, TRANSACTION_VIEW, GtkBox)
 
-GtkWidget *   finance_view_transactions_new     (void);
+GtkWidget *   finance_transaction_view_new        (void);
 
 G_END_DECLS
 
-#endif /* __FINANCE_VIEW_TRANSACTIONS_H__ */
+#endif /* __FINANCE_TRANSACTION_VIEW_H__ */

@@ -13,7 +13,7 @@
         <property name="visible">True</property>
         <property name="can-focus">False</property>
         <child>
-          <object class="GtkImage" id="image">
+          <object class="GtkImage" id="image_icon">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="double-buffered">False</property>
@@ -34,7 +34,7 @@
             <property name="can-focus">False</property>
             <property name="orientation">vertical</property>
             <child>
-              <object class="GtkLabel" id="title">
+              <object class="GtkLabel" id="label_title">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="ellipsize">end</property>
@@ -50,7 +50,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="amount">
+              <object class="GtkLabel" id="label_amount">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="ellipsize">end</property>
@@ -73,17 +73,17 @@
           </packing>
         </child>
         <child>
-          <object class="GtkRevealer" id="revealer">
+          <object class="GtkRevealer" id="revealer_check">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="transition-type">slide-left</property>
             <child>
-              <object class="GtkCheckButton" id="check">
+              <object class="GtkCheckButton" id="check_button">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">False</property>
                 <property name="draw-indicator">True</property>
-                <signal name="toggled" handler="on_check_toggled" swapped="no"/>
+                <signal name="toggled" handler="on_check_button_toggled" swapped="no"/>
                 <style>
                   <class name="row-check" />
                 </style>
