@@ -33,7 +33,6 @@ struct _FinanceTransactionRow
   GtkWidget     *label_title;
   GtkWidget     *revealer_check;
 
-
   GdkRGBA       *color;
   gchar         *icon;
 };
@@ -49,7 +48,6 @@ enum {
   PROP_TITLE,
   N_PROPS,
 };
-
 
 static GParamSpec *properties [N_PROPS] = { NULL, };
 
@@ -120,9 +118,9 @@ finance_transaction_row_dispose (GObject *object)
 
 static void
 finance_transaction_row_get_property (GObject    *object,
-                               guint       prop_id,
-                               GValue     *value,
-                               GParamSpec *pspec)
+                                      guint       prop_id,
+                                      GValue     *value,
+                                      GParamSpec *pspec)
 {
   FinanceTransactionRow *self = FINANCE_TRANSACTION_ROW (object);
 
@@ -156,9 +154,9 @@ finance_transaction_row_get_property (GObject    *object,
 
 static void
 finance_transaction_row_set_property (GObject      *object,
-                               guint         prop_id,
-                               const GValue *value,
-                               GParamSpec   *pspec)
+                                      guint         prop_id,
+                                      const GValue *value,
+                                      GParamSpec   *pspec)
 {
   FinanceTransactionRow *self = FINANCE_TRANSACTION_ROW (object);
 
