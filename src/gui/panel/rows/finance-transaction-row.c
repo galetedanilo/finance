@@ -246,7 +246,7 @@ finance_transaction_row_class_init (FinanceTransactionRowClass *klass)
                                                 G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinanceTransactionRow::selected
+   * FinanceTransactionRow::selected:
    *
    * The transaction row selected
    */
@@ -432,7 +432,7 @@ finance_transaction_row_get_selected (FinanceTransactionRow *self)
  * @self: a #FinanceTransactionRow
  * @selected: #TRUE if row is to be selected, and #FALSE otherwise
  *
- * Changes the state of #FinanceTransactionRow to the desired one
+ * Sets whether the row is in its “selected” or “unselected” state
  *
  * Since: 1.0
  */

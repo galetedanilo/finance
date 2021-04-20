@@ -29,6 +29,7 @@ struct _FinanceSummaryChild
   GtkButton parent_instance;
 
   /* The widgets */
+  GtkWidget *check_button;
   GtkWidget *image_icon;
   GtkWidget *label_amount;
   GtkWidget *label_category;
@@ -38,15 +39,9 @@ struct _FinanceSummaryChild
   GtkWidget *label_payment;
   GtkWidget *label_repeat;
 
-  gdouble   amount;
-
-  gboolean  currency_symbol;
-
   gchar     *icon;
 
   GdkRGBA   *color;
-
-  FinanceSymbol symbol;
 };
 
 G_DEFINE_TYPE (FinanceSummaryChild, finance_summary_child, GTK_TYPE_BUTTON)
@@ -54,17 +49,15 @@ G_DEFINE_TYPE (FinanceSummaryChild, finance_summary_child, GTK_TYPE_BUTTON)
 enum {
   PROP_0,
   PROP_AMOUNT,
-  PROP_AMOUNT_STRING,
   PROP_CATEGORY,
   PROP_COLOR,
-  PROP_CURRENCY_SYMBOL,
   PROP_DATE,
   PROP_ICON,
   PROP_NAME,
   PROP_PAYEE_NAME,
   PROP_PAYMENT,
   PROP_REPEAT,
-  PROP_SYMBOL,
+  PROP_SELECTED,
   N_PROPS
 };
 
@@ -119,11 +112,7 @@ finance_summary_child_get_property (GObject    *object,
   switch (prop_id)
     {
     case PROP_AMOUNT:
-      g_value_set_double (value, finance_summary_child_get_amount (self));
-      break;
-
-    case PROP_AMOUNT_STRING:
-      g_value_set_string (value, finance_summary_child_get_amount_string (self));
+      g_value_set_string (value, finance_summary_child_get_amount (self));
       break;
 
     case PROP_CATEGORY:
@@ -134,8 +123,8 @@ finance_summary_child_get_property (GObject    *object,
       g_value_set_boxed (value, finance_summary_child_get_color (self));
       break;
 
-    case PROP_CURRENCY_SYMBOL:
-      g_value_set_boolean (value, finance_summary_child_get_currency_symbol (self));
+    case PROP_DATE:
+      g_value_set_string (value, finance_summary_child_get_date (self));
       break;
 
     case PROP_ICON:
@@ -144,6 +133,22 @@ finance_summary_child_get_property (GObject    *object,
 
     case PROP_NAME:
       g_value_set_string (value, finance_summary_child_get_name (self));
+      break;
+
+    case PROP_PAYEE_NAME:
+      g_value_set_string (value, finance_summary_child_get_payee_name (self));
+      break;
+
+    case PROP_PAYMENT:
+      g_value_set_string (value, finance_summary_child_get_payment (self));
+      break;
+
+    case PROP_REPEAT:
+      g_value_set_string (value, finance_summary_child_get_repeat (self));
+      break;
+
+    case PROP_SELECTED:
+      g_value_set_boolean (value, finance_summary_child_get_selected (self));
       break;
 
     default:
@@ -163,11 +168,7 @@ finance_summary_child_set_property (GObject      *object,
   switch (prop_id)
     {
     case PROP_AMOUNT:
-      finance_summary_child_set_amount (self, g_value_get_double (value));
-      break;
-
-    case PROP_AMOUNT_STRING:
-      finance_summary_child_set_amount_string (self, g_value_get_string (value));
+      finance_summary_child_set_amount (self, g_value_get_string (value));
       break;
 
     case PROP_CATEGORY:
@@ -178,12 +179,8 @@ finance_summary_child_set_property (GObject      *object,
       finance_summary_child_set_color (self, g_value_get_boxed (value));
       break;
 
-    case PROP_CURRENCY_SYMBOL:
-      finance_summary_child_set_currency_symbol (self, g_value_get_boolean (value));
-      break;
-
     case PROP_DATE:
-      finance_summary_child_set_date (self, g_value_get_boxed (value));
+      finance_summary_child_set_date (self, g_value_get_string (value));
       break;
 
     case PROP_ICON:
@@ -199,15 +196,15 @@ finance_summary_child_set_property (GObject      *object,
       break;
 
     case PROP_PAYMENT:
-      finance_summary_child_set_payment (self, g_value_get_enum (value));
+      finance_summary_child_set_payment (self, g_value_get_string (value));
       break;
 
     case PROP_REPEAT:
-      finance_summary_child_set_repeat (self, g_value_get_enum (value));
+      finance_summary_child_set_repeat (self, g_value_get_string (value));
       break;
 
-    case PROP_SYMBOL:
-      finance_summary_child_set_symbol (self, g_value_get_enum (value));
+    case PROP_SELECTED:
+      finance_summary_child_set_selected (self, g_value_get_boolean (value));
       break;
 
     default:
@@ -230,26 +227,13 @@ finance_summary_child_class_init (FinanceSummaryChildClass *klass)
   /**
    * FinanceSummaryChild::amount:
    *
-   * The transaction amount
-   */
-  properties[PROP_AMOUNT] =  g_param_spec_double ("amount",
-                                                  "Amount",
-                                                  "The transaction amount",
-                                                  0.0,
-                                                  G_MAXDOUBLE,
-                                                  0.0,
-                                                  G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
-
-  /**
-   * FinanceSummaryChild::amount_string:
-   *
    * The transaction amount as a string
    */
-  properties[PROP_AMOUNT_STRING] = g_param_spec_string ("amount-string",
-                                                        "Amount string",
-                                                        "The transaction amount as a string",
-                                                        NULL,
-                                                        G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+  properties[PROP_AMOUNT] =  g_param_spec_string ("amount",
+                                                  "Amount",
+                                                  "The transaction amount",
+                                                  NULL,
+                                                  G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
    * FinanceSummaryChild::category:
@@ -274,26 +258,15 @@ finance_summary_child_class_init (FinanceSummaryChildClass *klass)
                                                G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinanceSummaryChild::currency-symbol:
-   *
-   * Enable automatic currency symbol
-   */
-  properties[PROP_CURRENCY_SYMBOL] = g_param_spec_boolean ("currency-symbol",
-                                                           "Enable automatic currency symbol",
-                                                           "Enable automatic currency symbol",
-                                                           FALSE,
-                                                           G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
-
-  /**
    * FinanceSummaryChild::date:
    *
    * The transaction date
    */
-  properties[PROP_DATE] = g_param_spec_boxed ("date",
-                                              "Date",
-                                              "The transaction date",
-                                              G_TYPE_DATE_TIME,
-                                              G_PARAM_WRITABLE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+  properties[PROP_DATE] = g_param_spec_string ("date",
+                                               "Date",
+                                               "The transaction date",
+                                               NULL,
+                                               G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
    * FinanceSummaryChild::icon:
@@ -326,50 +299,47 @@ finance_summary_child_class_init (FinanceSummaryChildClass *klass)
                                                      "Payee name",
                                                      "The transaction payee name",
                                                      NULL,
-                                                     G_PARAM_WRITABLE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+                                                     G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
    * FinanceSummaryChild::payment:
    *
    * The payment method of the transaction
    */
-  properties[PROP_PAYMENT] = g_param_spec_enum ("payment",
-                                                "Payment",
-                                                "The payment method of the transaction",
-                                                FINANCE_TYPE_PAYMENT,
-                                                FINANCE_CASH,
-                                                G_PARAM_WRITABLE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
-
+  properties[PROP_PAYMENT] = g_param_spec_string ("payment",
+                                                  "Payment",
+                                                  "The payment method of the transaction",
+                                                  NULL,
+                                                  G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
    * FinanceSummaryChild::repeat:
    *
    * The transaction repeat type
    */
-  properties[PROP_REPEAT] = g_param_spec_enum ("repeat",
-                                               "Repeat",
-                                               "The transaction repeat type",
-                                               FINANCE_TYPE_REPEAT,
-                                               FINANCE_NO_REPEAT,
-                                               G_PARAM_WRITABLE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+  properties[PROP_REPEAT] = g_param_spec_string ("repeat",
+                                                 "Repeat",
+                                                 "The transaction repeat type",
+                                                 NULL,
+                                                 G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
-  /**
-   * FinanceSummaryChild::symbol:
+    /**
+   * FinanceSummaryChild::selected:
    *
-   * Sets currency symbol is local or international
+   * The summary child is selected
    */
-  properties[PROP_SYMBOL] = g_param_spec_enum ("symbol",
-                                               "Sets currency symbol is local or international",
-                                               "Sets currency symbol is local or international",
-                                               FINANCE_TYPE_SYMBOL,
-                                               FINANCE_LOCAL,
-                                               G_PARAM_WRITABLE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+  properties[PROP_SELECTED] = g_param_spec_boolean ("selected",
+                                                    "Select",
+                                                    "The summary child is selected",
+                                                    FALSE,
+                                                    G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/views/children/finance-summary-child.ui");
 
   /* The Widgets */
+  gtk_widget_class_bind_template_child (widget_class, FinanceSummaryChild, check_button);
   gtk_widget_class_bind_template_child (widget_class, FinanceSummaryChild, image_icon);
   gtk_widget_class_bind_template_child (widget_class, FinanceSummaryChild, label_amount);
   gtk_widget_class_bind_template_child (widget_class, FinanceSummaryChild, label_category);
@@ -394,43 +364,6 @@ finance_summary_child_init (FinanceSummaryChild *self)
  * finance_summary_child_get_amount:
  * @self: a #FinanceSummaryChild
  *
- * Gets transaction amount
- *
- * Returns: a #gdouble
- *
- * Since: 1.0
- */
-gdouble
-finance_summary_child_get_amount (FinanceSummaryChild *self)
-{
-  g_return_val_if_fail (FINANCE_IS_SUMMARY_CHILD (self), 0.0);
-
-  return self->amount;
-}
-/**
- * finance_summary_child_set_amount:
- * @self: a #FinanceSummaryChild
- * @amount:
- *
- * Sets transaction amount
- *
- * Since: 1.0
- */
-void
-finance_summary_child_set_amount (FinanceSummaryChild *self,
-                                  gdouble              amount)
-{
-  g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
-
-  self->amount = amount;
-
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_AMOUNT]);
-}
-
-/**
- * finance_summary_child_get_amount_string:
- * @self: a #FinanceSummaryChild
- *
  * Returns the transaction amount as a string
  *
  * Returns: The transaction amount as a string, or %NULL.
@@ -440,7 +373,7 @@ finance_summary_child_set_amount (FinanceSummaryChild *self,
  * Since: 1.0
  */
 const gchar *
-finance_summary_child_get_amount_string (FinanceSummaryChild *self)
+finance_summary_child_get_amount (FinanceSummaryChild *self)
 {
   g_return_val_if_fail (FINANCE_IS_SUMMARY_CHILD (self), NULL);
 
@@ -457,14 +390,14 @@ finance_summary_child_get_amount_string (FinanceSummaryChild *self)
  * Since: 1.0
  */
 void
-finance_summary_child_set_amount_string (FinanceSummaryChild *self,
-                                         const gchar         *amount)
+finance_summary_child_set_amount (FinanceSummaryChild *self,
+                                  const gchar         *amount)
 {
   g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
 
   gtk_label_set_text (GTK_LABEL (self->label_amount), amount);
 
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_AMOUNT_STRING]);
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_AMOUNT]);
 }
 
 /**
@@ -550,50 +483,29 @@ finance_summary_child_set_color (FinanceSummaryChild *self,
 }
 
 /**
- * finance_summary_child_get_currency_symbol:
+ * finance_summary_child_get_date:
  * @self: a #FinanceSummaryChild
  *
- * Gets whether the currency symbol is in its “on” or “off” state
+ * Returns the transaction date
  *
- * Returns: %TRUE if the currency symbol is active, and %FALSE otherwise
+ * Returns: The transaction date as a string, or %NULL.
+ * This string points to internally allocated storage in the object
+ * and must not be freed, modified or stored.
  *
  * Since: 1.0
  */
-gboolean
-finance_summary_child_get_currency_symbol (FinanceSummaryChild  *self)
+const gchar *
+finance_summary_child_get_date (FinanceSummaryChild *self)
 {
-  g_return_val_if_fail (FINANCE_IS_SUMMARY_CHILD (self), FALSE);
+  g_return_val_if_fail (FINANCE_IS_SUMMARY_CHILD (self), NULL);
 
-  return self->currency_symbol;
-}
-
-/**
- * finance_summary_child_set_currency_symbol:
- * @self: a #FinanceSummaryChild
- * @currency_symbol: %TRUE if currency symbol should be active, and %FALSE otherwise
- *
- * Change currency symbol states. %TRUE if currency symbol should be active, and %FALSE otherwise
- *
- * Since: 1.0
- */
-void
-finance_summary_child_set_currency_symbol (FinanceSummaryChild  *self,
-                                           gboolean             currency_symbol)
-{
-  g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
-
-  if (self->currency_symbol == currency_symbol)
-    return;
-
-  self->currency_symbol = currency_symbol;
-
-  g_object_notify_by_pspec(G_OBJECT (self), properties[PROP_CURRENCY_SYMBOL]);
+  return gtk_label_get_text (GTK_LABEL (self->label_date));
 }
 
 /**
  * finance_summary_child_set_date:
  * @self: a #FinanceSummaryChild
- * @date: a valid date, as a #GDateTime
+ * @date: a valid date, as a string
  *
  * Sets the date of the financial transaction
  *
@@ -601,17 +513,11 @@ finance_summary_child_set_currency_symbol (FinanceSummaryChild  *self,
  */
 void
 finance_summary_child_set_date (FinanceSummaryChild *self,
-                                GDateTime           *date)
+                                const gchar         *date)
 {
   g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
 
-  gchar *format_date;
-
-  format_date = g_date_time_format (date, "%x");
-
-  gtk_label_set_text (GTK_LABEL (self->label_date),format_date);
-
-  g_free (format_date);
+  gtk_label_set_text (GTK_LABEL (self->label_date), date);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_DATE]);
 }
@@ -702,6 +608,26 @@ finance_summary_child_set_name (FinanceSummaryChild *self,
 }
 
 /**
+ * finance_summary_child_get_payee_name:
+ * @self: a #FinanceSummaryChild
+ *
+ * Returns the transaction payee name
+ *
+ * Returns: The transaction payee name as a string, or %NULL.
+ * This string points to internally allocated storage in the object
+ * and must not be freed, modified or stored.
+ *
+ * Since: 1.0
+ */
+const gchar *
+finance_summary_child_get_payee_name (FinanceSummaryChild *self)
+{
+  g_return_val_if_fail (FINANCE_IS_SUMMARY_CHILD (self), NULL);
+
+  return gtk_label_get_text (GTK_LABEL (self->label_payee_name));
+}
+
+/**
  * finance_summary_child_set_payee_name:
  * @self: a #FinanceSummaryChild
  * @payee_name: a payee name to set, as a string
@@ -722,6 +648,26 @@ finance_summary_child_set_payee_name (FinanceSummaryChild *self,
 }
 
 /**
+ * finance_summary_child_get_payment:
+ * @self: a #FinanceSummaryChild
+ *
+ * Returns the transaction payment
+ *
+ * Returns: The transaction payment as a string, or %NULL.
+ * This string points to internally allocated storage in the object
+ * and must not be freed, modified or stored.
+ *
+ * Since: 1.0
+ */
+const gchar *
+finance_summary_child_get_payment (FinanceSummaryChild *self)
+{
+  g_return_val_if_fail (FINANCE_IS_SUMMARY_CHILD (self), NULL);
+
+  return gtk_label_get_text (GTK_LABEL (self->label_payment));
+}
+
+/**
  * finance_summary_child_set_payment:
  * @self: a #FinanceSummaryChild
  * @payment: a #FinancePayment
@@ -732,120 +678,89 @@ finance_summary_child_set_payee_name (FinanceSummaryChild *self,
  */
 void
 finance_summary_child_set_payment (FinanceSummaryChild *self,
-                                   gint                 payment)
+                                   const gchar         *payment)
 {
   g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
 
-  switch (payment)
-    {
-    case FINANCE_CASH:
-      gtk_label_set_text (GTK_LABEL (self->label_payment), _("Cash"));
-      break;
-
-    case FINANCE_DIRECT_DEBIT:
-      gtk_label_set_text (GTK_LABEL (self->label_payment), _("Direct Debit"));
-      break;
-
-    case FINANCE_TRANSFER:
-      gtk_label_set_text (GTK_LABEL (self->label_payment), _("Transfer"));
-      break;
-
-    case FINANCE_DEBIT_CARD:
-      gtk_label_set_text (GTK_LABEL (self->label_payment), _("Debit Card"));
-      break;
-
-    case FINANCE_CREDIT_CARD:
-      gtk_label_set_text (GTK_LABEL (self->label_payment), _("Credit Card"));
-      break;
-
-    case FINANCE_ELECTRONIC_PAYMENT:
-      gtk_label_set_text (GTK_LABEL (self->label_payment), _("Electronic Payment"));
-      break;
-
-    case FINANCE_DEPOSIT:
-      gtk_label_set_text (GTK_LABEL (self->label_payment), _("Deposit"));
-      break;
-
-    case FINANCE_CHECK:
-      gtk_label_set_text (GTK_LABEL (self->label_payment), _("Check"));
-      break;
-
-    default:
-      gtk_label_set_text (GTK_LABEL (self->label_payment), _("Null"));
-      break;
-
-    }
+  gtk_label_set_text (GTK_LABEL (self->label_payment), payment);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_PAYMENT]);
 }
 
 /**
+ * finance_summary_child_get_repeat:
+ * @self: a #FinanceSummaryChild
+ *
+ * Returns the transaction repeat type
+ *
+ * Returns: The transaction repeat type as a string, or %NULL.
+ * This string points to internally allocated storage in the object
+ * and must not be freed, modified or stored.
+ *
+ * Since: 1.0
+ */
+const gchar *
+finance_summary_child_get_repeat (FinanceSummaryChild *self)
+{
+  g_return_val_if_fail (FINANCE_IS_SUMMARY_CHILD (self), NULL);
+
+  return gtk_label_get_text (GTK_LABEL (self->label_repeat));
+}
+
+/**
  * finance_summary_child_set_repeat:
  * @self: a #FinanceSummaryChild
- * @repeat: a #FinanceRepeat
+ * @repeat: a repeat type to set, as a string
  *
- * Sets the repeat transaction.
+ * Sets the transaction repeat type, replacing the current contents
  *
  * Since: 1.0
  */
 void
 finance_summary_child_set_repeat (FinanceSummaryChild *self,
-                                  gint                 repeat)
+                                  const gchar         *repeat)
 {
   g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
 
-  switch (repeat)
-    {
-    case FINANCE_NO_REPEAT:
-      gtk_label_set_text (GTK_LABEL (self->label_repeat), _("No Repeat"));
-      break;
-
-    case FINANCE_DAILY:
-      gtk_label_set_text (GTK_LABEL (self->label_repeat), _("Daily"));
-      break;
-
-    case FINANCE_MONDAY_FRIDAY:
-      gtk_label_set_text (GTK_LABEL (self->label_repeat), _("Monday - Friday"));
-      break;
-
-    case FINANCE_WEEKLY:
-      gtk_label_set_text (GTK_LABEL (self->label_repeat), _("Weekly"));
-      break;
-
-    case FINANCE_MONTHLY:
-      gtk_label_set_text (GTK_LABEL (self->label_repeat), _("Monthly"));
-      break;
-
-    case FINANCE_YEARLY:
-      gtk_label_set_text (GTK_LABEL (self->label_repeat), _("Yearly"));
-      break;
-
-    default:
-      gtk_label_set_text (GTK_LABEL (self->label_repeat), _("Null"));
-      break;
-
-    }
+  gtk_label_set_text (GTK_LABEL (self->label_repeat), repeat);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_REPEAT]);
 }
 
 /**
- * finance_summary_child_set_symbol:
+ * finance_summary_child_get_selected:
  * @self: a #FinanceSummaryChild
- * @symbol: a #FinanceSymbol
  *
- * Sets currency symbol is local or international
+ * Returns whether the child is in its “selected” or “unselected” state
+ *
+ * Returns: #TRUE if the child is selected, and #FALSE otherwise
+ *
+ * Since: 1.0
+ */
+gboolean
+finance_summary_child_get_selected (FinanceSummaryChild *self)
+{
+  g_return_val_if_fail (FINANCE_IS_SUMMARY_CHILD (self), FALSE);
+
+  return gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (self->check_button));
+}
+
+/**
+ * finance_summary_child_set_selected:
+ * @self: a #FinanceSummaryChild
+ * @selected: #TRUE if row is to be selected, and #FALSE otherwise
+ *
+ * Sets whether the child is in its “selected” or “unselected” state
  *
  * Since: 1.0
  */
 void
-finance_summary_child_set_symbol (FinanceSummaryChild *self,
-                                  gint                 symbol)
+finance_summary_child_set_selected (FinanceSummaryChild *self,
+                                    gboolean             selected)
 {
   g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
 
-  self->symbol = symbol;
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (self->check_button), selected);
 
-
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SYMBOL]);
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SELECTED]);
 }

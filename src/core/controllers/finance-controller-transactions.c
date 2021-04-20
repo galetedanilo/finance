@@ -168,7 +168,7 @@ finance_controller_transactions_startup (FinanceControllerTransactions *self)
                                 G_BINDING_DEFAULT);
 
       g_object_bind_property ((gpointer)summary,
-                                "amount-string",
+                                "amount",
                                 (gpointer)row,
                                 "amount",
                                 G_BINDING_DEFAULT);
@@ -181,7 +181,7 @@ finance_controller_transactions_startup (FinanceControllerTransactions *self)
       finance_summary_child_set_name (FINANCE_SUMMARY_CHILD (summary),
                                       "Cadastro para Teste");
 
-      finance_summary_child_set_amount_string (FINANCE_SUMMARY_CHILD (summary),
+      finance_summary_child_set_amount (FINANCE_SUMMARY_CHILD (summary),
                                                "R$ 500,00");
 
       finance_view_insert_child (FINANCE_VIEW (self->view_transactions), summary);

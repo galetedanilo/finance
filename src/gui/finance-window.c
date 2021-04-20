@@ -38,8 +38,8 @@ struct _FinanceWindow
   GtkWidget   *stack;
   GtkWidget   *stack_switcher_top;
   GtkWidget   *transaction;
+  GtkWidget   *transaction_view;
   GtkWidget   *view_switcher_bottom;
-  GtkWidget   *view_transactions;
 
   GSettings   *settings;
   GObject     *controller_transactions;
@@ -174,8 +174,8 @@ finance_window_class_init (FinanceWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, stack);
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, stack_switcher_top);
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, transaction);
+  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, transaction_view);
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, view_switcher_bottom);
-  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, view_transactions);
 
   /* The CallBacks */
   gtk_widget_class_bind_template_callback (widget_class, on_add_credit_clicked);
@@ -197,7 +197,7 @@ finance_window_init (FinanceWindow *self)
 
   self->controller_transactions = g_object_new (FINANCE_TYPE_CONTROLLER_TRANSACTIONS,
                                                 "pane", self->left_panel,
-                                                "view", self->view_transactions,
+                                                "view", self->transaction_view,
                                                 NULL);
 
   finance_controller_transactions_startup (self->controller_transactions);
