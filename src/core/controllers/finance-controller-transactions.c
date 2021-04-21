@@ -143,7 +143,7 @@ finance_controller_transactions_init (FinanceControllerTransactions *self)
 void
 finance_controller_transactions_startup (FinanceControllerTransactions *self)
 {
-      for(int x = 0; x < 5; x++)
+      for(int x = 0; x < 50; x++)
     {
         //this is a test
         GtkWidget *summary = finance_summary_child_new ();
@@ -172,6 +172,12 @@ finance_controller_transactions_startup (FinanceControllerTransactions *self)
                                 (gpointer)row,
                                 "amount",
                                 G_BINDING_DEFAULT);
+
+      g_object_bind_property ((gpointer)summary,
+                                "selected",
+                                (gpointer)row,
+                                "selected",
+                                G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
 
       finance_summary_child_set_color (FINANCE_SUMMARY_CHILD (summary),
                                        color);

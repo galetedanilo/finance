@@ -18,8 +18,6 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include <glib/gi18n.h>
-
 #include "finance-summary-child.h"
 
 #include "finance-enums.h"
@@ -73,6 +71,15 @@ create_icon (FinanceSummaryChild *self)
   gtk_image_set_from_surface (GTK_IMAGE (self->image_icon), surface);
 
   g_clear_pointer (&surface, cairo_surface_destroy);
+}
+
+static void
+on_check_button_toggled (GtkToggleButton *button,
+                         gpointer         user_data)
+{
+  FinanceSummaryChild *self = FINANCE_SUMMARY_CHILD (user_data);
+
+
 }
 
 GtkWidget *
@@ -348,6 +355,9 @@ finance_summary_child_class_init (FinanceSummaryChildClass *klass)
   gtk_widget_class_bind_template_child (widget_class, FinanceSummaryChild, label_payee_name);
   gtk_widget_class_bind_template_child (widget_class, FinanceSummaryChild, label_payment);
   gtk_widget_class_bind_template_child (widget_class, FinanceSummaryChild, label_repeat);
+
+  /* The CallBacks */
+  gtk_widget_class_bind_template_callback (widget_class, on_check_button_toggled);
 }
 
 static void

@@ -69,6 +69,8 @@ on_check_button_toggled (GtkToggleButton *togglebutton,
 {
   FinanceTransactionRow *self = FINANCE_TRANSACTION_ROW (user_data);
 
+  (void)togglebutton;
+
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SELECTED]);
 }
 
@@ -441,6 +443,8 @@ finance_transaction_row_set_selected (FinanceTransactionRow *self,
   g_return_if_fail (FINANCE_IS_TRANSACTION_ROW (self));
 
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (self->check_button), selected);
+
+  gtk_revealer_set_reveal_child (GTK_REVEALER (self->revealer_check), selected);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SELECTED]);
 }
