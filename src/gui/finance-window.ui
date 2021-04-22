@@ -136,7 +136,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="orientation">vertical</property>
-            <property name="sensitive" bind-source="transaction" bind-property="sensitive" bind-flags="invert-boolean">True</property>
+            <property name="sensitive" bind-source="transaction_editor" bind-property="sensitive" bind-flags="invert-boolean">True</property>
             <child>
               <object class="HdyHeaderBar" id="header_bar_left">
                 <property name="visible">True</property>
@@ -304,7 +304,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="centering-policy">strict</property>
-                <property name="show-close-button" bind-source="transaction" bind-property="sensitive" bind-flags="invert-boolean">True</property>
+                <property name="show-close-button" bind-source="transaction_editor" bind-property="sensitive" bind-flags="invert-boolean">True</property>
                 <child type="title">
                   <object class="HdySqueezer" id="header_bar_squeezer">
                     <property name="visible">True</property>
@@ -339,7 +339,7 @@
                     <property name="receives-default">True</property>
                     <property name="tooltip-text" translatable="yes">Go back</property>
                     <property name="visible" bind-source="leaflet" bind-property="folded" bind-flags="sync-create">False</property>
-                    <property name="sensitive" bind-source="transaction" bind-property="sensitive" bind-flags="invert-boolean">True</property>
+                    <property name="sensitive" bind-source="transaction_editor" bind-property="sensitive" bind-flags="invert-boolean">True</property>
                     <signal name="clicked" handler="on_swipe_back_clicked" object="FinanceWindow" swapped="no"/>
                     <child>
                       <object class="GtkImage">
@@ -365,7 +365,7 @@
                     <property name="tooltip-text" translatable="yes">Cancel</property>
                     <property name="valign">center</property>
                     <property name="use-underline">True</property>
-                    <property name="visible" bind-source="transaction" bind-property="sensitive" bind-flags="sync-create">False</property>
+                    <property name="visible" bind-source="transaction_editor" bind-property="sensitive" bind-flags="sync-create">False</property>
                     <signal name="clicked" handler="on_cancel_button_clicked" object="FinanceWindow" swapped="no"/>
                     <child internal-child="accessible">
                       <object class="AtkObject" id="button_cancel-atkobject">
@@ -389,7 +389,7 @@
                     <property name="tooltip-text" translatable="yes">Done</property>
                     <property name="valign">center</property>
                     <property name="use-underline">True</property>
-                    <property name="visible" bind-source="transaction" bind-property="sensitive" bind-flags="sync-create">False</property>
+                    <property name="visible" bind-source="transaction_editor" bind-property="sensitive" bind-flags="sync-create">False</property>
                     <signal name="clicked" handler="on_done_button_clicked" object="FinanceWindow" swapped="no"/>
                     <child internal-child="accessible">
                       <object class="AtkObject" id="button_done-atkobject">
@@ -453,12 +453,12 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkScrolledWindow" id="scrolled_window_transaction">
+                  <object class="GtkScrolledWindow" id="scrolled_window_transaction_editor">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="hscrollbar-policy">never</property>
                     <child>
-                      <object class="FinanceTransaction" id="transaction">
+                      <object class="FinanceTransactionEditor" id="transaction_editor">
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can-focus">True</property>
@@ -478,7 +478,7 @@
               <object class="HdyViewSwitcherBar" id="view_switcher_bottom">
                 <property name="can-focus">False</property>
                 <property name="stack">stack</property>
-                <property name="visible" bind-source="transaction" bind-property="sensitive" bind-flags="invert-boolean">True</property>
+                <property name="visible" bind-source="transaction_editor" bind-property="sensitive" bind-flags="invert-boolean">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>

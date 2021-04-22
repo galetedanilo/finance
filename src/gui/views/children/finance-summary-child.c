@@ -24,7 +24,7 @@
 
 struct _FinanceSummaryChild
 {
-  GtkButton parent_instance;
+  GtkGrid   parent_instance;
 
   /* The widgets */
   GtkWidget *check_button;
@@ -42,7 +42,7 @@ struct _FinanceSummaryChild
   GdkRGBA   *color;
 };
 
-G_DEFINE_TYPE (FinanceSummaryChild, finance_summary_child, GTK_TYPE_BUTTON)
+G_DEFINE_TYPE (FinanceSummaryChild, finance_summary_child, GTK_TYPE_GRID)
 
 enum {
   PROP_0,
@@ -74,12 +74,14 @@ create_icon (FinanceSummaryChild *self)
 }
 
 static void
-on_check_button_toggled (GtkToggleButton *button,
+on_check_button_toggled (GtkToggleButton *togglebutton,
                          gpointer         user_data)
 {
   FinanceSummaryChild *self = FINANCE_SUMMARY_CHILD (user_data);
 
+  (void)togglebutton;
 
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SELECTED]);
 }
 
 GtkWidget *

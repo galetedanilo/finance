@@ -24,7 +24,7 @@
 
 #include "finance-controller-transactions.h"
 #include "finance-left-panel.h"
-#include "finance-transaction.h"
+#include "finance-transaction-editor.h"
 #include "finance-transaction-view.h"
 
 G_BEGIN_DECLS

@@ -29,7 +29,7 @@ G_BEGIN_DECLS
 
 #define FINANCE_TYPE_SUMMARY_CHILD (finance_summary_child_get_type ())
 
-G_DECLARE_FINAL_TYPE (FinanceSummaryChild, finance_summary_child, FINANCE, SUMMARY_CHILD, GtkButton)
+G_DECLARE_FINAL_TYPE (FinanceSummaryChild, finance_summary_child, FINANCE, SUMMARY_CHILD, GtkGrid)
 
 GtkWidget *     finance_summary_child_new                 (void);
 

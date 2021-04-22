@@ -19,11 +19,11 @@ label.secondary-text {
   padding-bottom: 3px;
 }
 
-list.pane {
+list.panel {
   background-color: transparent;
 }
 
-label.pane-title {
+label.panel-title {
   font-weight: bold;
   color: #808080;
   margin-left: 0.5em;
@@ -33,17 +33,33 @@ label.pane-title {
 label.row-title {
 	font-size: 14px;
 	font-weight: bold;
-	margin-top: 0.5em;
+	margin: 0.5em;
 }
 
 label.row-amount {
 	font-size: 12px;
 	font-weight: bold;
-	margin-left: 0.5em;
+	margin-left: 1em;
 }
 
 checkbutton.row-check {
   margin: 1em;
+}
+
+label.summary-amount {
+  font-size: 15px;
+  font-weight: bold;
+}
+
+label.summary-date {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+label.summary-title {
+	font-size: 14px;
+	font-weight: bold;
+	margin: 0.5em;
 }
 
 .preferences list > row {

@@ -34,10 +34,10 @@ struct _FinanceWindow
   GtkWidget   *label_title;
   GtkWidget   *leaflet;
   GtkWidget   *left_panel;
-  GtkWidget   *scrolled_window_transaction;
+  GtkWidget   *scrolled_window_transaction_editor;
   GtkWidget   *stack;
   GtkWidget   *stack_switcher_top;
-  GtkWidget   *transaction;
+  GtkWidget   *transaction_editor;
   GtkWidget   *transaction_view;
   GtkWidget   *view_switcher_bottom;
 
@@ -82,7 +82,7 @@ on_cancel_button_clicked (GtkButton *button,
   hdy_squeezer_set_child_enabled (HDY_SQUEEZER (self->header_bar_squeezer),
                                   self->stack_switcher_top, TRUE);
 
-  gtk_widget_set_sensitive (self->transaction, FALSE);
+  gtk_widget_set_sensitive (self->transaction_editor, FALSE);
   gtk_label_set_text (GTK_LABEL (self->label_title), _("Finance"));
   gtk_stack_set_visible_child_name (GTK_STACK (self->stack), "home");
 }
@@ -129,13 +129,12 @@ finance_window_prepare_new_transaction (FinanceWindow *self)
   hdy_squeezer_set_child_enabled (HDY_SQUEEZER (self->header_bar_squeezer),
                                   self->stack_switcher_top, FALSE);
 
-  finance_transaction_create_new (FINANCE_TRANSACTION (self->transaction));
+  finance_transaction_editor_clear (FINANCE_TRANSACTION_EDITOR (self->transaction_editor));
 
-  gtk_widget_set_sensitive (self->transaction, TRUE);
+  gtk_widget_set_sensitive (self->transaction_editor, TRUE);
   gtk_label_set_text (GTK_LABEL (self->label_title), _("New"));
   hdy_leaflet_set_visible_child (HDY_LEAFLET (self->leaflet), self->box_content);
-  gtk_stack_set_visible_child_name (GTK_STACK (self->stack), "transactions");
-  gtk_stack_set_visible_child (GTK_STACK (self->stack), self->scrolled_window_transaction);
+  gtk_stack_set_visible_child (GTK_STACK (self->stack), self->scrolled_window_transaction_editor);
 }
 
 static void
@@ -155,7 +154,7 @@ finance_window_class_init (FinanceWindowClass *klass)
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
   g_type_ensure (FINANCE_TYPE_LEFT_PANEL);
-  g_type_ensure (FINANCE_TYPE_TRANSACTION);
+  g_type_ensure (FINANCE_TYPE_TRANSACTION_EDITOR);
   g_type_ensure (FINANCE_TYPE_TRANSACTION_VIEW);
 
   G_OBJECT_CLASS (klass)->dispose     = finance_window_dispose;
@@ -170,10 +169,10 @@ finance_window_class_init (FinanceWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, label_title);
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, leaflet);
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, left_panel);
-  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, scrolled_window_transaction);
+  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, scrolled_window_transaction_editor);
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, stack);
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, stack_switcher_top);
-  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, transaction);
+  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, transaction_editor);
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, transaction_view);
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, view_switcher_bottom);
 

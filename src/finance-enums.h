@@ -20,37 +20,37 @@
 
 #include "finance-enum-types.h"
 
-// /**
-//  * FinanceTransaction:
-//  * @FINANCE_CREDIT:
-//  * @FINANCE_DEBIT:
-//  *
-//  * Enum with available transactions type
-//  */
-// typedef enum
-// {
-//   FINANCE_CREDIT,
-//   FINANCE_DEBIT,
-// } FinanceTransaction;
+/**
+ * FinanceTransaction:
+ * @FINANCE_CREDIT:
+ * @FINANCE_DEBIT:
+ *
+ * Enum with available transactions type
+ */
+typedef enum
+{
+  FINANCE_CREDIT,
+  FINANCE_DEBIT,
+} FinanceTransaction;
 
 /**
  * FinanceRepeat:
- * @FINANCE_NO_REPEAT:
  * @FINANCE_DAILY:
  * @FINANCE_MONDAY_FRIDAY:
- * @FINANCE_WEEKLY:
  * @FINANCE_MONTHLY:
+ * @FINANCE_NO_REPEAT:
+ * @FINANCE_WEEKLY:
  * @FINANCE_YEARLY:
  *
  * Enum with available repetitions
  */
 typedef enum
 {
-  FINANCE_NO_REPEAT,
   FINANCE_DAILY,
   FINANCE_MONDAY_FRIDAY,
-  FINANCE_WEEKLY,
   FINANCE_MONTHLY,
+  FINANCE_NO_REPEAT,
+  FINANCE_WEEKLY,
   FINANCE_YEARLY,
 } FinanceRepeat;
 
@@ -72,39 +72,39 @@ typedef enum
 /**
  * FinancePayment:
  * @FINANCE_CASH:
- * @FINANCE_DIRECT_DEBIT:
- * @FINANCE_TRANSFER:
- * @FINANCE_DEBIT_CARD:
- * @FINANCE_CREDIT_CARD:
- * @FINANCE_ELECTRONIC_PAYMENT:
- * @FINANCE_DEPOSIT:
  * @FINANCE_CHECK:
+ * @FINANCE_CREDIT_CARD:
+ * @FINANCE_DEBIT_CARD:
+ * @FINANCE_DEPOSIT:
+ * @FINANCE_DIRECT_DEBIT:
+ * @FINANCE_ELECTRONIC_PAYMENT:
+ * @FINANCE_TRANSFER:
  *
  * Enum with available payments
  */
 typedef enum
 {
   FINANCE_CASH,
-  FINANCE_DIRECT_DEBIT,
-  FINANCE_TRANSFER,
-  FINANCE_DEBIT_CARD,
-  FINANCE_CREDIT_CARD,
-  FINANCE_ELECTRONIC_PAYMENT,
-  FINANCE_DEPOSIT,
   FINANCE_CHECK,
+  FINANCE_CREDIT_CARD,
+  FINANCE_DEBIT_CARD,
+  FINANCE_DEPOSIT,
+  FINANCE_DIRECT_DEBIT,
+  FINANCE_ELECTRONIC_PAYMENT,
+  FINANCE_TRANSFER,
 } FinancePayment;
 
 /**
  * FinanceSymbol:
- * @FINANCE_LOCAL_SYMBOL:
  * @FINANCE_INTERNATIONAL_SYMBOL:
+ * @FINANCE_LOCAL_SYMBOL:
  *
  * Enum with available symbols
  */
 typedef enum
 {
-  FINANCE_LOCAL,
   FINANCE_INTERNATIONAL,
+  FINANCE_LOCAL,
 } FinanceSymbol;
 
 

@@ -1,13 +1,13 @@
 finance_incs += include_directories('entries')
 
 built_sources += gnome.compile_resources(
-  'transaction-resouces',
-  'transaction.gresource.xml',
-  c_name: 'transaction',
+  'editor-resouces',
+  'editor.gresource.xml',
+  c_name: 'editor',
 )
 
 sources += files(
-  'finance-transaction.c',
+  'finance-transaction-editor.c',
 )
 
 subdir('entries')

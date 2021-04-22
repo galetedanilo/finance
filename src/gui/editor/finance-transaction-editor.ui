@@ -10,7 +10,7 @@
   </object>
   <object class="GtkTextBuffer" id="buffer_notes"/>
   <!-- n-columns=3 n-rows=10 -->
-  <template class="FinanceTransaction" parent="GtkGrid">
+  <template class="FinanceTransactionEditor" parent="GtkGrid">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
     <property name="halign">center</property>
@@ -233,7 +233,7 @@
           <item id="4" translatable="yes">Monthly</item>
           <item id="5" translatable="yes">Yearly</item>
         </items>
-        <signal name="changed" handler="on_combo_repeat_changed" swapped="no"/>
+        <signal name="changed" handler="on_combo_box_repeat_changed" swapped="no"/>
       </object>
       <packing>
         <property name="left-attach">1</property>
@@ -271,7 +271,7 @@
           <item id="1" translatable="yes">N°. of Occurrences</item>
           <item id="2" translatable="yes">Until Date</item>
         </items>
-        <signal name="changed" handler="on_combo_frequency_changed" swapped="no"/>
+        <signal name="changed" handler="on_combo_box_frequency_changed" swapped="no"/>
       </object>
       <packing>
         <property name="left-attach">2</property>

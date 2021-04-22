@@ -1,4 +1,4 @@
-finance_incs += include_directories('transaction')
+finance_incs += include_directories('editor')
 finance_incs += include_directories('panel')
 finance_incs += include_directories('views')
 
@@ -15,6 +15,6 @@ sources += files(
   'finance-window.c',
 )
 
+subdir('editor')
 subdir('panel')
-subdir('transaction')
 subdir('views')

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/org/gnome/finance/editor">
+    <file compressed="true">finance-transaction-editor.ui</file>
+  </gresource>
+</gresources>
