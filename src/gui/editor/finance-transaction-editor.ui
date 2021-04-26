@@ -9,6 +9,44 @@
     <property name="page-increment">10</property>
   </object>
   <object class="GtkTextBuffer" id="buffer_notes"/>
+  <object class="GtkListStore" id="liststore_payment">
+    <columns>
+      <!-- column-name icon -->
+      <column type="gchararray"/>
+      <!-- column-name payment -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0">finance-cash-symbolic</col>
+        <col id="1" translatable="yes">Cash</col>
+      </row>
+      <row>
+        <col id="0">finance-check-symbolic</col>
+        <col id="1" translatable="yes">Check</col>
+      </row>
+      <row>
+        <col id="0">finance-credit-card-symbolic</col>
+        <col id="1" translatable="yes">Credit Card</col>
+      </row>
+      <row>
+        <col id="0">finance-debit-card-symbolic</col>
+        <col id="1" translatable="yes">Debit Card</col>
+      </row>
+      <row>
+        <col id="0">finance-deposit-symbolic</col>
+        <col id="1" translatable="yes">Deposit</col>
+      </row>
+      <row>
+        <col id="0">finance-eletronic-payment-symbolic</col>
+        <col id="1" translatable="yes">Eletronic Payment</col>
+      </row>
+      <row>
+        <col id="0">finance-transfer-symbolic</col>
+        <col id="1" translatable="yes">Transfer</col>
+      </row>
+    </data>
+  </object>
   <!-- n-columns=3 n-rows=10 -->
   <template class="FinanceTransactionEditor" parent="GtkGrid">
     <property name="visible">True</property>
@@ -21,7 +59,6 @@
     <property name="margin-bottom">10</property>
     <child>
       <object class="GtkImage" id="image_icon">
-        <property name="visible">False</property>
         <property name="can-focus">False</property>
         <property name="stock">gtk-missing-image</property>
       </object>
@@ -100,7 +137,6 @@
     </child>
     <child>
       <object class="GtkLabel" id="label_payment">
-        <property name="visible">False</property>
         <property name="can-focus">False</property>
         <property name="margin-start">5</property>
         <property name="margin-end">5</property>
@@ -118,7 +154,7 @@
       </packing>
     </child>
     <child>
-      <object class="GtkComboBoxText" id="combo_payment">
+      <object class="GtkComboBox" id="combo_payment">
         <property name="height-request">40</property>
         <property name="visible">True</property>
         <property name="can-focus">False</property>
@@ -126,17 +162,19 @@
         <property name="margin-end">5</property>
         <property name="margin-top">5</property>
         <property name="margin-bottom">5</property>
-        <property name="active">0</property>
-        <items>
-          <item id="0" translatable="yes">Cash</item>
-          <item id="1" translatable="yes">Direct Debit</item>
-          <item id="2" translatable="yes">Transfer</item>
-          <item id="3" translatable="yes">Debit Card</item>
-          <item id="4" translatable="yes">Credit Card</item>
-          <item id="5" translatable="yes">Electronic Payment</item>
-          <item id="6" translatable="yes">Deposit</item>
-          <item id="7" translatable="yes">Check</item>
-        </items>
+        <property name="model">liststore_payment</property>
+        <child>
+          <object class="GtkCellRendererPixbuf" id="icon"/>
+          <attributes>
+            <attribute name="icon-name">0</attribute>
+          </attributes>
+        </child>
+        <child>
+          <object class="GtkCellRendererText" id="payment"/>
+          <attributes>
+            <attribute name="text">1</attribute>
+          </attributes>
+        </child>
       </object>
       <packing>
         <property name="left-attach">1</property>
@@ -163,7 +201,6 @@
     </child>
     <child>
       <object class="GtkLabel" id="label_category">
-        <property name="visible">False</property>
         <property name="can-focus">False</property>
         <property name="margin-start">5</property>
         <property name="margin-end">5</property>
@@ -198,7 +235,6 @@
     </child>
     <child>
       <object class="GtkLabel" id="label_repeat">
-        <property name="visible">False</property>
         <property name="can-focus">False</property>
         <property name="margin-start">5</property>
         <property name="margin-end">5</property>
@@ -296,7 +332,6 @@
     </child>
     <child>
       <object class="GtkLabel" id="label_notes">
-        <property name="visible">False</property>
         <property name="can-focus">False</property>
         <property name="margin-start">5</property>
         <property name="margin-end">5</property>
@@ -338,6 +373,9 @@
         <property name="top-attach">9</property>
         <property name="width">2</property>
       </packing>
+    </child>
+    <child>
+      <placeholder/>
     </child>
     <child>
       <placeholder/>
