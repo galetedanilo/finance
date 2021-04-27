@@ -1,6 +1,6 @@
-/* finance-entry-date.h
+/* finance-date-entry.h
  *
- * Copyright 2020 galetedanilo <galetedanilo@gmail.com>
+ * Copyright 2020 - 2021 galetedanilo <galetedanilo@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,29 +18,29 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef __FINANCE_ENTRY_DATE_H__
-#define __FINANCE_ENTRY_DATE_H__
+#ifndef __FINANCE_DATE_ENTRY_H__
+#define __FINANCE_DATE_ENTRY_H__
 
 #include <gtk/gtk.h>
 
 G_BEGIN_DECLS
 
-#define FINANCE_TYPE_ENTRY_DATE (finance_entry_date_get_type ())
+#define FINANCE_TYPE_DATE_ENTRY (finance_date_entry_get_type ())
 
-G_DECLARE_FINAL_TYPE (FinanceEntryDate, finance_entry_date, FINANCE, ENTRY_DATE, GtkEntry)
+G_DECLARE_FINAL_TYPE (FinanceDateEntry, finance_date_entry, FINANCE, DATE_ENTRY, GtkEntry)
 
-GtkWidget *       finance_entry_date_new              (void);
+GtkWidget *       finance_date_entry_new              (void);
 
-GDateTime *       finance_entry_date_get_date         (FinanceEntryDate *self);
+GDateTime *       finance_date_entry_get_date         (FinanceDateEntry *self);
 
-void              finance_entry_date_set_date         (FinanceEntryDate *self,
+void              finance_date_entry_set_date         (FinanceDateEntry *self,
                                                        GDateTime        *date);
 
-gboolean          finance_entry_date_get_formatting   (FinanceEntryDate *self);
+gboolean          finance_date_entry_get_formatting   (FinanceDateEntry *self);
 
-void              finance_entry_date_set_formatting   (FinanceEntryDate *self,
-                                                       gboolean         formatting);
+void              finance_date_entry_set_formatting   (FinanceDateEntry *self,
+                                                       gboolean          formatting);
 
 G_END_DECLS
 
-#endif /* __FINANCE_ENTRY_DATE_H__ */
+#endif /* __FINANCE_DATE_ENTRY_H__ */

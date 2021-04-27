@@ -38,6 +38,10 @@
         <col id="1" translatable="yes">Deposit</col>
       </row>
       <row>
+        <col id="0">finance-direct-debit-symbolic</col>
+        <col id="1" translatable="yes">Direct Debit</col>
+      </row>
+      <row>
         <col id="0">finance-eletronic-payment-symbolic</col>
         <col id="1" translatable="yes">Eletronic Payment</col>
       </row>
@@ -103,7 +107,7 @@
       </packing>
     </child>
     <child>
-      <object class="FinanceEntryDate" id="entry_date">
+      <object class="FinanceDateEntry" id="entry_date">
         <property name="height-request">40</property>
         <property name="visible">True</property>
         <property name="can-focus">True</property>
@@ -315,7 +319,7 @@
       </packing>
     </child>
     <child>
-      <object class="FinanceEntryDate" id="entry_frequency_date">
+      <object class="FinanceDateEntry" id="entry_frequency_date">
         <property name="height-request">40</property>
         <property name="visible">False</property>
         <property name="can-focus">True</property>

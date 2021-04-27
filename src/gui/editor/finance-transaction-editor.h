@@ -23,7 +23,7 @@
 
 #include <gtk/gtk.h>
 
-#include "finance-entry-date.h"
+#include "finance-date-entry.h"
 #include "finance-entry-monetary.h"
 #include "finance-utils.h"
 

@@ -354,8 +354,8 @@ finance_transaction_editor_class_init (FinanceTransactionEditorClass *klass)
   GObjectClass    *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass  *widget_class = GTK_WIDGET_CLASS (klass);
 
+  g_type_ensure (FINANCE_TYPE_DATE_ENTRY);
   g_type_ensure (FINANCE_TYPE_ENTRY_MONETARY);
-  g_type_ensure (FINANCE_TYPE_ENTRY_DATE);
 
   object_class->finalize     = finance_transaction_editor_finalize;
   object_class->dispose      = finance_transaction_editor_dispose;

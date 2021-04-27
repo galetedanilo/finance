@@ -1,6 +1,6 @@
-/* finance-entry-date.c
+/* finance-date-entry.c
  *
- * Copyright 2020 galetedanilo <galetedanilo@gmail.com>
+ * Copyright 2020 - 2021 galetedanilo <galetedanilo@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +20,9 @@
 
 #include "finance-config.h"
 
-#include "finance-entry-date.h"
+#include "finance-date-entry.h"
 
-struct _FinanceEntryDate
+struct _FinanceDateEntry
 {
   GtkEntry    parent_instance;
 
@@ -35,7 +35,7 @@ struct _FinanceEntryDate
   gboolean    formatting;
 };
 
-G_DEFINE_TYPE (FinanceEntryDate, finance_entry_date, GTK_TYPE_ENTRY)
+G_DEFINE_TYPE (FinanceDateEntry, finance_date_entry, GTK_TYPE_ENTRY)
 
 enum {
   PROP_0,
@@ -47,7 +47,7 @@ enum {
 static GParamSpec *properties[N_PROPS] = { NULL, };
 
 static void
-date_update (FinanceEntryDate *self)
+date_update (FinanceDateEntry *self)
 {
   GDateTime *date_time;
   GDate     date;
@@ -60,7 +60,7 @@ date_update (FinanceEntryDate *self)
     {
       date_time = g_date_time_new_now_local ();
 
-      finance_entry_date_set_date (self, date_time);
+      finance_date_entry_set_date (self, date_time);
 
       gtk_entry_set_text (GTK_ENTRY (self), "");
 
@@ -74,7 +74,7 @@ date_update (FinanceEntryDate *self)
                                      g_date_get_day (&date),
                                      0, 0, 0);
 
-  finance_entry_date_set_date (self, date_time);
+  finance_date_entry_set_date (self, date_time);
 
   g_clear_pointer (&date_time, g_date_time_unref);
 }
@@ -123,7 +123,7 @@ on_entry_date_icon_press (GtkEntry              *entry,
                           GdkEvent              *event,
                           gpointer              user_data)
 {
-  FinanceEntryDate *self = FINANCE_ENTRY_DATE (user_data);
+  FinanceDateEntry *self = FINANCE_DATE_ENTRY (user_data);
 
   (void)event;
 
@@ -144,7 +144,7 @@ static void
 on_calendar_day_selected (GtkCalendar *calendar,
                           gpointer    user_data)
 {
-  FinanceEntryDate *self = FINANCE_ENTRY_DATE (user_data);
+  FinanceDateEntry *self = FINANCE_DATE_ENTRY (user_data);
 
   guint year, month, day;
   gchar *format_date;
@@ -174,46 +174,46 @@ on_calendar_day_selected (GtkCalendar *calendar,
 }
 
 GtkWidget *
-finance_entry_date_new (void)
+finance_date_entry_new (void)
 {
-  return g_object_new (FINANCE_TYPE_ENTRY_DATE, NULL);
+  return g_object_new (FINANCE_TYPE_DATE_ENTRY, NULL);
 }
 
 static void
-finance_entry_date_finalize (GObject *object)
+finance_date_entry_finalize (GObject *object)
 {
-  FinanceEntryDate *self = FINANCE_ENTRY_DATE (object);
+  FinanceDateEntry *self = FINANCE_DATE_ENTRY (object);
 
   g_clear_pointer (&self->date_time, g_date_time_unref);
 
-  G_OBJECT_CLASS (finance_entry_date_parent_class)->finalize (object);
+  G_OBJECT_CLASS (finance_date_entry_parent_class)->finalize (object);
 }
 
 static gboolean
-finance_entry_date_focus_out_event (GtkWidget     *widget,
+finance_date_entry_focus_out_event (GtkWidget     *widget,
                                     GdkEventFocus *event)
 {
-  date_update (FINANCE_ENTRY_DATE (widget));
+  date_update (FINANCE_DATE_ENTRY (widget));
 
-  return GTK_WIDGET_CLASS (finance_entry_date_parent_class)->focus_out_event (widget, event);
+  return GTK_WIDGET_CLASS (finance_date_entry_parent_class)->focus_out_event (widget, event);
 }
 
 static void
-finance_entry_date_get_property (GObject    *object,
-                                 guint      prop_id,
+finance_date_entry_get_property (GObject    *object,
+                                 guint       prop_id,
                                  GValue     *value,
                                  GParamSpec *pspec)
 {
-  FinanceEntryDate *self = FINANCE_ENTRY_DATE (object);
+  FinanceDateEntry *self = FINANCE_DATE_ENTRY (object);
 
   switch (prop_id)
     {
     case PROP_DATE:
-      g_value_set_boxed (value, finance_entry_date_get_date (self));
+      g_value_set_boxed (value, finance_date_entry_get_date (self));
       break;
 
     case PROP_FORMATTING:
-      g_value_set_boolean (value, finance_entry_date_get_formatting (self));
+      g_value_set_boolean (value, finance_date_entry_get_formatting (self));
       break;
 
     default:
@@ -223,21 +223,21 @@ finance_entry_date_get_property (GObject    *object,
 }
 
 static void
-finance_entry_date_set_property (GObject      *object,
-                                 guint        prop_id,
+finance_date_entry_set_property (GObject      *object,
+                                 guint         prop_id,
                                  const GValue *value,
                                  GParamSpec   *pspec)
 {
-  FinanceEntryDate *self = FINANCE_ENTRY_DATE (object);
+  FinanceDateEntry *self = FINANCE_DATE_ENTRY (object);
 
   switch (prop_id)
     {
     case PROP_DATE:
-      finance_entry_date_set_date (self, g_value_get_boxed (value));
+      finance_date_entry_set_date (self, g_value_get_boxed (value));
       break;
 
     case PROP_FORMATTING:
-      finance_entry_date_set_formatting (self, g_value_get_boolean (value));
+      finance_date_entry_set_formatting (self, g_value_get_boolean (value));
       break;
 
     default:
@@ -247,21 +247,21 @@ finance_entry_date_set_property (GObject      *object,
 }
 
 static void
-finance_entry_date_class_init (FinanceEntryDateClass *klass)
+finance_date_entry_class_init (FinanceDateEntryClass *klass)
 {
   GObjectClass    *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass  *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->finalize     = finance_entry_date_finalize;
-  object_class->get_property = finance_entry_date_get_property;
-  object_class->set_property = finance_entry_date_set_property;
+  object_class->finalize     = finance_date_entry_finalize;
+  object_class->get_property = finance_date_entry_get_property;
+  object_class->set_property = finance_date_entry_set_property;
 
-  widget_class->focus_out_event = finance_entry_date_focus_out_event;
+  widget_class->focus_out_event = finance_date_entry_focus_out_event;
 
   /**
-   * FinanceEntryDate::date:
+   * FinanceDateEntry::date:
    *
-   * The current date set.
+   * Sets the date time
    */
   properties[PROP_DATE] = g_param_spec_boxed ("date",
                                               "The current date set",
@@ -270,7 +270,7 @@ finance_entry_date_class_init (FinanceEntryDateClass *klass)
                                               G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinanceEntryDate::formatting:
+   * FinanceDateEntry::formatting:
    *
    * Enable automatic date formatting
    */
@@ -282,11 +282,11 @@ finance_entry_date_class_init (FinanceEntryDateClass *klass)
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/transaction/entries/finance-entry-date.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/transaction/entries/finance-date-entry.ui");
 
   /* The Widgets */
-  gtk_widget_class_bind_template_child (widget_class, FinanceEntryDate, calendar);
-  gtk_widget_class_bind_template_child (widget_class, FinanceEntryDate, popover);
+  gtk_widget_class_bind_template_child (widget_class, FinanceDateEntry, calendar);
+  gtk_widget_class_bind_template_child (widget_class, FinanceDateEntry, popover);
 
   /* The CallBacks */
   gtk_widget_class_bind_template_callback (widget_class, on_calendar_day_selected);
@@ -295,7 +295,7 @@ finance_entry_date_class_init (FinanceEntryDateClass *klass)
 }
 
 static void
-finance_entry_date_init (FinanceEntryDate *self)
+finance_date_entry_init (FinanceDateEntry *self)
 {
   self->date_time   = g_date_time_new_now_local ();
   self->formatting  = TRUE;
@@ -304,37 +304,37 @@ finance_entry_date_init (FinanceEntryDate *self)
 }
 
 /**
- * finance_entry_date_get_date:
- * @self: a #FinanceEntryDate
+ * finance_date_entry_get_date:
+ * @self: a #FinanceDateEntry
  *
- * Get the value of the date.
+ * Get the value of the date
  *
- * Returns: (transfer none): a #GDateTime with the date.
+ * Returns: (transfer none): a #GDateTime with the date
  *
  * Since: 1.0
  */
 GDateTime *
-finance_entry_date_get_date (FinanceEntryDate *self)
+finance_date_entry_get_date (FinanceDateEntry *self)
 {
-  g_return_val_if_fail (FINANCE_IS_ENTRY_DATE (self), NULL);
+  g_return_val_if_fail (FINANCE_IS_DATE_ENTRY (self), NULL);
 
   return self->date_time;
 }
 
 /**
- * finance_entry_date_set_date:
- * @self: a #FinanceEntryDate
- * @date: a valid #GDateTime.
+ * finance_date_entry_set_date:
+ * @self: a #FinanceDateEntry
+ * @date: a valid #GDateTime
  *
- * Set the value of the entry date.
+ * Set the value of the entry date
  *
  * Since: 1.0
  */
 void
-finance_entry_date_set_date (FinanceEntryDate *self,
+finance_date_entry_set_date (FinanceDateEntry *self,
                              GDateTime        *date)
 {
-  g_return_if_fail (FINANCE_IS_ENTRY_DATE (self));
+  g_return_if_fail (FINANCE_IS_DATE_ENTRY (self));
 
   gint year, month, day;
 
@@ -347,37 +347,37 @@ finance_entry_date_set_date (FinanceEntryDate *self,
 }
 
 /**
- * finance_entry_date_get_formatting:
- * @self: a #FinanceEntryDate
+ * finance_date_entry_get_formatting:
+ * @self: a #FinanceDateEntry
  *
- * Gets whether the formatting is in its “on” or “off” state.
+ * Gets whether the formatting is in its “on” or “off” state
  *
- * Returns: %TRUE if the automatic date formatting is active, and %FALSE otherwise.
+ * Returns: %TRUE if the automatic date formatting is active, and %FALSE otherwise
  *
  * Since: 1.0
  */
 gboolean
-finance_entry_date_get_formatting (FinanceEntryDate *self)
+finance_date_entry_get_formatting (FinanceDateEntry *self)
 {
-  g_return_val_if_fail (FINANCE_IS_ENTRY_DATE (self), FALSE);
+  g_return_val_if_fail (FINANCE_IS_DATE_ENTRY (self), FALSE);
 
   return self->formatting;
 }
 
 /**
- * finance_entry_date_set_formatting:
- * @self: a #FinanceEntryDate
- * @formatting: %TRUE if formatting should be active, and %FALSE otherwise.
+ * finance_date_entry_set_formatting:
+ * @self: a #FinanceDateEntry
+ * @formatting: %TRUE if formatting should be active, and %FALSE otherwise
  *
  * Change automatic date formatting states. %TRUE if formatting should be active, and %FALSE otherwise.
  *
  * Since: 1.0
  */
 void
-finance_entry_date_set_formatting (FinanceEntryDate *self,
-                                   gboolean         formatting)
+finance_date_entry_set_formatting (FinanceDateEntry *self,
+                                   gboolean          formatting)
 {
-  g_return_if_fail (FINANCE_IS_ENTRY_DATE (self));
+  g_return_if_fail (FINANCE_IS_DATE_ENTRY (self));
 
   if (self->formatting == formatting)
     return;
