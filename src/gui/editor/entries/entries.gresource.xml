@@ -2,6 +2,6 @@
 <gresources>
   <gresource prefix="/org/gnome/finance/transaction/entries">
     <file compressed="true">finance-date-entry.ui</file>
-    <file compressed="true">finance-entry-monetary.ui</file>
+    <file compressed="true">finance-monetary-entry.ui</file>
   </gresource>
 </gresources>    

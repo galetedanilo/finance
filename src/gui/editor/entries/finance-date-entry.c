@@ -47,39 +47,6 @@ enum {
 static GParamSpec *properties[N_PROPS] = { NULL, };
 
 static void
-date_update (FinanceDateEntry *self)
-{
-  GDateTime *date_time;
-  GDate     date;
-
-  g_date_clear (&date, 1);
-
-  g_date_set_parse (&date, gtk_entry_get_text (GTK_ENTRY (self)));
-
-  if (!g_date_valid (&date))
-    {
-      date_time = g_date_time_new_now_local ();
-
-      finance_date_entry_set_date (self, date_time);
-
-      gtk_entry_set_text (GTK_ENTRY (self), "");
-
-      g_clear_pointer (&date_time, g_date_time_unref);
-
-      return;
-    }
-
-  date_time = g_date_time_new_local (g_date_get_year (&date),
-                                     g_date_get_month (&date),
-                                     g_date_get_day (&date),
-                                     0, 0, 0);
-
-  finance_date_entry_set_date (self, date_time);
-
-  g_clear_pointer (&date_time, g_date_time_unref);
-}
-
-static void
 on_automatic_date_formatting (GtkEditable *editable,
                               const gchar *text,
                               gint        length,
@@ -151,7 +118,7 @@ on_calendar_day_selected (GtkCalendar *calendar,
 
   gtk_calendar_get_date (calendar, &year, &month, &day);
 
-  g_date_time_unref (self->date_time);
+  g_clear_pointer (&self->date_time, g_date_time_unref);
 
   self->date_time = g_date_time_new_local (year,
                                            month + 1,
@@ -170,7 +137,40 @@ on_calendar_day_selected (GtkCalendar *calendar,
                                      on_automatic_date_formatting,
                                      self);
 
-  g_free (format_date);
+  g_clear_pointer (&format_date, g_free);
+}
+
+static void
+finance_date_entry_update (FinanceDateEntry *self)
+{
+  GDateTime *date_time;
+  GDate     date;
+
+  g_date_clear (&date, 1);
+
+  g_date_set_parse (&date, gtk_entry_get_text (GTK_ENTRY (self)));
+
+  if (!g_date_valid (&date))
+    {
+      date_time = g_date_time_new_now_local ();
+
+      finance_date_entry_set_date (self, date_time);
+
+      gtk_entry_set_text (GTK_ENTRY (self), "");
+
+      g_clear_pointer (&date_time, g_date_time_unref);
+
+      return;
+    }
+
+  date_time = g_date_time_new_local (g_date_get_year (&date),
+                                     g_date_get_month (&date),
+                                     g_date_get_day (&date),
+                                     0, 0, 0);
+
+  finance_date_entry_set_date (self, date_time);
+
+  g_clear_pointer (&date_time, g_date_time_unref);
 }
 
 GtkWidget *
@@ -193,7 +193,7 @@ static gboolean
 finance_date_entry_focus_out_event (GtkWidget     *widget,
                                     GdkEventFocus *event)
 {
-  date_update (FINANCE_DATE_ENTRY (widget));
+  finance_date_entry_update (FINANCE_DATE_ENTRY (widget));
 
   return GTK_WIDGET_CLASS (finance_date_entry_parent_class)->focus_out_event (widget, event);
 }
@@ -390,4 +390,22 @@ finance_date_entry_set_formatting (FinanceDateEntry *self,
     g_signal_handlers_block_by_func (self, on_automatic_date_formatting, self);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_FORMATTING]);
+}
+
+/**
+ * finance_date_entry_clear:
+ * @self: a #FinanceDateEntry
+ *
+ * Restores the date to the initial value and sets the text to empty
+ *
+ * Since: 1.0
+ */
+void
+finance_date_entry_clear (FinanceDateEntry *self)
+{
+  g_return_if_fail (FINANCE_IS_DATE_ENTRY (self));
+
+  gtk_entry_set_text (GTK_ENTRY (self), "");
+
+  finance_date_entry_update (self);
 }

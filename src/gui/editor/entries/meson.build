@@ -6,5 +6,5 @@ built_sources += gnome.compile_resources(
 
 sources += files(
   'finance-date-entry.c',
-  'finance-entry-monetary.c',
+  'finance-monetary-entry.c',
 )

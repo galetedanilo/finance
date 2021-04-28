@@ -1,6 +1,6 @@
 /* finance-transaction-editor.c
  *
- * Copyright 2020 galetedanilo <galetedanilo@gmail.com>
+ * Copyright 2020 - 2021 galetedanilo <galetedanilo@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,7 +100,7 @@ on_combo_box_frequency_changed (GtkComboBox *widget,
 
   gtk_spin_button_set_value (GTK_SPIN_BUTTON (self->spin_frequency_number), 2);
 
-  gtk_entry_set_text (GTK_ENTRY (self->entry_frequency_date), "");
+  finance_date_entry_clear (FINANCE_DATE_ENTRY (self->entry_frequency_date));
 
   switch (frequency)
     {
@@ -355,7 +355,7 @@ finance_transaction_editor_class_init (FinanceTransactionEditorClass *klass)
   GtkWidgetClass  *widget_class = GTK_WIDGET_CLASS (klass);
 
   g_type_ensure (FINANCE_TYPE_DATE_ENTRY);
-  g_type_ensure (FINANCE_TYPE_ENTRY_MONETARY);
+  g_type_ensure (FINANCE_TYPE_MONETARY_ENTRY);
 
   object_class->finalize     = finance_transaction_editor_finalize;
   object_class->dispose      = finance_transaction_editor_dispose;
@@ -1181,8 +1181,7 @@ finance_transaction_editor_clear (FinanceTransactionEditor *self)
 
   create_icon (self);
 
-  //Do not forget
-  finance_entry_monetary_set_amount (FINANCE_ENTRY_MONETARY (self->entry_amount), 0.0);
+  finance_date_entry_clear (FINANCE_DATE_ENTRY (self->entry_date));
 
   gtk_text_buffer_set_text (GTK_TEXT_BUFFER (self->buffer_notes),
                             self->notes, -1);
@@ -1190,8 +1189,6 @@ finance_transaction_editor_clear (FinanceTransactionEditor *self)
   gtk_combo_box_set_active (GTK_COMBO_BOX (self->combo_payment), 0);
   gtk_combo_box_set_active (GTK_COMBO_BOX (self->combo_repeat), 0);
 
-  gtk_entry_set_text (GTK_ENTRY (self->entry_amount), "");
-  gtk_entry_set_text (GTK_ENTRY (self->entry_date), "");
   gtk_entry_set_text (GTK_ENTRY (self->entry_name), "");
   gtk_entry_set_text (GTK_ENTRY (self->entry_payee_name), "");
   gtk_entry_set_text (GTK_ENTRY (self->entry_payment_info), "");

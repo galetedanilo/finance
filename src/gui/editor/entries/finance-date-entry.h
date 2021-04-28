@@ -41,6 +41,8 @@ gboolean          finance_date_entry_get_formatting   (FinanceDateEntry *self);
 void              finance_date_entry_set_formatting   (FinanceDateEntry *self,
                                                        gboolean          formatting);
 
+void              finance_date_entry_clear            (FinanceDateEntry *self);
+
 G_END_DECLS
 
 #endif /* __FINANCE_DATE_ENTRY_H__ */

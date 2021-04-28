@@ -2,7 +2,7 @@
 <!-- Generated with glade 3.38.2 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
-  <template class="FinanceEntryMonetary" parent="GtkEntry">
+  <template class="FinanceMonetaryEntry" parent="GtkEntry">
     <property name="visible">True</property>
     <property name="can-focus">True</property>
     <property name="input-purpose">digits</property>

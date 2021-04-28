@@ -91,7 +91,7 @@
       </packing>
     </child>
     <child>
-      <object class="FinanceEntryMonetary" id="entry_amount">
+      <object class="FinanceMonetaryEntry" id="entry_amount">
         <property name="height-request">40</property>
         <property name="visible">True</property>
         <property name="can-focus">True</property>

@@ -1,6 +1,6 @@
-/* finance-entry-monetary.c
+/* finance-monetary-entry.c
  *
- * Copyright 2020 galetedanilo <galetedanilo@gmail.com>
+ * Copyright 2020 - 2021 galetedanilo <galetedanilo@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #include "finance-config.h"
 #include "finance-enums.h"
 
-#include "finance-entry-monetary.h"
+#include "finance-monetary-entry.h"
 
 struct _FinanceEntryMonetary
 {

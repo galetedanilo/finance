@@ -1,6 +1,6 @@
 /* finance-transaction-editor.h
  *
- * Copyright 2020 galetedanilo <galetedanilo@gmail.com>
+ * Copyright 2020 - 2021 galetedanilo <galetedanilo@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 #include <gtk/gtk.h>
 
 #include "finance-date-entry.h"
-#include "finance-entry-monetary.h"
+#include "finance-monetary-entry.h"
 #include "finance-utils.h"
 
 G_BEGIN_DECLS
