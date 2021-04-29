@@ -23,7 +23,7 @@
 
 #include "finance-monetary-entry.h"
 
-struct _FinanceEntryMonetary
+struct _FinanceMonetaryEntry
 {
   GtkEntry    parent_class;
 
@@ -36,7 +36,7 @@ struct _FinanceEntryMonetary
   FinanceSymbol symbol;
 };
 
-G_DEFINE_TYPE (FinanceEntryMonetary, finance_entry_monetary, GTK_TYPE_ENTRY)
+G_DEFINE_TYPE (FinanceMonetaryEntry, finance_monetary_entry, GTK_TYPE_ENTRY)
 
 enum {
   PROP_0,
@@ -51,7 +51,7 @@ enum {
 static GParamSpec *properties[N_PROPS] = { NULL, };
 
 static void
-filter_string (FinanceEntryMonetary *self)
+filter_string (FinanceMonetaryEntry *self)
 {
   GString     *aux;
   const gchar *p;
@@ -80,7 +80,7 @@ on_monetary_automatic_formatting (GtkEditable *editable,
                                   gint        *position,
                                   gpointer    user_data)
 {
-  FinanceEntryMonetary *self = FINANCE_ENTRY_MONETARY (user_data);
+  FinanceMonetaryEntry *self = FINANCE_MONETARY_ENTRY (user_data);
 
   gunichar aux_num = g_utf8_get_char (text);
 
@@ -123,7 +123,7 @@ on_monetary_automatic_formatting (GtkEditable *editable,
 }
 
 static void
-on_monetary_formatting (FinanceEntryMonetary *self)
+on_monetary_formatting (FinanceMonetaryEntry *self)
 {
   gchar money[40];
   gchar format[7];
@@ -162,16 +162,16 @@ on_monetary_formatting (FinanceEntryMonetary *self)
 }
 
 GtkWidget *
-finance_entry_monetary_new (void)
+finance_monetary_entry_new (void)
 {
-  return g_object_new (FINANCE_TYPE_ENTRY_MONETARY, NULL);
+  return g_object_new (FINANCE_TYPE_MONETARY_ENTRY, NULL);
 }
 
 static gboolean
-finance_entry_monetary_focus_in_event (GtkWidget      *widget,
+finance_monetary_entry_focus_in_event (GtkWidget      *widget,
                                        GdkEventFocus  *event)
 {
-  FinanceEntryMonetary *self = FINANCE_ENTRY_MONETARY (widget);
+  FinanceMonetaryEntry *self = FINANCE_MONETARY_ENTRY (widget);
 
   gchar *value;
 
@@ -214,14 +214,14 @@ finance_entry_monetary_focus_in_event (GtkWidget      *widget,
         }
     }
 
-  return GTK_WIDGET_CLASS (finance_entry_monetary_parent_class)->focus_in_event (widget, event);
+  return GTK_WIDGET_CLASS (finance_monetary_entry_parent_class)->focus_in_event (widget, event);
 }
 
 static gboolean
-finance_entry_monetary_focus_out_event (GtkWidget     *widget,
+finance_monetary_entry_focus_out_event (GtkWidget     *widget,
                                         GdkEventFocus *event)
 {
-  FinanceEntryMonetary *self = FINANCE_ENTRY_MONETARY (widget);
+  FinanceMonetaryEntry *self = FINANCE_MONETARY_ENTRY (widget);
 
   gtk_entry_set_alignment (GTK_ENTRY (self), 0);
 
@@ -243,37 +243,37 @@ finance_entry_monetary_focus_out_event (GtkWidget     *widget,
       self->amount = 0.0;
     }
 
-  return GTK_WIDGET_CLASS (finance_entry_monetary_parent_class)->focus_out_event (widget, event);
+  return GTK_WIDGET_CLASS (finance_monetary_entry_parent_class)->focus_out_event (widget, event);
 }
 
 static void
-finance_entry_monetary_get_property (GObject    *object,
-                                     guint      prop_id,
+finance_monetary_entry_get_property (GObject    *object,
+                                     guint       prop_id,
                                      GValue     *value,
                                      GParamSpec *pspec)
 {
-  FinanceEntryMonetary *self = FINANCE_ENTRY_MONETARY (object);
+  FinanceMonetaryEntry *self = FINANCE_MONETARY_ENTRY (object);
 
   switch (prop_id)
     {
     case PROP_AMOUNT:
-      g_value_set_double (value, finance_entry_monetary_get_amount (self));
+      g_value_set_double (value, finance_monetary_entry_get_amount (self));
       break;
 
     case PROP_CURRENCY_SYMBOL:
-      g_value_set_boolean (value, finance_entry_monetary_get_currency_symbol (self));
+      g_value_set_boolean (value, finance_monetary_entry_get_currency_symbol (self));
       break;
 
     case PROP_DECIMAL_PLACES:
-      g_value_set_int (value, finance_entry_monetary_get_decimal_places (self));
+      g_value_set_int (value, finance_monetary_entry_get_decimal_places (self));
       break;
 
     case PROP_FORMATTING:
-      g_value_set_boolean (value, finance_entry_monetary_get_formatting (self));
+      g_value_set_boolean (value, finance_monetary_entry_get_formatting (self));
       break;
 
     case PROP_SYMBOL:
-      g_value_set_enum (value, finance_entry_monetary_get_symbol (self));
+      g_value_set_enum (value, finance_monetary_entry_get_symbol (self));
       break;
 
     default:
@@ -283,33 +283,33 @@ finance_entry_monetary_get_property (GObject    *object,
 }
 
 static void
-finance_entry_monetary_set_property (GObject      *object,
-                                     guint        prop_id,
+finance_monetary_entry_set_property (GObject      *object,
+                                     guint         prop_id,
                                      const GValue *value,
                                      GParamSpec   *pspec)
 {
-  FinanceEntryMonetary *self = FINANCE_ENTRY_MONETARY (object);
+  FinanceMonetaryEntry *self = FINANCE_MONETARY_ENTRY (object);
 
   switch (prop_id)
     {
     case PROP_AMOUNT:
-      finance_entry_monetary_set_amount (self, g_value_get_double (value));
+      finance_monetary_entry_set_amount (self, g_value_get_double (value));
       break;
 
     case PROP_CURRENCY_SYMBOL:
-      finance_entry_monetary_set_currency_symbol (self, g_value_get_boolean (value));
+      finance_monetary_entry_set_currency_symbol (self, g_value_get_boolean (value));
       break;
 
     case PROP_DECIMAL_PLACES:
-      finance_entry_monetary_set_decimal_places (self, g_value_get_int (value));
+      finance_monetary_entry_set_decimal_places (self, g_value_get_int (value));
       break;
 
     case PROP_FORMATTING:
-      finance_entry_monetary_set_formatting (self, g_value_get_boolean (value));
+      finance_monetary_entry_set_formatting (self, g_value_get_boolean (value));
       break;
 
     case PROP_SYMBOL:
-      finance_entry_monetary_set_symbol (self, g_value_get_enum (value));
+      finance_monetary_entry_set_symbol (self, g_value_get_enum (value));
       break;
 
     default:
@@ -319,19 +319,19 @@ finance_entry_monetary_set_property (GObject      *object,
 }
 
 static void
-finance_entry_monetary_class_init (FinanceEntryMonetaryClass *klass)
+finance_monetary_entry_class_init (FinanceMonetaryEntryClass *klass)
 {
   GObjectClass    *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass  *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->get_property = finance_entry_monetary_get_property;
-  object_class->set_property = finance_entry_monetary_set_property;
+  object_class->get_property = finance_monetary_entry_get_property;
+  object_class->set_property = finance_monetary_entry_set_property;
 
-  widget_class->focus_in_event  = finance_entry_monetary_focus_in_event;
-  widget_class->focus_out_event = finance_entry_monetary_focus_out_event;
+  widget_class->focus_in_event  = finance_monetary_entry_focus_in_event;
+  widget_class->focus_out_event = finance_monetary_entry_focus_out_event;
 
   /**
-   * FinanceEntryMonetary::amount:
+   * FinanceMonetaryEntry::amount:
    *
    * The amount value
    */
@@ -344,7 +344,7 @@ finance_entry_monetary_class_init (FinanceEntryMonetaryClass *klass)
                                                  G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinanceEntryMonetary::currency-symbol:
+   * FinanceMonetaryEntry::currency-symbol:
    *
    * Enable automatic currency symbol
    */
@@ -355,7 +355,7 @@ finance_entry_monetary_class_init (FinanceEntryMonetaryClass *klass)
                                                            G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinanceEntryMonetary::decimal-places:
+   * FinanceMonetaryEntry::decimal-places:
    *
    * The number of digits to the right of a decimal point
    */
@@ -368,7 +368,7 @@ finance_entry_monetary_class_init (FinanceEntryMonetaryClass *klass)
                                                       G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinanceEntryMonetary::formatting:
+   * FinanceMonetaryEntry::formatting:
    *
    * Enable automatic monetary formatting
    */
@@ -380,7 +380,7 @@ finance_entry_monetary_class_init (FinanceEntryMonetaryClass *klass)
 
 
   /**
-   * FinanceEntryMonetary::symbol-type:
+   * FinanceMonetaryEntry::symbol-type:
    *
    * Sets currency symbol is local or international
    */
@@ -393,14 +393,14 @@ finance_entry_monetary_class_init (FinanceEntryMonetaryClass *klass)
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/transaction/entries/finance-entry-monetary.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/transaction/entries/finance-monetary-entry.ui");
 
   /* The CallBacks */
   gtk_widget_class_bind_template_callback (widget_class, on_monetary_automatic_formatting);
 }
 
 static void
-finance_entry_monetary_init (FinanceEntryMonetary *self)
+finance_monetary_entry_init (FinanceMonetaryEntry *self)
 {
   self->currency_symbol = FALSE;
   self->formatting      = TRUE;
@@ -412,37 +412,37 @@ finance_entry_monetary_init (FinanceEntryMonetary *self)
 }
 
 /**
- * finance_entr_monetary_get_amount:
- * @self: a #FinanceEntryMonetary
+ * finance_monetary_entry_get_amount:
+ * @self: a #FinanceMonetaryEntry
  *
- * Gets the amount value in #FinanceEntryMonetary.
+ * Gets the amount
  *
  * Returns: a #gdouble.
  *
  * Since: 1.0
  */
 gdouble
-finance_entry_monetary_get_amount (FinanceEntryMonetary *self)
+finance_monetary_entry_get_amount (FinanceMonetaryEntry *self)
 {
-  g_return_val_if_fail (FINANCE_IS_ENTRY_MONETARY (self), 0.0);
+  g_return_val_if_fail (FINANCE_IS_MONETARY_ENTRY (self), 0.0);
 
   return self->amount;
 }
 
 /**
- * finance_entry_monetary_set_amount:
- * @self: a #FinanceEntryMonetary
- * @amount: a #gdouble to set it to.
+ * finance_monetary_entry_set_amount:
+ * @self: a #FinanceMonetaryEntry
+ * @amount: a #gdouble to set it to
  *
- * Sets amount value in #FinanceEntryMonetary.
+ * Sets amount value
  *
  * Since: 1.0
  */
 void
-finance_entry_monetary_set_amount (FinanceEntryMonetary *self,
+finance_monetary_entry_set_amount (FinanceMonetaryEntry *self,
                                    gdouble              amount)
 {
-  g_return_if_fail (FINANCE_IS_ENTRY_MONETARY (self));
+  g_return_if_fail (FINANCE_IS_MONETARY_ENTRY (self));
 
   self->amount = amount;
 
@@ -452,37 +452,37 @@ finance_entry_monetary_set_amount (FinanceEntryMonetary *self,
 }
 
 /**
- * finance_entry_manetary_get_currency_symbol:
- * @self: a #FinanceEntryMonetary
+ * finance_monetary_entry_get_currency_symbol:
+ * @self: a #FinanceMonetaryEntry
  *
- * Gets whether the currency symbol is in its “on” or “off” state.
+ * Gets whether the currency symbol is in its “on” or “off” state
  *
  * Returns: %TRUE if the currency symbol is active, and %FALSE otherwise.
  *
  * Since: 1.0
  */
 gboolean
-finance_entry_monetary_get_currency_symbol (FinanceEntryMonetary *self)
+finance_monetary_entry_get_currency_symbol (FinanceMonetaryEntry *self)
 {
-  g_return_val_if_fail (FINANCE_IS_ENTRY_MONETARY (self), FALSE);
+  g_return_val_if_fail (FINANCE_IS_MONETARY_ENTRY (self), FALSE);
 
   return self->currency_symbol;
 }
 
 /**
- * finance_entry_monetary_set_currency_symbol:
- * @self: a #FinanceEntryMonetary
- * @currency_symbol: %TRUE if currency symbol should be active, and %FALSE otherwise.
+ * finance_monetary_entry_set_currency_symbol:
+ * @self: a #FinanceMonetaryEntry
+ * @currency_symbol: %TRUE if currency symbol should be active, and %FALSE otherwise
  *
  * Change currency symbol states. %TRUE if currency symbol should be active, and %FALSE otherwise.
  *
  * Since: 1.0
  */
 void
-finance_entry_monetary_set_currency_symbol (FinanceEntryMonetary  *self,
+finance_monetary_entry_set_currency_symbol (FinanceMonetaryEntry  *self,
                                             gboolean              currency_symbol)
 {
-  g_return_if_fail (FINANCE_IS_ENTRY_MONETARY (self));
+  g_return_if_fail (FINANCE_IS_MONETARY_ENTRY (self));
 
   self->currency_symbol = currency_symbol;
 
@@ -492,37 +492,37 @@ finance_entry_monetary_set_currency_symbol (FinanceEntryMonetary  *self,
 }
 
 /**
- * finance_entry_monetary_get_decimal_places:
- * @self: a #FinanceEntryMonetary
+ * finance_monetary_entry_get_decimal_places:
+ * @self: a #FinanceMonetaryEntry
  *
- * Returns the current precision of monetary value.
+ * Returns the current precision of monetary value
  *
  * Returns: The current precision.
  *
  * Since: 1.0
  */
 gint
-finance_entry_monetary_get_decimal_places (FinanceEntryMonetary *self)
+finance_monetary_entry_get_decimal_places (FinanceMonetaryEntry *self)
 {
-  g_return_val_if_fail (FINANCE_IS_ENTRY_MONETARY (self), FALSE);
+  g_return_val_if_fail (FINANCE_IS_MONETARY_ENTRY (self), FALSE);
 
   return self->decimal_value;
 }
 
 /**
- * finance_entry_monetary_set_decimal_places:
- * @self: a #FinanceEntryMonetary
- * @value: a #gint.
+ * finance_monetary_entry_set_decimal_places:
+ * @self: a #FinanceMonetaryEntry
+ * @value: a #gint
  *
- * Sets the number of digits to the right of a decimal point.
+ * Sets the number of digits to the right of a decimal point
  *
  * Since: 1.0
  */
 void
-finance_entry_monetary_set_decimal_places (FinanceEntryMonetary *self,
+finance_monetary_entry_set_decimal_places (FinanceMonetaryEntry *self,
                                            gint                  value)
 {
-  g_return_if_fail (FINANCE_IS_ENTRY_MONETARY (self));
+  g_return_if_fail (FINANCE_IS_MONETARY_ENTRY (self));
 
   self->decimal_value = value;
 
@@ -532,37 +532,37 @@ finance_entry_monetary_set_decimal_places (FinanceEntryMonetary *self,
 }
 
 /**
- * finance_entry_monetary_get_formatting:
- * @self: a #FinanceEntryMonetary
+ * finance_monetary_entry_get_formatting:
+ * @self: a #FinanceMonetaryEntry
  *
- * Gets whether the formatting is in its “on” or “off” state.
+ * Gets whether the formatting is in its “on” or “off” state
  *
  * Returns: %TRUE if the automatic date formatting is active, and %FALSE otherwise.
  *
  * Since: 1.0
  */
 gboolean
-finance_entry_monetary_get_formatting (FinanceEntryMonetary *self)
+finance_monetary_entry_get_formatting (FinanceMonetaryEntry *self)
 {
-  g_return_val_if_fail (FINANCE_IS_ENTRY_MONETARY (self), FALSE);
+  g_return_val_if_fail (FINANCE_IS_MONETARY_ENTRY (self), FALSE);
 
   return self->formatting;
 }
 
 /**
- * finance_entry_monetary_set_formatting:
- * @self: a #FinanceEntryMonetary
- * @formatting: %TRUE if formatting should be active, and %FALSE otherwise.
+ * finance_monetary_entry_set_formatting:
+ * @self: a #FinanceMonetaryEntry
+ * @formatting: %TRUE if formatting should be active, and %FALSE otherwise
  *
  * Change automatic monetary formatting states. %TRUE if formatting should be active, and %FALSE otherwise.
  *
  * Since: 1.0
  */
 void
-finance_entry_monetary_set_formatting (FinanceEntryMonetary *self,
+finance_monetary_entry_set_formatting (FinanceMonetaryEntry *self,
                                        gboolean             formatting)
 {
-  g_return_if_fail (FINANCE_IS_ENTRY_MONETARY (self));
+  g_return_if_fail (FINANCE_IS_MONETARY_ENTRY (self));
 
   if (self->formatting == formatting)
     return;
@@ -578,37 +578,37 @@ finance_entry_monetary_set_formatting (FinanceEntryMonetary *self,
 }
 
 /**
- * finance_entry_monetary_get_symbol:
- * @self: a #FinanceEntryMonetary
+ * finance_monetary_entry_get_symbol:
+ * @self: a #FinanceMonetaryEntry
  *
- * Returns the type of currency symbol in use.
+ * Returns the type of currency symbol in use
  *
  * Returns: a #FinanceSymbol.
  *
  * Since: 1.0
  */
 gint
-finance_entry_monetary_get_symbol (FinanceEntryMonetary *self)
+finance_monetary_entry_get_symbol (FinanceMonetaryEntry *self)
 {
-  g_return_val_if_fail (FINANCE_IS_ENTRY_MONETARY (self), -1);
+  g_return_val_if_fail (FINANCE_IS_MONETARY_ENTRY (self), -1);
 
   return self->symbol;
 }
 
 /**
- * finance_entry_monetary_set_symbol:
- * @self: a #FinanceEntryMonetary
- * @symbol: a #FinanceSymbol.
+ * finance_monetary_entry_set_symbol:
+ * @self: a #FinanceMonetaryEntry
+ * @symbol: a #FinanceSymbol
  *
- * Sets currency symbol is local or international.
+ * Sets currency symbol is local or international
  *
  * Since: 1.0
  */
 void
-finance_entry_monetary_set_symbol (FinanceEntryMonetary *self,
+finance_monetary_entry_set_symbol (FinanceMonetaryEntry *self,
                                    gint         symbol)
 {
-  g_return_if_fail (FINANCE_IS_ENTRY_MONETARY (self));
+  g_return_if_fail (FINANCE_IS_MONETARY_ENTRY (self));
 
   self->symbol = symbol;
 

@@ -60,7 +60,7 @@ gint            finance_transaction_editor_get_frequency              (FinanceTr
 void            finance_transaction_editor_set_frequency              (FinanceTransactionEditor *self,
                                                                        gint                      frequency);
 
-const gchar *  finance_transaction_editor_get_frequency_date         (FinanceTransactionEditor *self);
+const gchar *   finance_transaction_editor_get_frequency_date         (FinanceTransactionEditor *self);
 
 void            finance_transaction_editor_set_frequency_date         (FinanceTransactionEditor *self,
                                                                        const gchar              *date);

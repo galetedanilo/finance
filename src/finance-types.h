@@ -24,10 +24,11 @@
 
 G_BEGIN_DECLS
 
-typedef struct _FinanceRepeat FinanceRepeat;
 typedef struct _FinanceFrequency FinanceFrequency;
 typedef struct _FinancePayment FinancePayment;
+typedef struct _FinanceRepeat FinanceRepeat;
 typedef struct _FinanceSymbol FinanceSymbol;
+typedef struct _FinanceTransaction FinanceTransaction;
 
 G_END_DECLS
 

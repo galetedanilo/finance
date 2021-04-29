@@ -605,7 +605,7 @@ finance_transaction_editor_get_amount (FinanceTransactionEditor *self)
 {
   g_return_val_if_fail (FINANCE_IS_TRANSACTION_EDITOR (self), 0.0);
 
-  return finance_entry_monetary_get_amount (FINANCE_ENTRY_MONETARY (self->entry_amount));
+  return finance_monetary_entry_get_amount (FINANCE_MONETARY_ENTRY (self->entry_amount));
 }
 
 /**
@@ -623,7 +623,7 @@ finance_transaction_editor_set_amount (FinanceTransactionEditor *self,
 {
   g_return_if_fail (FINANCE_IS_TRANSACTION_EDITOR (self));
 
-  finance_entry_monetary_set_amount (FINANCE_ENTRY_MONETARY (self->entry_amount), amount);
+  finance_monetary_entry_set_amount (FINANCE_MONETARY_ENTRY (self->entry_amount), amount);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_AMOUNT]);
 }

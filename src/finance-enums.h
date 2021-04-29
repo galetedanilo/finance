@@ -21,40 +21,6 @@
 #include "finance-enum-types.h"
 
 /**
- * FinanceTransaction:
- * @FINANCE_CREDIT:
- * @FINANCE_DEBIT:
- *
- * Enum with available transactions type
- */
-typedef enum
-{
-  FINANCE_CREDIT,
-  FINANCE_DEBIT,
-} FinanceTransaction;
-
-/**
- * FinanceRepeat:
- * @FINANCE_DAILY:
- * @FINANCE_MONDAY_FRIDAY:
- * @FINANCE_MONTHLY:
- * @FINANCE_NO_REPEAT:
- * @FINANCE_WEEKLY:
- * @FINANCE_YEARLY:
- *
- * Enum with available repetitions
- */
-typedef enum
-{
-  FINANCE_DAILY,
-  FINANCE_MONDAY_FRIDAY,
-  FINANCE_MONTHLY,
-  FINANCE_NO_REPEAT,
-  FINANCE_WEEKLY,
-  FINANCE_YEARLY,
-} FinanceRepeat;
-
-/**
  * FinanceFrequency:
  * @FINANCE_FOREVER:
  * @FINANCE_N_OCCURRENCES:
@@ -95,6 +61,27 @@ typedef enum
 } FinancePayment;
 
 /**
+ * FinanceRepeat:
+ * @FINANCE_DAILY:
+ * @FINANCE_MONDAY_FRIDAY:
+ * @FINANCE_MONTHLY:
+ * @FINANCE_NO_REPEAT:
+ * @FINANCE_WEEKLY:
+ * @FINANCE_YEARLY:
+ *
+ * Enum with available repetitions
+ */
+typedef enum
+{
+  FINANCE_DAILY,
+  FINANCE_MONDAY_FRIDAY,
+  FINANCE_MONTHLY,
+  FINANCE_NO_REPEAT,
+  FINANCE_WEEKLY,
+  FINANCE_YEARLY,
+} FinanceRepeat;
+
+/**
  * FinanceSymbol:
  * @FINANCE_INTERNATIONAL_SYMBOL:
  * @FINANCE_LOCAL_SYMBOL:
@@ -107,4 +94,15 @@ typedef enum
   FINANCE_LOCAL,
 } FinanceSymbol;
 
-
+/**
+ * FinanceTransaction:
+ * @FINANCE_CREDIT:
+ * @FINANCE_DEBIT:
+ *
+ * Enum with available transactions type
+ */
+typedef enum
+{
+  FINANCE_CREDIT,
+  FINANCE_DEBIT,
+} FinanceTransaction;
