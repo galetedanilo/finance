@@ -56,6 +56,8 @@ gint          finance_monetary_entry_get_symbol           (FinanceMonetaryEntry 
 void          finance_monetary_entry_set_symbol           (FinanceMonetaryEntry *self,
                                                            gint                  symbol);
 
+void          finance_monetary_entry_clear                (FinanceMonetaryEntry *self);
+
 G_END_DECLS
 
 #endif /* __FINANCE_MONETARY_ENTRY_H__ */
