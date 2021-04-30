@@ -1169,8 +1169,8 @@ finance_transaction_editor_clear (FinanceTransactionEditor *self)
 {
   g_return_if_fail (FINANCE_IS_TRANSACTION_EDITOR (self));
 
-  g_free (self->icon);
-  g_free (self->notes);
+  g_clear_pointer (&self->icon, g_free);
+  g_clear_pointer (&self->notes, g_free);
 
   gdk_rgba_free (self->color);
 
@@ -1182,6 +1182,7 @@ finance_transaction_editor_clear (FinanceTransactionEditor *self)
   create_icon (self);
 
   finance_date_entry_clear (FINANCE_DATE_ENTRY (self->entry_date));
+  finance_monetary_entry_clear (FINANCE_MONETARY_ENTRY (self->entry_amount));
 
   gtk_text_buffer_set_text (GTK_TEXT_BUFFER (self->buffer_notes),
                             self->notes, -1);
