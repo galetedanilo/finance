@@ -28,7 +28,7 @@ struct _FinanceMonetaryEntry
   GtkEntry    parent_class;
 
   gdouble     amount;
-  gint        decimal_value;
+  gint        decimal_places;
 
   gboolean    formatting;
   gboolean    currency_symbol;
@@ -64,7 +64,7 @@ filter_string (FinanceMonetaryEntry *self)
       if (g_unichar_isdigit (g_utf8_get_char (p)))
         g_string_append_unichar (aux, g_utf8_get_char (p));
 
-  aux = g_string_insert_c (aux, (aux->len - self->decimal_value), '.');
+  aux = g_string_insert_c (aux, (aux->len - self->decimal_places), '.');
 
   aux = g_string_append_c (aux, 0x00);
 
@@ -95,14 +95,14 @@ on_monetary_automatic_formatting (GtkEditable *editable,
                                 length,
                                 position);
 
-      if (gtk_entry_get_text_length (GTK_ENTRY (user_data)) > self->decimal_value)
+      if (gtk_entry_get_text_length (GTK_ENTRY (user_data)) > self->decimal_places)
         {
           gchar       format[7];
           gchar       money[40];
 
           filter_string (self);
 
-          g_snprintf (format, 7, "%%!.%dn", self->decimal_value);
+          g_snprintf (format, 7, "%%!.%dn", self->decimal_places);
           strfmon (money, 40, format, self->amount);
 
           gtk_entry_set_text (GTK_ENTRY (user_data), "");
@@ -135,18 +135,18 @@ on_monetary_formatting (FinanceMonetaryEntry *self)
     {
       if (self->symbol == FINANCE_LOCAL)
         {
-          g_snprintf (format, 7, "%%.%dn", self->decimal_value);
+          g_snprintf (format, 7, "%%.%dn", self->decimal_places);
           strfmon (money, 40, format, self->amount);
         }
       else
         {
-          g_snprintf (format, 7, "%%.%di", self->decimal_value);
+          g_snprintf (format, 7, "%%.%di", self->decimal_places);
           strfmon (money, 40, format, self->amount);
         }
     }
   else
     {
-      g_snprintf (format, 7, "%%!.%dn", self->decimal_value);
+      g_snprintf (format, 7, "%%!.%dn", self->decimal_places);
       strfmon (money, 40, format, self->amount);
     }
 
@@ -180,7 +180,7 @@ finance_monetary_entry_focus_in_event (GtkWidget      *widget,
   if (self->formatting && self->amount == 0.0)
     {
 
-      switch (self->decimal_value)
+      switch (self->decimal_places)
         {
         case 3:
           gtk_entry_set_text (GTK_ENTRY (self), "0.000");
@@ -205,7 +205,7 @@ finance_monetary_entry_focus_in_event (GtkWidget      *widget,
       if (self->amount != 0.0)
         {
           value = g_strdup_printf ("%.*f",
-                                   self->decimal_value,
+                                   self->decimal_places,
                                    self->amount);
 
           gtk_entry_set_text (GTK_ENTRY (self), value);
@@ -405,7 +405,7 @@ finance_monetary_entry_init (FinanceMonetaryEntry *self)
   self->currency_symbol = FALSE;
   self->formatting      = TRUE;
   self->amount          = 0.0;
-  self->decimal_value   = 1;
+  self->decimal_places  = 1;
   self->symbol          = FINANCE_LOCAL;
 
   gtk_widget_init_template (GTK_WIDGET (self));
@@ -506,7 +506,7 @@ finance_monetary_entry_get_decimal_places (FinanceMonetaryEntry *self)
 {
   g_return_val_if_fail (FINANCE_IS_MONETARY_ENTRY (self), FALSE);
 
-  return self->decimal_value;
+  return self->decimal_places;
 }
 
 /**
@@ -524,7 +524,7 @@ finance_monetary_entry_set_decimal_places (FinanceMonetaryEntry *self,
 {
   g_return_if_fail (FINANCE_IS_MONETARY_ENTRY (self));
 
-  self->decimal_value = value;
+  self->decimal_places = value;
 
   on_monetary_formatting (self);
 
@@ -615,4 +615,22 @@ finance_monetary_entry_set_symbol (FinanceMonetaryEntry *self,
   on_monetary_formatting (self);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SYMBOL]);
+}
+
+/**
+ * finance_monetary_entry_clear:
+ * @self: a #FinanceMonetaryEntry
+ *
+ * Restores the amount to the initial value and sets the text to empty
+ *
+ * Since: 1.0
+ */
+void
+finance_monetary_entry_clear (FinanceMonetaryEntry *self)
+{
+  g_return_if_fail (FINANCE_IS_MONETARY_ENTRY (self));
+
+  gtk_entry_set_text (GTK_ENTRY (self), "");
+
+  self->amount = 0.0;
 }
