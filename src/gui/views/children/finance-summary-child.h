@@ -43,20 +43,15 @@ const gchar *   finance_summary_child_get_category        (FinanceSummaryChild *
 void            finance_summary_child_set_category        (FinanceSummaryChild *self,
                                                            const gchar         *category);
 
-GdkRGBA *       finance_summary_child_get_color           (FinanceSummaryChild *self);
-
-void            finance_summary_child_set_color           (FinanceSummaryChild *self,
-                                                           const GdkRGBA       *color);
-
 const gchar *   finance_summary_child_get_date            (FinanceSummaryChild *self);
 
 void            finance_summary_child_set_date            (FinanceSummaryChild *self,
                                                            const gchar         *date);
 
-const gchar *   finance_summary_child_get_icon            (FinanceSummaryChild *self);
+const gchar *   finance_summary_child_get_icon_name       (FinanceSummaryChild *self);
 
-void            finance_summary_child_set_icon            (FinanceSummaryChild *self,
-                                                           const gchar         *icon);
+void            finance_summary_child_set_icon_name       (FinanceSummaryChild *self,
+                                                           const gchar         *icon_name);
 
 const gchar *   finance_summary_child_get_name            (FinanceSummaryChild *self);
 
