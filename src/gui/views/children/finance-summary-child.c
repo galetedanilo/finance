@@ -37,9 +37,7 @@ struct _FinanceSummaryChild
   GtkWidget *label_payment;
   GtkWidget *label_repeat;
 
-  gchar     *icon;
-
-  GdkRGBA   *color;
+  gchar     *icon_name;
 };
 
 G_DEFINE_TYPE (FinanceSummaryChild, finance_summary_child, GTK_TYPE_GRID)
@@ -48,9 +46,8 @@ enum {
   PROP_0,
   PROP_AMOUNT,
   PROP_CATEGORY,
-  PROP_COLOR,
   PROP_DATE,
-  PROP_ICON,
+  PROP_ICON_NAME,
   PROP_NAME,
   PROP_PAYEE_NAME,
   PROP_PAYMENT,
@@ -60,18 +57,6 @@ enum {
 };
 
 static GParamSpec *properties [N_PROPS] = { NULL, };
-
-static void
-create_icon (FinanceSummaryChild *self)
-{
-  cairo_surface_t *surface;
-
-  surface = finance_utils_create_circle (self->color, 100, self->icon);
-
-  gtk_image_set_from_surface (GTK_IMAGE (self->image_icon), surface);
-
-  g_clear_pointer (&surface, cairo_surface_destroy);
-}
 
 static void
 on_check_button_toggled (GtkToggleButton *togglebutton,
@@ -95,19 +80,9 @@ finance_summary_child_finalize (GObject *object)
 {
   FinanceSummaryChild *self = (FinanceSummaryChild *)object;
 
-  g_clear_pointer (&self->icon, g_free);
+  g_clear_pointer (&self->icon_name, g_free);
 
   G_OBJECT_CLASS (finance_summary_child_parent_class)->finalize (object);
-}
-
-static void
-finance_summary_child_dispose (GObject *object)
-{
-  FinanceSummaryChild *self = (FinanceSummaryChild *)object;
-
-  g_clear_pointer (&self->color, gdk_rgba_free);
-
-  G_OBJECT_CLASS (finance_summary_child_parent_class)->dispose (object);
 }
 
 static void
@@ -128,16 +103,12 @@ finance_summary_child_get_property (GObject    *object,
       g_value_set_string (value, finance_summary_child_get_category (self));
       break;
 
-    case PROP_COLOR:
-      g_value_set_boxed (value, finance_summary_child_get_color (self));
-      break;
-
     case PROP_DATE:
       g_value_set_string (value, finance_summary_child_get_date (self));
       break;
 
-    case PROP_ICON:
-      g_value_set_string (value, finance_summary_child_get_icon (self));
+    case PROP_ICON_NAME:
+      g_value_set_string (value, finance_summary_child_get_icon_name (self));
       break;
 
     case PROP_NAME:
@@ -184,16 +155,12 @@ finance_summary_child_set_property (GObject      *object,
       finance_summary_child_set_category (self, g_value_get_string (value));
       break;
 
-    case PROP_COLOR:
-      finance_summary_child_set_color (self, g_value_get_boxed (value));
-      break;
-
     case PROP_DATE:
       finance_summary_child_set_date (self, g_value_get_string (value));
       break;
 
-    case PROP_ICON:
-      finance_summary_child_set_icon (self, g_value_get_string (value));
+    case PROP_ICON_NAME:
+      finance_summary_child_set_icon_name (self, g_value_get_string (value));
       break;
 
     case PROP_NAME:
@@ -229,7 +196,6 @@ finance_summary_child_class_init (FinanceSummaryChildClass *klass)
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
   object_class->finalize      = finance_summary_child_finalize;
-  object_class->dispose       = finance_summary_child_dispose;
   object_class->get_property  = finance_summary_child_get_property;
   object_class->set_property  = finance_summary_child_set_property;
 
@@ -256,17 +222,6 @@ finance_summary_child_class_init (FinanceSummaryChildClass *klass)
                                                    G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinanceSummaryChild::color:
-   *
-   * The background color of the icon
-   */
-  properties[PROP_COLOR] = g_param_spec_boxed ("color",
-                                               "Color",
-                                               "The background color of the icon",
-                                               GDK_TYPE_RGBA,
-                                               G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
-
-  /**
    * FinanceSummaryChild::date:
    *
    * The transaction date
@@ -278,15 +233,15 @@ finance_summary_child_class_init (FinanceSummaryChildClass *klass)
                                                G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinanceSummaryChild::icon:
+   * FinanceSummaryChild::icon-name:
    *
-   * The two letters that are part of the icon image
+   * The name of the icon in the image
    */
-  properties[PROP_ICON] = g_param_spec_string ("icon",
-                                               "Icon",
-                                               "The two letters that are part of the icon image",
-                                               NULL,
-                                               G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+  properties[PROP_ICON_NAME] = g_param_spec_string ("icon-name",
+                                                    "Icon name",
+                                                    "The name of the icon in the image",
+                                                    NULL,
+                                                    G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
    * FinanceSummaryChild::name:
@@ -366,10 +321,6 @@ static void
 finance_summary_child_init (FinanceSummaryChild *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
-
-  self->color = finance_utils_random_rgba_color ();
-
-  create_icon (self);
 }
 
 /**
@@ -453,48 +404,6 @@ finance_summary_child_set_category (FinanceSummaryChild *self,
 }
 
 /**
- * finance_summary_child_get_color:
- * @self: a #FinanceSummaryChild
- *
- * Returns the background color of the icon
- *
- * Returns: (transfer none): a #GdkRGBA with the color.
- *
- * Since: 1.0
- */
-GdkRGBA *
-finance_summary_child_get_color (FinanceSummaryChild *self)
-{
-  g_return_val_if_fail (FINANCE_IS_SUMMARY_CHILD (self), NULL);
-
-  return self->color;
-}
-
-/**
- * finance_summary_child_set_color:
- * @self: a #FinanceSummaryChild
- * @color: a #GdkRGBA
- *
- * Sets the background color of the icon
- *
- * Since: 1.0
- */
-void
-finance_summary_child_set_color (FinanceSummaryChild *self,
-                                 const GdkRGBA       *color)
-{
-  g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
-
-  g_clear_pointer (&self->color, gdk_rgba_free);
-
-  self->color = gdk_rgba_copy (color);
-
-  create_icon (self);
-
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_COLOR]);
-}
-
-/**
  * finance_summary_child_get_date:
  * @self: a #FinanceSummaryChild
  *
@@ -535,48 +444,46 @@ finance_summary_child_set_date (FinanceSummaryChild *self,
 }
 
 /**
- * finance_summary_child_get_icon:
+ * finance_summary_child_get_icon_name:
  * @self: a #FinanceSummaryChild
  *
- * Returns the two letters that are part of the icon image
+ * Returns the name of the icon in the image
  *
- * Returns: A two-letter string , or %NULL.
+ * Returns: The name of the icon in the image as a string , or %NULL.
  * This string points to internally allocated storage in the object
  * and must not be freed, modified or stored.
  *
  * Since: 1.0
  */
 const gchar *
-finance_summary_child_get_icon (FinanceSummaryChild *self)
+finance_summary_child_get_icon_name (FinanceSummaryChild *self)
 {
   g_return_val_if_fail (FINANCE_IS_SUMMARY_CHILD (self), NULL);
 
-  return self->icon;
+  return self->icon_name;
 }
 
 /**
- * finance_summary_child_set_icon:
+ * finance_summary_child_set_icon_name:
  * @self: a #FinanceSummaryChild
- * @icon: the icon to set, as a two-letter string
+ * @icon_name: the name of the icon in the image
  *
- * Sets the two letters that are part of the icon image,
+ * Sets the name of the icon in the image,
  * replacing the current contents.
  *
  * Since:1.0
  */
 void
-finance_summary_child_set_icon (FinanceSummaryChild *self,
-                                const gchar         *icon)
+finance_summary_child_set_icon_name (FinanceSummaryChild *self,
+                                     const gchar         *icon_name)
 {
   g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
 
-  g_clear_pointer (&self->icon, g_free);
+  g_clear_pointer (&self->icon_name, g_free);
 
-  self->icon = g_strdup (icon);
+  self->icon_name = g_strdup (icon_name);
 
-  create_icon (self);
-
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_ICON]);
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_ICON_NAME]);
 }
 
 /**
