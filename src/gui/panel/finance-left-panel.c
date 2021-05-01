@@ -78,7 +78,7 @@ on_left_panel_search_changed (GtkSearchEntry *entry,
 static void
 on_list_box_row_activated (GtkListBox    *box,
                            GtkListBoxRow *row,
-                           gpointer      user_data)
+                           gpointer       user_data)
 {
   FinanceLeftPanel *self = FINANCE_LEFT_PANEL (user_data);
 }
@@ -89,7 +89,7 @@ on_button_ascending_clicked (GtkButton *button,
 {
   FinanceLeftPanel *self = FINANCE_LEFT_PANEL (user_data);
 
-  gtk_widget_set_visible (button, FALSE);
+  gtk_widget_set_visible (GTK_WIDGET (button), FALSE);
 
   gtk_widget_set_visible (self->button_descending, TRUE);
 
