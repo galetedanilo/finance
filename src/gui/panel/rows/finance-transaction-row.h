@@ -38,15 +38,15 @@ const gchar *   finance_transaction_row_get_amount        (FinanceTransactionRow
 void            finance_transaction_row_set_amount        (FinanceTransactionRow *self,
                                                            const gchar           *amount);
 
-GdkRGBA *       finance_transaction_row_get_color         (FinanceTransactionRow *self);
+GdkRGBA *       finance_transaction_row_get_icon_color    (FinanceTransactionRow *self);
 
-void            finance_transaction_row_set_color         (FinanceTransactionRow *self,
+void            finance_transaction_row_set_icon_color    (FinanceTransactionRow *self,
                                                            const GdkRGBA         *color);
 
-const gchar *   finance_transaction_row_get_icon          (FinanceTransactionRow *self);
+const gchar *   finance_transaction_row_get_icon_text     (FinanceTransactionRow *self);
 
-void            finance_transaction_row_set_icon          (FinanceTransactionRow *self,
-                                                           const gchar           *icon);
+void            finance_transaction_row_set_icon_text     (FinanceTransactionRow *self,
+                                                           const gchar           *text);
 
 gboolean        finance_transaction_row_get_selected      (FinanceTransactionRow *self);
 
