@@ -33,8 +33,8 @@ struct _FinanceTransactionRow
   GtkWidget     *label_title;
   GtkWidget     *revealer_check;
 
-  GdkRGBA       *color;
-  gchar         *icon;
+  GdkRGBA       *icon_color;
+  gchar         *icon_text;
 };
 
 G_DEFINE_TYPE (FinanceTransactionRow, finance_transaction_row, GTK_TYPE_LIST_BOX_ROW)
@@ -42,8 +42,8 @@ G_DEFINE_TYPE (FinanceTransactionRow, finance_transaction_row, GTK_TYPE_LIST_BOX
 enum {
   PROP_0,
   PROP_AMOUNT,
-  PROP_COLOR,
-  PROP_ICON,
+  PROP_ICON_COLOR,
+  PROP_ICON_TEXT,
   PROP_SELECTED,
   PROP_TITLE,
   N_PROPS,
@@ -56,7 +56,7 @@ create_icon (FinanceTransactionRow *self)
 {
   cairo_surface_t *surface;
 
-  surface = finance_utils_create_circle (self->color, 45, self->icon);
+  surface = finance_utils_create_circle (self->icon_color, 45, self->icon_text);
 
   gtk_image_set_from_surface (GTK_IMAGE (self->image_icon), surface);
 
@@ -103,7 +103,7 @@ finance_transaction_row_finalize (GObject *object)
 {
   FinanceTransactionRow *self = (FinanceTransactionRow *)object;
 
-  g_clear_pointer (&self->icon, g_free);
+  g_clear_pointer (&self->icon_text, g_free);
 
   G_OBJECT_CLASS (finance_transaction_row_parent_class)->finalize (object);
 }
@@ -113,7 +113,7 @@ finance_transaction_row_dispose (GObject *object)
 {
   FinanceTransactionRow *self = (FinanceTransactionRow *)object;
 
-  g_clear_pointer (&self->color, gdk_rgba_free);
+  g_clear_pointer (&self->icon_color, gdk_rgba_free);
 
   G_OBJECT_CLASS (finance_transaction_row_parent_class)->dispose (object);
 }
@@ -132,12 +132,12 @@ finance_transaction_row_get_property (GObject    *object,
       g_value_set_string (value, finance_transaction_row_get_amount (self));
       break;
 
-    case PROP_COLOR:
-      g_value_set_boxed (value, finance_transaction_row_get_color (self));
+    case PROP_ICON_COLOR:
+      g_value_set_boxed (value, finance_transaction_row_get_icon_color (self));
       break;
 
-    case PROP_ICON:
-      g_value_set_string (value, finance_transaction_row_get_icon (self));
+    case PROP_ICON_TEXT:
+      g_value_set_string (value, finance_transaction_row_get_icon_text (self));
       break;
 
     case PROP_SELECTED:
@@ -168,12 +168,12 @@ finance_transaction_row_set_property (GObject      *object,
       finance_transaction_row_set_amount (self, g_value_get_string (value));
       break;
 
-    case PROP_COLOR:
-      finance_transaction_row_set_color (self, g_value_get_boxed (value));
+    case PROP_ICON_COLOR:
+      finance_transaction_row_set_icon_color (self, g_value_get_boxed (value));
       break;
 
-    case PROP_ICON:
-      finance_transaction_row_set_icon (self, g_value_get_string (value));
+    case PROP_ICON_TEXT:
+      finance_transaction_row_set_icon_text (self, g_value_get_string (value));
       break;
 
     case PROP_TITLE:
@@ -213,26 +213,26 @@ finance_transaction_row_class_init (FinanceTransactionRowClass *klass)
                                                   G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinanceTransactionRow::color:
+   * FinanceTransactionRow::icon-color:
    *
    * The background color of the icon
    */
-  properties[PROP_COLOR] = g_param_spec_boxed ("color",
-                                               "Color",
-                                               "The background color of the icon",
-                                               GDK_TYPE_RGBA,
-                                               G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+  properties[PROP_ICON_COLOR] = g_param_spec_boxed ("icon-color",
+                                                    "Icon color",
+                                                    "The background color of the icon",
+                                                    GDK_TYPE_RGBA,
+                                                    G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinanceTransactionRow::icon:
+   * FinanceTransactionRow::icon-text:
    *
    * The two letters that are part of the icon image
    */
-  properties[PROP_ICON] = g_param_spec_string ("icon",
-                                               "Icon",
-                                               "The two letters that are part of the icon image",
-                                               NULL,
-                                               G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+  properties[PROP_ICON_TEXT] = g_param_spec_string ("icon-text",
+                                                    "Icon text",
+                                                    "The two letters that are part of the icon image",
+                                                    NULL,
+                                                    G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
    * FinanceTransactionRow::title:
@@ -277,9 +277,9 @@ finance_transaction_row_init (FinanceTransactionRow *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
 
-  self->color = finance_utils_random_rgba_color ();
+  self->icon_color = finance_utils_random_rgba_color ();
 
-  self->icon = g_strdup ("NW");
+  self->icon_text = g_strdup ("NW");
 }
 
 /**
@@ -323,7 +323,7 @@ finance_transaction_row_set_amount (FinanceTransactionRow *self,
 }
 
 /**
- * finance_transaction_row_get_color:
+ * finance_transaction_row_get_icon_color:
  * @self: a #FinanceTransactionRow
  *
  * Returns the background color of the icon
@@ -333,15 +333,15 @@ finance_transaction_row_set_amount (FinanceTransactionRow *self,
  * Since: 1.0
  */
 GdkRGBA *
-finance_transaction_row_get_color (FinanceTransactionRow *self)
+finance_transaction_row_get_icon_color (FinanceTransactionRow *self)
 {
   g_return_val_if_fail (FINANCE_IS_TRANSACTION_ROW (self), NULL);
 
-  return self->color;
+  return self->icon_color;
 }
 
 /**
- * finance_transaction_row_set_color:
+ * finance_transaction_row_set_icon_color:
  * @self: a #FinanceTransactionRow
  * @color: a #GdkRGBA
  *
@@ -350,22 +350,22 @@ finance_transaction_row_get_color (FinanceTransactionRow *self)
  * Since: 1.0
  */
 void
-finance_transaction_row_set_color (FinanceTransactionRow *self,
-                                   const GdkRGBA         *color)
+finance_transaction_row_set_icon_color (FinanceTransactionRow *self,
+                                        const GdkRGBA         *color)
 {
   g_return_if_fail (FINANCE_IS_TRANSACTION_ROW (self));
 
-  g_clear_pointer (&self->color, gdk_rgba_free);
+  g_clear_pointer (&self->icon_color, gdk_rgba_free);
 
-  self->color = gdk_rgba_copy (color);
+  self->icon_color = gdk_rgba_copy (color);
 
   create_icon (self);
 
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_COLOR]);
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_ICON_COLOR]);
 }
 
 /**
- * finance_transaction_row_get_icon:
+ * finance_transaction_row_get_icon_text:
  * @self: a #FinanceTransactionRow
  *
  * Returns the two letters that are part of the icon image
@@ -377,17 +377,17 @@ finance_transaction_row_set_color (FinanceTransactionRow *self,
  * Since: 1.0
  */
 const gchar *
-finance_transaction_row_get_icon (FinanceTransactionRow *self)
+finance_transaction_row_get_icon_text (FinanceTransactionRow *self)
 {
   g_return_val_if_fail (FINANCE_IS_TRANSACTION_ROW (self), NULL);
 
-  return self->icon;
+  return self->icon_text;
 }
 
 /**
- * finance_transaction_row_set_icon:
+ * finance_transaction_row_set_icon_text:
  * @self: a #FinanceTransactionRow
- * @icon: the icon to set, as a two-letter string
+ * @text: the text to set, as a two-letter string
  *
  * Sets the two letters that are part of the icon image,
  * replacing the current contents.
@@ -395,18 +395,18 @@ finance_transaction_row_get_icon (FinanceTransactionRow *self)
  * Since:1.0
  */
 void
-finance_transaction_row_set_icon (FinanceTransactionRow *self,
-                                  const gchar           *icon)
+finance_transaction_row_set_icon_text (FinanceTransactionRow *self,
+                                       const gchar           *text)
 {
   g_return_if_fail (FINANCE_IS_TRANSACTION_ROW (self));
 
-  g_clear_pointer (&self->icon, g_free);
+  g_clear_pointer (&self->icon_text, g_free);
 
-  self->icon = g_strdup (icon);
+  self->icon_text = g_strdup (text);
 
   create_icon (self);
 
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_ICON]);
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_ICON_TEXT]);
 }
 
 /**
