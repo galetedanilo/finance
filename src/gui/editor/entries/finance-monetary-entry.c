@@ -76,9 +76,9 @@ filter_string (FinanceMonetaryEntry *self)
 static void
 on_monetary_automatic_formatting (GtkEditable *editable,
                                   const gchar *text,
-                                  gint        length,
+                                  gint         length,
                                   gint        *position,
-                                  gpointer    user_data)
+                                  gpointer     user_data)
 {
   FinanceMonetaryEntry *self = FINANCE_MONETARY_ENTRY (user_data);
 
@@ -440,7 +440,7 @@ finance_monetary_entry_get_amount (FinanceMonetaryEntry *self)
  */
 void
 finance_monetary_entry_set_amount (FinanceMonetaryEntry *self,
-                                   gdouble              amount)
+                                   gdouble               amount)
 {
   g_return_if_fail (FINANCE_IS_MONETARY_ENTRY (self));
 
@@ -479,7 +479,7 @@ finance_monetary_entry_get_currency_symbol (FinanceMonetaryEntry *self)
  * Since: 1.0
  */
 void
-finance_monetary_entry_set_currency_symbol (FinanceMonetaryEntry  *self,
+finance_monetary_entry_set_currency_symbol (FinanceMonetaryEntry *self,
                                             gboolean              currency_symbol)
 {
   g_return_if_fail (FINANCE_IS_MONETARY_ENTRY (self));
@@ -560,7 +560,7 @@ finance_monetary_entry_get_formatting (FinanceMonetaryEntry *self)
  */
 void
 finance_monetary_entry_set_formatting (FinanceMonetaryEntry *self,
-                                       gboolean             formatting)
+                                       gboolean              formatting)
 {
   g_return_if_fail (FINANCE_IS_MONETARY_ENTRY (self));
 
@@ -606,7 +606,7 @@ finance_monetary_entry_get_symbol (FinanceMonetaryEntry *self)
  */
 void
 finance_monetary_entry_set_symbol (FinanceMonetaryEntry *self,
-                                   gint         symbol)
+                                   gint                  symbol)
 {
   g_return_if_fail (FINANCE_IS_MONETARY_ENTRY (self));
 
