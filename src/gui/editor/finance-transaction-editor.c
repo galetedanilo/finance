@@ -46,8 +46,8 @@ struct _FinanceTransactionEditor
   GtkWidget   *label_repeat;
   GtkWidget   *spin_frequency_number;
 
-  GdkRGBA     *color;
-  gchar       *icon;
+  GdkRGBA     *icon_color;
+  gchar       *icon_text;
   gchar       *notes;
   gboolean    mobile;
 
@@ -59,13 +59,13 @@ G_DEFINE_TYPE (FinanceTransactionEditor, finance_transaction_editor, GTK_TYPE_GR
 enum {
   PROP_0,
   PROP_AMOUNT,
-  //PROP_CATEGORY,
-  PROP_COLOR,
+  PROP_CATEGORY,
   PROP_DATE,
   PROP_FREQUENCY,
   PROP_FREQUENCY_DATE,
   PROP_FREQUENCY_NUMBER,
-  PROP_ICON,
+  PROP_ICON_COLOR,
+  PROP_ICON_TEXT,
   PROP_MOBILE,
   PROP_NAME,
   PROP_NOTES,
@@ -83,7 +83,7 @@ create_icon (FinanceTransactionEditor *self)
 {
   cairo_surface_t *surface;
 
-  surface = finance_utils_create_circle (self->color, 140, self->icon);
+  surface = finance_utils_create_circle (self->icon_color, 140, self->icon_text);
 
   gtk_image_set_from_surface (GTK_IMAGE (self->image_icon), surface);
 
@@ -187,7 +187,7 @@ finance_transaction_editor_finalize (GObject *object)
 {
   FinanceTransactionEditor *self = (FinanceTransactionEditor *)object;
 
-  g_clear_pointer (&self->icon, g_free);
+  g_clear_pointer (&self->icon_text, g_free);
   g_clear_pointer (&self->notes, g_free);
 
   G_OBJECT_CLASS (finance_transaction_editor_parent_class)->finalize (object);
@@ -198,7 +198,7 @@ finance_transaction_editor_dispose (GObject *object)
 {
   FinanceTransactionEditor *self = (FinanceTransactionEditor *)object;
 
-  g_clear_pointer (&self->color, gdk_rgba_free);
+  g_clear_pointer (&self->icon_color, gdk_rgba_free);
   g_clear_object (&self->settings);
 
   G_OBJECT_CLASS (finance_transaction_editor_parent_class)->dispose (object);
@@ -218,12 +218,12 @@ finance_transaction_editor_get_property (GObject    *object,
       g_value_set_double (value, finance_transaction_editor_get_amount (self));
       break;
 
-    case PROP_COLOR:
-      g_value_set_boxed (value, finance_transaction_editor_get_color (self));
+    case PROP_CATEGORY:
+      g_value_set_int (value, finance_transaction_editor_get_category (self));
       break;
 
     case PROP_DATE:
-      g_value_set_string (value, finance_transaction_editor_get_date (self));
+      g_value_set_boxed (value, finance_transaction_editor_get_date (self));
       break;
 
     case PROP_FREQUENCY:
@@ -231,15 +231,20 @@ finance_transaction_editor_get_property (GObject    *object,
       break;
 
     case PROP_FREQUENCY_DATE:
-      g_value_set_string (value,finance_transaction_editor_get_frequency_date (self));
+      g_value_set_boxed (value,finance_transaction_editor_get_frequency_date (self));
       break;
 
     case PROP_FREQUENCY_NUMBER:
       g_value_set_int (value, finance_transaction_editor_get_frequency_number (self));
       break;
 
-    case PROP_ICON:
-      g_value_set_string (value, finance_transaction_editor_get_icon (self));
+
+    case PROP_ICON_COLOR:
+      g_value_set_boxed (value, finance_transaction_editor_get_icon_color (self));
+      break;
+
+    case PROP_ICON_TEXT:
+      g_value_set_string (value, finance_transaction_editor_get_icon_text (self));
       break;
 
     case PROP_MOBILE:
@@ -290,12 +295,12 @@ finance_transaction_editor_set_property (GObject      *object,
       finance_transaction_editor_set_amount (self, g_value_get_double (value));
       break;
 
-    case PROP_COLOR:
-      finance_transaction_editor_set_color (self, g_value_get_boxed (value));
+    case PROP_CATEGORY:
+      finance_transaction_editor_set_category (self, g_value_get_int (value));
       break;
 
     case PROP_DATE:
-      finance_transaction_editor_set_date (self, g_value_get_string (value));
+      finance_transaction_editor_set_date (self, g_value_get_boxed (value));
       break;
 
     case PROP_FREQUENCY:
@@ -303,15 +308,19 @@ finance_transaction_editor_set_property (GObject      *object,
       break;
 
     case PROP_FREQUENCY_DATE:
-      finance_transaction_editor_set_frequency_date (self, g_value_get_string (value));
+      finance_transaction_editor_set_frequency_date (self, g_value_get_boxed (value));
       break;
 
     case PROP_FREQUENCY_NUMBER:
       finance_transaction_editor_set_frequency_number (self, g_value_get_int (value));
       break;
 
-    case PROP_ICON:
-      finance_transaction_editor_set_icon (self, g_value_get_string (value));
+    case PROP_ICON_COLOR:
+      finance_transaction_editor_set_icon_color (self, g_value_get_boxed (value));
+      break;
+
+    case PROP_ICON_TEXT:
+      finance_transaction_editor_set_icon_text (self, g_value_get_string (value));
       break;
 
     case PROP_MOBILE:
@@ -376,26 +385,15 @@ finance_transaction_editor_class_init (FinanceTransactionEditorClass *klass)
                                                   G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinanceTransactionEditor::color:
-   *
-   * The background color of the icon
-   */
-  properties[PROP_COLOR] = g_param_spec_boxed ("color",
-                                               "Color",
-                                               "The background color of the icon",
-                                               GDK_TYPE_RGBA,
-                                               G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
-
-  /**
    * FinanceTransactionEditor::date:
    *
    * The transaction date
    */
-  properties[PROP_DATE] = g_param_spec_string ("date",
-                                               "Date",
-                                               "The transaction date",
-                                               NULL,
-                                               G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+  properties[PROP_DATE] = g_param_spec_boxed ("date",
+                                              "Date",
+                                              "The transaction date",
+                                              G_TYPE_DATE_TIME,
+                                              G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
    * FinanceTransactionEditor::frequency:
@@ -414,11 +412,11 @@ finance_transaction_editor_class_init (FinanceTransactionEditorClass *klass)
    *
    * The date of the financial transaction frequency
    */
-  properties[PROP_FREQUENCY_DATE] = g_param_spec_string ("frequency-date",
-                                                         "Fequency date",
-                                                         "The date of the financial transaction frequency",
-                                                         NULL,
-                                                         G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+  properties[PROP_FREQUENCY_DATE] = g_param_spec_boxed ("frequency-date",
+                                                        "Fequency date",
+                                                        "The date of the financial transaction frequency",
+                                                        NULL,
+                                                        G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
    * FinanceTransactionEditor::frequency_number:
@@ -431,17 +429,27 @@ finance_transaction_editor_class_init (FinanceTransactionEditorClass *klass)
                                                         2, 365, 2,
                                                         G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
+  /**
+   * FinanceTransactionEditor::icon-color:
+   *
+   * The background color of the icon
+   */
+  properties[PROP_ICON_COLOR] = g_param_spec_boxed ("icon-color",
+                                                    "Icon color",
+                                                    "The background color of the icon",
+                                                    GDK_TYPE_RGBA,
+                                                    G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinanceTransactionEditor::icon:
+   * FinanceTransactionEditor::icon-text:
    *
    * The two letters that are part of the icon image
    */
-  properties[PROP_ICON] = g_param_spec_string ("icon",
-                                               "Icon",
-                                               "The two letters that are part of the icon image",
-                                               NULL,
-                                               G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+  properties[PROP_ICON_TEXT] = g_param_spec_string ("icon-text",
+                                                    "Icon text",
+                                                    "The two letters that are part of the icon image",
+                                                    NULL,
+                                                    G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
    * FinanceTransactionEditor::mobile:
@@ -557,9 +565,9 @@ finance_transaction_editor_init (FinanceTransactionEditor *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
 
-  self->icon = g_strdup ("NW");
+  self->icon_text = g_strdup ("NW");
 
-  self->color = finance_utils_random_rgba_color ();
+  self->icon_color = finance_utils_random_rgba_color ();
 
   create_icon (self);
 
@@ -629,71 +637,27 @@ finance_transaction_editor_set_amount (FinanceTransactionEditor *self,
 }
 
 /**
- * finance_transaction_editor_get_color:
- * @self: a #FinanceTransactionEditor
- *
- * Returns the background color of the icon
- *
- * Returns: (transfer none): a #GdkRGBA with the color
- *
- * Since: 1.0
- */
-GdkRGBA *
-finance_transaction_editor_get_color (FinanceTransactionEditor *self)
-{
-  g_return_val_if_fail (FINANCE_IS_TRANSACTION_EDITOR (self), NULL);
-
-  return self->color;
-}
-
-/**
- * finance_transaction_editor_set_color:
- * @self: a #FinanceTransactionEditor
- * @color: a #GdkRGBA
- *
- * Sets the background color of the icon
- *
- * Since: 1.0
- */
-void
-finance_transaction_editor_set_color (FinanceTransactionEditor *self,
-                                      const GdkRGBA            *color)
-{
-  g_return_if_fail (FINANCE_IS_TRANSACTION_EDITOR (self));
-
-  gdk_rgba_free (self->color);
-
-  self->color = gdk_rgba_copy (color);
-
-  create_icon (self);
-
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_COLOR]);
-}
-
-/**
  * finance_transaction_editor_get_date:
  * @self: a #FinanceTransactionEditor
  *
  * Returns the transaction date
  *
- * Returns: The transaction date as a string, or %NULL.
- * This string points to internally allocated storage in the object
- * and must not be freed, modified or stored.
+ * Returns: (transfer none): a #GDateTime with the date
  *
  * Since: 1.0
  */
-const gchar *
+GDateTime *
 finance_transaction_editor_get_date (FinanceTransactionEditor *self)
 {
   g_return_val_if_fail (FINANCE_IS_TRANSACTION_EDITOR (self), NULL);
 
-  return gtk_entry_get_text (GTK_ENTRY (self->entry_date));
+  return finance_date_entry_get_date (FINANCE_DATE_ENTRY (self->entry_date));
 }
 
 /**
  * finance_transaction_editor_set_date:
  * @self: a #FinanceTransactionEditor
- * @date: a valid date, as a string
+ * @date: a valid #GDateTime
  *
  * Sets the date of the financial transaction
  *
@@ -701,11 +665,11 @@ finance_transaction_editor_get_date (FinanceTransactionEditor *self)
  */
 void
 finance_transaction_editor_set_date (FinanceTransactionEditor *self,
-                                     const gchar              *date)
+                                     GDateTime                *date)
 {
   g_return_if_fail (FINANCE_IS_TRANSACTION_EDITOR (self));
 
-  gtk_entry_set_text (GTK_ENTRY (self->entry_date), date);
+  finance_date_entry_set_date (FINANCE_DATE_ENTRY (self->entry_date), date);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_DATE]);
 }
@@ -754,24 +718,22 @@ finance_transaction_editor_set_frequency (FinanceTransactionEditor *self,
  *
  * Returns the transaction frequency date
  *
- * Returns: The transaction frequency date as a string, or %NULL.
- * This string points to internally allocated storage in the object
- * and must not be freed, modified or stored.
+ * Returns: (transfer none): a #GDateTime with the date
  *
  * Since: 1.0
  */
-const gchar *
+GDateTime *
 finance_transaction_editor_get_frequency_date (FinanceTransactionEditor *self)
 {
   g_return_val_if_fail (FINANCE_IS_TRANSACTION_EDITOR (self), NULL);
 
-  return gtk_entry_get_text (GTK_ENTRY (self->entry_frequency_date));
+  return finance_date_entry_get_date (FINANCE_DATE_ENTRY (self->entry_frequency_date));
 }
 
 /**
  * finance_transaction_editor_set_frequency_date:
  * @self: a #FinanceTransactionEditor
- * @date: a valid date, as a string
+ * @date: a valid #GDateTime
  *
  * Sets the date of the financial transaction frequency.
  *
@@ -779,11 +741,11 @@ finance_transaction_editor_get_frequency_date (FinanceTransactionEditor *self)
  */
 void
 finance_transaction_editor_set_frequency_date (FinanceTransactionEditor *self,
-                                               const gchar              *date)
+                                               GDateTime                *date)
 {
   g_return_if_fail (FINANCE_IS_TRANSACTION_EDITOR (self));
 
-  gtk_entry_set_text (GTK_ENTRY (self->entry_frequency_date), date);
+  finance_date_entry_set_date (FINANCE_DATE_ENTRY (self->entry_frequency_date), date);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_FREQUENCY_DATE]);
 }
@@ -829,7 +791,49 @@ finance_transaction_editor_set_frequency_number (FinanceTransactionEditor *self,
 }
 
 /**
- * finance_transaction_editor_get_icon:
+ * finance_transaction_editor_get_icon_color:
+ * @self: a #FinanceTransactionEditor
+ *
+ * Returns the background color of the icon
+ *
+ * Returns: (transfer none): a #GdkRGBA with the color
+ *
+ * Since: 1.0
+ */
+GdkRGBA *
+finance_transaction_editor_get_icon_color (FinanceTransactionEditor *self)
+{
+  g_return_val_if_fail (FINANCE_IS_TRANSACTION_EDITOR (self), NULL);
+
+  return self->icon_color;
+}
+
+/**
+ * finance_transaction_editor_set_icon_color:
+ * @self: a #FinanceTransactionEditor
+ * @color: a #GdkRGBA
+ *
+ * Sets the background color of the icon
+ *
+ * Since: 1.0
+ */
+void
+finance_transaction_editor_set_icon_color (FinanceTransactionEditor *self,
+                                           const GdkRGBA            *color)
+{
+  g_return_if_fail (FINANCE_IS_TRANSACTION_EDITOR (self));
+
+  gdk_rgba_free (self->icon_color);
+
+  self->icon_color = gdk_rgba_copy (color);
+
+  create_icon (self);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_ICON_COLOR]);
+}
+
+/**
+ * finance_transaction_editor_get_icon_text:
  * @self: a #FinanceTransactionEditor
  *
  * Returns the two letters that are part of the icon image
@@ -845,13 +849,13 @@ finance_transaction_editor_get_icon (FinanceTransactionEditor *self)
 {
   g_return_val_if_fail (FINANCE_IS_TRANSACTION_EDITOR (self), NULL);
 
-  return self->icon;
+  return self->icon_text;
 }
 
 /**
- * finance_transaction_editor_set_icon:
+ * finance_transaction_editor_set_icon_text:
  * @self: a #FinanceTransactionEditor
- * @icon: the icon to set, as a two-letter string
+ * @icon: the text to set, as a two-letter string
  *
  * Sets the two letters that are part of the icon image,
  * replacing the current contents.
@@ -859,18 +863,18 @@ finance_transaction_editor_get_icon (FinanceTransactionEditor *self)
  * Since:1.0
  */
 void
-finance_transaction_editor_set_icon (FinanceTransactionEditor *self,
-                                     const gchar              *icon)
+finance_transaction_editor_set_icon_text (FinanceTransactionEditor *self,
+                                          const gchar              *text)
 {
   g_return_if_fail (FINANCE_IS_TRANSACTION_EDITOR (self));
 
-  g_free (self->icon);
+  g_free (self->icon_text);
 
-  self->icon = g_strdup (icon);
+  self->icon_text = g_strdup (text);
 
   create_icon (self);
 
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_ICON]);
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_ICON_TEXT]);
 }
 
 /**
@@ -1169,15 +1173,15 @@ finance_transaction_editor_clear (FinanceTransactionEditor *self)
 {
   g_return_if_fail (FINANCE_IS_TRANSACTION_EDITOR (self));
 
-  g_clear_pointer (&self->icon, g_free);
+  g_clear_pointer (&self->icon_text, g_free);
   g_clear_pointer (&self->notes, g_free);
 
-  gdk_rgba_free (self->color);
+  gdk_rgba_free (self->icon_color);
 
-  self->icon = g_strdup ("NW");
+  self->icon_text = g_strdup ("NW");
   self->notes = g_strdup ("");
 
-  self->color = finance_utils_random_rgba_color ();
+  self->icon_color = finance_utils_random_rgba_color ();
 
   create_icon (self);
 
