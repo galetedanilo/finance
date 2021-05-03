@@ -49,9 +49,9 @@ static GParamSpec *properties[N_PROPS] = { NULL, };
 static void
 on_automatic_date_formatting (GtkEditable *editable,
                               const gchar *text,
-                              gint        length,
+                              gint         length,
                               gint        *position,
-                              gpointer    user_data)
+                              gpointer     user_data)
 {
   if (gtk_entry_get_text_length (GTK_ENTRY (user_data)) > 9)
     {
@@ -85,9 +85,9 @@ on_automatic_date_formatting (GtkEditable *editable,
 }
 
 static void
-on_entry_date_icon_press (GtkEntry              *entry,
+on_entry_date_icon_press (GtkEntry             *entry,
                           GtkEntryIconPosition  position,
-                          GdkEvent              *event,
+                          GdkEvent             *event,
                           gpointer              user_data)
 {
   FinanceDateEntry *self = FINANCE_DATE_ENTRY (user_data);
@@ -109,7 +109,7 @@ on_entry_date_icon_press (GtkEntry              *entry,
 
 static void
 on_calendar_day_selected (GtkCalendar *calendar,
-                          gpointer    user_data)
+                          gpointer     user_data)
 {
   FinanceDateEntry *self = FINANCE_DATE_ENTRY (user_data);
 
