@@ -45,35 +45,35 @@ gint            finance_transaction_editor_get_category               (FinanceTr
 void            finance_transaction_editor_set_category               (FinanceTransactionEditor *self,
                                                                        gint                      id_category);
 
-GdkRGBA *       finance_transaction_editor_get_color                  (FinanceTransactionEditor *self);
-
-void            finance_transaction_editor_set_color                  (FinanceTransactionEditor *self,
-                                                                       const GdkRGBA            *color);
-
-const gchar *   finance_transaction_editor_get_date                   (FinanceTransactionEditor *self);
+GDateTime *     finance_transaction_editor_get_date                   (FinanceTransactionEditor *self);
 
 void            finance_transaction_editor_set_date                   (FinanceTransactionEditor *self,
-                                                                       const gchar              *date);
+                                                                       GDateTime                *date);
 
 gint            finance_transaction_editor_get_frequency              (FinanceTransactionEditor *self);
 
 void            finance_transaction_editor_set_frequency              (FinanceTransactionEditor *self,
                                                                        gint                      frequency);
 
-const gchar *   finance_transaction_editor_get_frequency_date         (FinanceTransactionEditor *self);
+GDateTime *     finance_transaction_editor_get_frequency_date         (FinanceTransactionEditor *self);
 
 void            finance_transaction_editor_set_frequency_date         (FinanceTransactionEditor *self,
-                                                                       const gchar              *date);
+                                                                       GDateTime                *date);
 
 gint            finance_transaction_editor_get_frequency_number       (FinanceTransactionEditor *self);
 
 void            finance_transaction_editor_set_frequency_number       (FinanceTransactionEditor *self,
                                                                        gint                      frequency_number);
 
-const gchar *   finance_transaction_editor_get_icon                   (FinanceTransactionEditor *self);
+GdkRGBA *       finance_transaction_editor_get_icon_color             (FinanceTransactionEditor *self);
 
-void            finance_transaction_editor_set_icon                   (FinanceTransactionEditor *self,
-                                                                       const gchar              *icon);
+void            finance_transaction_editor_set_icon_color             (FinanceTransactionEditor *self,
+                                                                       const GdkRGBA            *color);
+
+const gchar *   finance_transaction_editor_get_icon_text              (FinanceTransactionEditor *self);
+
+void            finance_transaction_editor_set_icon_text              (FinanceTransactionEditor *self,
+                                                                       const gchar              *text);
 
 gboolean        finance_transaction_editor_get_mobile                 (FinanceTransactionEditor *self);
 
