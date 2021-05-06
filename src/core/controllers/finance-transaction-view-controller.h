@@ -1,4 +1,4 @@
-/* finance-controller-transactions.h
+/* finance-transaction-view-controller.h
  *
  * Copyright 2021 Danilo Fernandes Galete <galetedanilo@gmail.com>
  *
@@ -18,8 +18,8 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef __FINANCE_CONTROLLER_TRANSACTIONS_H__
-#define __FINANCE_CONTROLLER_TRANSACTIONS_H__
+#ifndef __FINANCE_TRANSACTION_VIEW_CONTROLLER_H__
+#define __FINANCE_TRANSACTION_VIEW_CONTROLLER_H__
 
 #include <glib-object.h>
 
@@ -31,12 +31,12 @@
 
 G_BEGIN_DECLS
 
-#define FINANCE_TYPE_CONTROLLER_TRANSACTIONS (finance_controller_transactions_get_type ())
+#define FINANCE_TYPE_TRANSACTION_VIEW_CONTROLLER (finance_transaction_view_controller_get_type ())
 
-G_DECLARE_FINAL_TYPE (FinanceControllerTransactions, finance_controller_transactions, FINANCE, CONTROLLER_TRANSACTIONS, GObject)
+G_DECLARE_FINAL_TYPE (FinanceTransactionViewController, finance_transaction_view_controller, FINANCE, TRANSACTION_VIEW_CONTROLLER, GObject)
 
-void        finance_controller_transactions_startup     (FinanceControllerTransactions *self);
+void        finance_transaction_view_transaction_startup     (FinanceTransactionViewTransaction *self);
 
 G_END_DECLS
 
-#endif /* ___FINANCE_CONTROLLER_TRANSACTIONS_H__ */
+#endif /* ___FINANCE_TRANSACTION_VIEW_CONTROLLER_H__ */
