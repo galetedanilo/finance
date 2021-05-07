@@ -29,11 +29,11 @@ finance_view_default_init (FinanceViewInterface *iface)
 }
 
 void
-finance_view_insert_child (FinanceView  *view,
-                           GtkWidget    *widget)
+finance_view_add_child (FinanceView *view,
+                        GtkWidget   *widget)
 {
   g_return_if_fail (FINANCE_IS_VIEW (view));
-  g_return_if_fail (FINANCE_VIEW_GET_IFACE (view)->insert_child);
+  g_return_if_fail (FINANCE_VIEW_GET_IFACE (view)->add_child);
 
-  FINANCE_VIEW_GET_IFACE (view)->insert_child (view, widget);
+  FINANCE_VIEW_GET_IFACE (view)->add_child (view, widget);
 }

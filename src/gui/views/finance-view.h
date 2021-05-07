@@ -34,12 +34,12 @@ struct _FinanceViewInterface
   GTypeInterface    parent;
 
 
-  void      (*insert_child)                     (FinanceView  *view,
-                                                 GtkWidget    *child);
+  void      (*add_child)                        (FinanceView *view,
+                                                 GtkWidget   *child);
 };
 
-void    finance_view_insert_child         (FinanceView  *view,
-                                           GtkWidget    *child);
+void    finance_view_add_child              (FinanceView *view,
+                                             GtkWidget   *child);
 
 G_END_DECLS
 
