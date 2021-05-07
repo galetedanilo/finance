@@ -160,7 +160,7 @@ finance_left_panel_init (FinanceLeftPanel *self)
 }
 
 /**
- * finance_left_panel_prepend_row:
+ * finance_left_panel_add_row:
  * @self: a #FinanceLeftPanel
  * @row: a #GtkWidget to add
  *
@@ -171,8 +171,8 @@ finance_left_panel_init (FinanceLeftPanel *self)
  * Since: 1.0
  */
 void
-finance_left_panel_prepend_row (FinanceLeftPanel *self,
-                                GtkWidget        *row)
+finance_left_panel_add_row (FinanceLeftPanel *self,
+                            GtkWidget        *row)
 {
   g_return_if_fail (FINANCE_IS_LEFT_PANEL (self));
 

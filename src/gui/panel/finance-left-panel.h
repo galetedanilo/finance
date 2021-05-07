@@ -33,7 +33,7 @@ G_DECLARE_FINAL_TYPE (FinanceLeftPanel, finance_left_panel, FINANCE, LEFT_PANEL,
 
 GtkWidget *   finance_left_panel_new              (void);
 
-void          finance_left_panel_prepend_row      (FinanceLeftPanel *self,
+void          finance_left_panel_add_row          (FinanceLeftPanel *self,
                                                    GtkWidget        *row);
 
 G_END_DECLS
