@@ -36,8 +36,8 @@ G_DEFINE_TYPE_WITH_CODE (FinanceTransactionView, finance_transaction_view, GTK_T
 
 /* FinanceView implementation */
 static void
-finance_transaction_view_insert_child (FinanceView *view,
-                                       GtkWidget   *child)
+finance_transaction_view_add_child (FinanceView *view,
+                                    GtkWidget   *child)
 {
   FinanceTransactionView *self = FINANCE_TRANSACTION_VIEW (view);
 
@@ -53,7 +53,7 @@ finance_transaction_view_new (void)
 static void
 finance_view_interface_init (FinanceViewInterface *iface)
 {
-  iface->insert_child = finance_transaction_view_insert_child;
+  iface->add_child = finance_transaction_view_add_child;
 }
 
 static void
