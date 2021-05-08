@@ -20,6 +20,8 @@
 
 #include "finance-config.h"
 
+#include "finance-enums.h"
+
 #include "finance-transaction-row.h"
 
 struct _FinanceTransactionRow
@@ -34,7 +36,10 @@ struct _FinanceTransactionRow
   GtkWidget     *revealer_check;
 
   GdkRGBA       *icon_color;
+
   gchar         *icon_text;
+
+  FinanceTransaction type;
 };
 
 G_DEFINE_TYPE (FinanceTransactionRow, finance_transaction_row, GTK_TYPE_LIST_BOX_ROW)
@@ -46,6 +51,7 @@ enum {
   PROP_ICON_TEXT,
   PROP_SELECTED,
   PROP_TITLE,
+  PROP_TYPE,
   N_PROPS,
 };
 
@@ -148,6 +154,10 @@ finance_transaction_row_get_property (GObject    *object,
       g_value_set_string (value, finance_transaction_row_get_title (self));
       break;
 
+    case PROP_TYPE:
+      g_value_set_int (value, finance_transaction_row_get_type (self));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -176,12 +186,16 @@ finance_transaction_row_set_property (GObject      *object,
       finance_transaction_row_set_icon_text (self, g_value_get_string (value));
       break;
 
+    case PROP_SELECTED:
+      finance_transaction_row_set_selected (self, g_value_get_boolean (value));
+      break;
+
     case PROP_TITLE:
       finance_transaction_row_set_title (self, g_value_get_string (value));
       break;
 
-    case PROP_SELECTED:
-      finance_transaction_row_set_selected (self, g_value_get_boolean (value));
+    case PROP_TYPE:
+      finance_transaction_row_set_type (self, g_value_get_int(value));
       break;
 
     default:
@@ -234,6 +248,17 @@ finance_transaction_row_class_init (FinanceTransactionRowClass *klass)
                                                     NULL,
                                                     G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
+    /**
+   * FinanceTransactionRow::selected:
+   *
+   * The transaction row selected
+   */
+  properties[PROP_SELECTED] = g_param_spec_boolean ("selected",
+                                                    "Select",
+                                                    "The transaction row is selected",
+                                                    FALSE,
+                                                    G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
   /**
    * FinanceTransactionRow::title:
    *
@@ -246,15 +271,15 @@ finance_transaction_row_class_init (FinanceTransactionRowClass *klass)
                                                 G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinanceTransactionRow::selected:
+   * FinanceTransactionRow::type:
    *
-   * The transaction row selected
+   * The transaction type
    */
-  properties[PROP_SELECTED] = g_param_spec_boolean ("selected",
-                                                    "Select",
-                                                    "The transaction row is selected",
-                                                    FALSE,
-                                                    G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+  properties[PROP_TYPE] = g_param_spec_int ("type",
+                                            "The type",
+                                            "The transaction type",
+                                            0, 1, 0,
+                                            G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
@@ -316,6 +341,7 @@ finance_transaction_row_set_amount (FinanceTransactionRow *self,
                                     const gchar           *amount)
 {
   g_return_if_fail (FINANCE_IS_TRANSACTION_ROW (self));
+  g_return_if_fail (amount == NULL);
 
   gtk_label_set_text (GTK_LABEL (self->label_amount), amount);
 
@@ -354,6 +380,7 @@ finance_transaction_row_set_icon_color (FinanceTransactionRow *self,
                                         const GdkRGBA         *color)
 {
   g_return_if_fail (FINANCE_IS_TRANSACTION_ROW (self));
+  g_return_if_fail (color == NULL);
 
   g_clear_pointer (&self->icon_color, gdk_rgba_free);
 
@@ -399,6 +426,7 @@ finance_transaction_row_set_icon_text (FinanceTransactionRow *self,
                                        const gchar           *text)
 {
   g_return_if_fail (FINANCE_IS_TRANSACTION_ROW (self));
+  g_return_if_fail (text == NULL);
 
   g_clear_pointer (&self->icon_text, g_free);
 
@@ -483,8 +511,47 @@ finance_transaction_row_set_title (FinanceTransactionRow *self,
                                    const gchar           *title)
 {
   g_return_if_fail (FINANCE_IS_TRANSACTION_ROW (self));
+  g_return_if_fail (title == NULL);
 
   gtk_label_set_text (GTK_LABEL (self->label_title), title);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_TITLE]);
+}
+
+/**
+ * finance_transaction_get_type:
+ * @self: a #FinanceTransactionRow
+ *
+ * Returns the transaction type
+ *
+ * Returns: a #FinanceTransaction
+ *
+ * Since: 1.0
+ */
+gint
+finance_transaction_row_get_type (FinanceTransactionRow *self)
+{
+  g_return_val_if_fail (FINANCE_IS_TRANSACTION_ROW (self), -1);
+
+  return self->type;
+}
+
+/**
+ * finance_transaction_set_type:
+ * @self: a #FinanceTransactionRow
+ * @type: a #FinanceTransaction
+ *
+ * Sets the transaction type
+ *
+ * Since: 1.0
+ */
+void
+finance_transaction_row_set_type (FinanceTransactionRow *self,
+                                  gint                   type)
+{
+  g_return_if_fail (FINANCE_IS_TRANSACTION_ROW (self));
+
+  self->type = type;
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_TYPE]);
 }
