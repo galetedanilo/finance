@@ -20,7 +20,7 @@
 
 #include "finance-view.h"
 
-G_DEFINE_INTERFACE (FinanceView, finance_view, G_TYPE_OBJECT)
+G_DEFINE_INTERFACE (FinanceView, finance_view, GTK_TYPE_WIDGET)
 
 static void
 finance_view_default_init (FinanceViewInterface *iface)
@@ -33,6 +33,9 @@ finance_view_add_child (FinanceView *view,
                         GtkWidget   *widget)
 {
   g_return_if_fail (FINANCE_IS_VIEW (view));
+  g_return_if_fail (widget == NULL);
+  g_return_if_fail (GTK_IS_WIDGET (widget));
+
   g_return_if_fail (FINANCE_VIEW_GET_IFACE (view)->add_child);
 
   FINANCE_VIEW_GET_IFACE (view)->add_child (view, widget);
