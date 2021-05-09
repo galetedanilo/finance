@@ -23,8 +23,6 @@
 
 #include <gtk/gtk.h>
 
-#include "finance-summary-child.h"
-
 G_BEGIN_DECLS
 
 #define FINANCE_TYPE_TRANSACTION_VIEW (finance_transaction_view_get_type())
