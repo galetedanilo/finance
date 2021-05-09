@@ -78,6 +78,11 @@ gboolean        finance_summary_child_get_selected        (FinanceSummaryChild *
 void            finance_summary_child_set_selected        (FinanceSummaryChild *self,
                                                            gboolean             selected);
 
+gint            finance_summary_child_get_type            (FinanceSummaryChild *self);
+
+void            finance_summary_child_set_type            (FinanceSummaryChild *self,
+                                                           gint                 type);
+
 G_END_DECLS
 
 #endif /* __FINANCE_SUMMARY_CHILD_H__ */
