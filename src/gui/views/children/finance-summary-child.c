@@ -38,6 +38,8 @@ struct _FinanceSummaryChild
   GtkWidget *label_repeat;
 
   gchar     *icon_name;
+
+  FinanceTransaction type;
 };
 
 G_DEFINE_TYPE (FinanceSummaryChild, finance_summary_child, GTK_TYPE_GRID)
@@ -53,6 +55,7 @@ enum {
   PROP_PAYMENT,
   PROP_REPEAT,
   PROP_SELECTED,
+  PROP_TYPE,
   N_PROPS
 };
 
@@ -131,6 +134,10 @@ finance_summary_child_get_property (GObject    *object,
       g_value_set_boolean (value, finance_summary_child_get_selected (self));
       break;
 
+    case PROP_TYPE:
+      g_value_set_int (value, finance_summary_child_get_type (self));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -181,6 +188,10 @@ finance_summary_child_set_property (GObject      *object,
 
     case PROP_SELECTED:
       finance_summary_child_set_selected (self, g_value_get_boolean (value));
+      break;
+
+    case PROP_TYPE:
+      finance_summary_child_set_type (self, g_value_get_int (value));
       break;
 
     default:
@@ -298,6 +309,17 @@ finance_summary_child_class_init (FinanceSummaryChildClass *klass)
                                                     FALSE,
                                                     G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
+  /**
+   * FinanceSummaryChild::type:
+   *
+   * The transaction type
+   */
+  properties[PROP_TYPE] = g_param_spec_int ("type",
+                                            "The type",
+                                            "The transaction type",
+                                            0, 1, 0,
+                                            G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/views/children/finance-summary-child.ui");
@@ -357,6 +379,7 @@ finance_summary_child_set_amount (FinanceSummaryChild *self,
                                   const gchar         *amount)
 {
   g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
+  g_return_if_fail (amount == NULL);
 
   gtk_label_set_text (GTK_LABEL (self->label_amount), amount);
 
@@ -397,6 +420,7 @@ finance_summary_child_set_category (FinanceSummaryChild *self,
                                     const gchar         *category)
 {
   g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
+  g_return_if_fail (category == NULL);
 
   gtk_label_set_text (GTK_LABEL (self->label_category), category);
 
@@ -437,6 +461,7 @@ finance_summary_child_set_date (FinanceSummaryChild *self,
                                 const gchar         *date)
 {
   g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
+  g_return_if_fail (date == NULL);
 
   gtk_label_set_text (GTK_LABEL (self->label_date), date);
 
@@ -478,6 +503,7 @@ finance_summary_child_set_icon_name (FinanceSummaryChild *self,
                                      const gchar         *icon_name)
 {
   g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
+  g_return_if_fail (icon_name == NULL);
 
   g_clear_pointer (&self->icon_name, g_free);
 
@@ -520,6 +546,7 @@ finance_summary_child_set_name (FinanceSummaryChild *self,
                                 const gchar         *name)
 {
   g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
+  g_return_if_fail (name == NULL);
 
   gtk_label_set_text (GTK_LABEL (self->label_name), name);
 
@@ -560,6 +587,7 @@ finance_summary_child_set_payee_name (FinanceSummaryChild *self,
                                       const gchar         *payee_name)
 {
   g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
+  g_return_if_fail (payee_name == NULL);
 
   gtk_label_set_text (GTK_LABEL (self->label_payee_name), payee_name);
 
@@ -600,6 +628,7 @@ finance_summary_child_set_payment (FinanceSummaryChild *self,
                                    const gchar         *payment)
 {
   g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
+  g_return_if_fail (payment == NULL);
 
   gtk_label_set_text (GTK_LABEL (self->label_payment), payment);
 
@@ -640,6 +669,7 @@ finance_summary_child_set_repeat (FinanceSummaryChild *self,
                                   const gchar         *repeat)
 {
   g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
+  g_return_if_fail (repeat == NULL);
 
   gtk_label_set_text (GTK_LABEL (self->label_repeat), repeat);
 
@@ -682,4 +712,42 @@ finance_summary_child_set_selected (FinanceSummaryChild *self,
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (self->check_button), selected);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SELECTED]);
+}
+
+/**
+ * finance_summary_child_get_type:
+ * @self: a #FinanceSummaryChild
+ *
+ * Returns the transaction type
+ *
+ * Returns: a #FinanceTransaction
+ *
+ * Since: 1.0
+ */
+gint
+finance_summary_child_get_type (FinanceSummaryChild *self)
+{
+  g_return_val_if_fail (FINANCE_IS_SUMMARY_CHILD (self), -1);
+
+  return self->type;
+}
+
+/**
+ * finance_summary_child_set_type:
+ * @self: a #FinanceSummaryChild
+ * @type: a #FinanceTransaction
+ *
+ * Sets the transaction type
+ *
+ * Since: 1.0
+ */
+void
+finance_summary_child_set_type (FinanceSummaryChild *self,
+                                gint                 type)
+{
+  g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
+
+  self->type = type;
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_TYPE]);
 }
