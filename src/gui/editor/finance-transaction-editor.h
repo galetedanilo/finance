@@ -110,6 +110,11 @@ gint            finance_transaction_editor_get_repeat                 (FinanceTr
 void            finance_transaction_editor_set_repeat                 (FinanceTransactionEditor *self,
                                                                        gint                      repeat);
 
+gint            finance_transaction_editor_get_type                   (FinanceTransactionEditor *self);
+
+void            finance_transaction_editor_set_type                   (FinanceTransactionEditor *self,
+                                                                       gint                      type);
+
 void            finance_transaction_editor_clear                      (FinanceTransactionEditor *self);
 
 G_END_DECLS
