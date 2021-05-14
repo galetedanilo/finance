@@ -162,7 +162,7 @@ finance_left_panel_init (FinanceLeftPanel *self)
 /**
  * finance_left_panel_add_row:
  * @self: a #FinanceLeftPanel
- * @row: a #GtkWidget to add
+ * @widget: a #GtkWidget to add
  *
  * Prepend a widget to the list. If a sort function is set,
  * the widget will actually be inserted at the calculated position
@@ -172,9 +172,11 @@ finance_left_panel_init (FinanceLeftPanel *self)
  */
 void
 finance_left_panel_add_row (FinanceLeftPanel *self,
-                            GtkWidget        *row)
+                            GtkWidget        *widget)
 {
   g_return_if_fail (FINANCE_IS_LEFT_PANEL (self));
+  g_return_if_fail (widget == NULL);
+  g_return_if_fail (GTK_IS_WIDGET (widget));
 
-  gtk_list_box_prepend (GTK_LIST_BOX (self->list_box), row);
+  gtk_list_box_prepend (GTK_LIST_BOX (self->list_box), widget);
 }
