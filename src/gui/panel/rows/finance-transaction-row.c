@@ -155,7 +155,7 @@ finance_transaction_row_get_property (GObject    *object,
       break;
 
     case PROP_TYPE:
-      g_value_set_int (value, finance_transaction_row_get_type (self));
+      g_value_set_enum (value, finance_transaction_row_get_type (self));
       break;
 
     default:
@@ -195,7 +195,7 @@ finance_transaction_row_set_property (GObject      *object,
       break;
 
     case PROP_TYPE:
-      finance_transaction_row_set_type (self, g_value_get_int(value));
+      finance_transaction_row_set_type (self, g_value_get_enum(value));
       break;
 
     default:
@@ -275,11 +275,12 @@ finance_transaction_row_class_init (FinanceTransactionRowClass *klass)
    *
    * The transaction type
    */
-  properties[PROP_TYPE] = g_param_spec_int ("type",
-                                            "The type",
-                                            "The transaction type",
-                                            0, 1, 0,
-                                            G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+  properties[PROP_TYPE] = g_param_spec_enum ("type",
+                                             "The type",
+                                             "The transaction type",
+                                             FINANCE_TYPE_TRANSACTION,
+                                             FINANCE_CREDIT,
+                                             G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
@@ -519,7 +520,7 @@ finance_transaction_row_set_title (FinanceTransactionRow *self,
 }
 
 /**
- * finance_transaction_get_type:
+ * finance_transaction_row_get_type:
  * @self: a #FinanceTransactionRow
  *
  * Returns the transaction type
@@ -537,7 +538,7 @@ finance_transaction_row_get_type (FinanceTransactionRow *self)
 }
 
 /**
- * finance_transaction_set_type:
+ * finance_transaction_row_set_type:
  * @self: a #FinanceTransactionRow
  * @type: a #FinanceTransaction
  *
