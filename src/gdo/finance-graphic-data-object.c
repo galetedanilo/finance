@@ -34,5 +34,5 @@ finance_graphic_data_object_has_changed (FinanceGraphicDataObject *object)
   g_return_if_fail (FINANCE_IS_GRAPHIC_DATA_OBJECT (object));
   g_return_if_fail (FINANCE_GRAPHIC_DATA_OBJECT_GET_IFACE (object)->has_changed);
 
-  FINANCE_GRAPHIC_DATA_OBJECT_GET_IFAC (object)->has_changed (object);
+  FINANCE_GRAPHIC_DATA_OBJECT_GET_IFACE (object)->has_changed (object);
 }
