@@ -27,7 +27,6 @@
 #include "finance-summary-child.h"
 #include "finance-transaction-row.h"
 #include "finance-view.h"
-#include "finance-utils.h"
 
 G_BEGIN_DECLS
 
@@ -35,7 +34,7 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (FinanceTransactionViewController, finance_transaction_view_controller, FINANCE, TRANSACTION_VIEW_CONTROLLER, GObject)
 
-void        finance_transaction_view_transaction_startup     (FinanceTransactionViewTransaction *self);
+void        finance_transaction_view_controller_start     (FinanceTransactionViewController *self);
 
 G_END_DECLS
 

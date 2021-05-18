@@ -1,3 +1,3 @@
 sources += files(
-  'finance-controller-transactions.c',
+  'finance-transaction-view-controller.c',
 )

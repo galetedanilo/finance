@@ -1,4 +1,4 @@
-/* finance-controller-transactions.c
+/* finance-transaction-view-controller.c
  *
  * Copyright 2021 Danilo Fernandes Galete <galetedanilo@gmail.com>
  *
@@ -18,19 +18,19 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include "finance-controller-transactions.h"
+#include "finance-transaction-view-controller.h"
 
-struct _FinanceControllerTransactions
+struct _FinanceTransactionViewController
 {
   GObject   parent_instance;
 
   /* The Objects */
   GObject   *pane;
-  GObject   *view_transactions;
+  GObject   *view;
 
 };
 
-G_DEFINE_TYPE (FinanceControllerTransactions, finance_controller_transactions, G_TYPE_OBJECT)
+G_DEFINE_TYPE (FinanceTransactionViewController, finance_transaction_view_controller, G_TYPE_OBJECT)
 
 enum {
   PROP_0,
@@ -42,23 +42,23 @@ enum {
 static GParamSpec *properties [N_PROPS] = { NULL, };
 
 static void
-finance_controller_transactions_finalize (GObject *object)
+finance_transaction_view_controller_finalize (GObject *object)
 {
-  FinanceControllerTransactions *self = (FinanceControllerTransactions *)object;
+  FinanceTransactionViewController *self = (FinanceTransactionViewController *)object;
 
   g_clear_object (&self->pane);
-  g_clear_object (&self->view_transactions);
+  g_clear_object (&self->view);
 
-  G_OBJECT_CLASS (finance_controller_transactions_parent_class)->finalize (object);
+  G_OBJECT_CLASS (finance_transaction_view_controller_parent_class)->finalize (object);
 }
 
 static void
-finance_controller_transactions_get_property (GObject    *object,
-                                              guint       prop_id,
-                                              GValue     *value,
-                                              GParamSpec *pspec)
+finance_transaction_view_controller_get_property (GObject    *object,
+                                                  guint       prop_id,
+                                                  GValue     *value,
+                                                  GParamSpec *pspec)
 {
-  FinanceControllerTransactions *self = FINANCE_CONTROLLER_TRANSACTIONS (object);
+  FinanceTransactionViewController *self = FINANCE_TRANSACTION_VIEW_CONTROLLER (object);
 
   switch (prop_id)
     {
@@ -67,7 +67,7 @@ finance_controller_transactions_get_property (GObject    *object,
       break;
 
     case PROP_VIEW:
-      g_value_set_object (value, self->view_transactions);
+      g_value_set_object (value, self->view);
       break;
 
     default:
@@ -76,12 +76,12 @@ finance_controller_transactions_get_property (GObject    *object,
 }
 
 static void
-finance_controller_transactions_set_property (GObject      *object,
-                                              guint         prop_id,
-                                              const GValue *value,
-                                              GParamSpec   *pspec)
+finance_transaction_view_controller_set_property (GObject      *object,
+                                                   guint         prop_id,
+                                                   const GValue *value,
+                                                   GParamSpec   *pspec)
 {
-  FinanceControllerTransactions *self = FINANCE_CONTROLLER_TRANSACTIONS (object);
+  FinanceTransactionViewController *self = FINANCE_TRANSACTION_VIEW_CONTROLLER (object);
 
   switch (prop_id)
     {
@@ -91,8 +91,8 @@ finance_controller_transactions_set_property (GObject      *object,
       break;
 
     case PROP_VIEW:
-      g_assert (self->view_transactions == NULL);
-      self->view_transactions = g_value_dup_object (value);
+      g_assert (self->view == NULL);
+      self->view = g_value_dup_object (value);
       break;
 
     default:
@@ -101,16 +101,16 @@ finance_controller_transactions_set_property (GObject      *object,
 }
 
 static void
-finance_controller_transactions_class_init (FinanceControllerTransactionsClass *klass)
+finance_transaction_view_controller_class_init (FinanceTransactionViewControllerClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->finalize      = finance_controller_transactions_finalize;
-  object_class->get_property  = finance_controller_transactions_get_property;
-  object_class->set_property  = finance_controller_transactions_set_property;
+  object_class->finalize      = finance_transaction_view_controller_finalize;
+  object_class->get_property  = finance_transaction_view_controller_get_property;
+  object_class->set_property  = finance_transaction_view_controller_set_property;
 
   /**
-   * FinanceControllerTransaction::pane:
+   * FinanceTransactionViewController::pane:
    *
    * Sets pane
    */
@@ -121,7 +121,7 @@ finance_controller_transactions_class_init (FinanceControllerTransactionsClass *
                                                G_PARAM_READWRITE);
 
     /**
-   * FinanceControllerTransaction::view:
+   * FinancerTransactionViewControlle::view:
    *
    * Sets view
    */
@@ -135,9 +135,9 @@ finance_controller_transactions_class_init (FinanceControllerTransactionsClass *
 }
 
 static void
-finance_controller_transactions_init (FinanceControllerTransactions *self)
+finance_transaction_view_controller_init (FinanceTransactionViewController *self)
 {
-  //self->child = g_ptr_array_new
+
 }
 
 void

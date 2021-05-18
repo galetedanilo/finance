@@ -22,7 +22,7 @@
 #include <gtk/gtk.h>
 #include <handy.h>
 
-#include "finance-controller-transactions.h"
+#include "finance-transaction-view-controller.h"
 #include "finance-left-panel.h"
 #include "finance-transaction-editor.h"
 #include "finance-transaction-view.h"
