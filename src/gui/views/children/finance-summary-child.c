@@ -39,7 +39,7 @@ struct _FinanceSummaryChild
 
   gchar     *icon_name;
 
-  FinanceTransaction type;
+  FinanceTransaction transaction;
 };
 
 G_DEFINE_TYPE (FinanceSummaryChild, finance_summary_child, GTK_TYPE_GRID)
@@ -55,7 +55,7 @@ enum {
   PROP_PAYMENT,
   PROP_REPEAT,
   PROP_SELECTED,
-  PROP_TYPE,
+  PROP_TRANSACTION,
   N_PROPS
 };
 
@@ -134,8 +134,8 @@ finance_summary_child_get_property (GObject    *object,
       g_value_set_boolean (value, finance_summary_child_get_selected (self));
       break;
 
-    case PROP_TYPE:
-      g_value_set_enum (value, finance_summary_child_get_type (self));
+    case PROP_TRANSACTION:
+      g_value_set_enum (value, finance_summary_child_get_transaction (self));
       break;
 
     default:
@@ -190,8 +190,8 @@ finance_summary_child_set_property (GObject      *object,
       finance_summary_child_set_selected (self, g_value_get_boolean (value));
       break;
 
-    case PROP_TYPE:
-      finance_summary_child_set_type (self, g_value_get_enum (value));
+    case PROP_TRANSACTION:
+      finance_summary_child_set_transaction (self, g_value_get_enum (value));
       break;
 
     default:
@@ -310,16 +310,16 @@ finance_summary_child_class_init (FinanceSummaryChildClass *klass)
                                                     G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinanceSummaryChild::type:
+   * FinanceSummaryChild::transaction:
    *
-   * The transaction type
+   * The transaction transaction
    */
-  properties[PROP_TYPE] = g_param_spec_enum ("type",
-                                             "The type",
-                                             "The transaction type",
-                                             FINANCE_TYPE_TRANSACTION,
-                                             FINANCE_CREDIT,
-                                             G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+  properties[PROP_TRANSACTION] = g_param_spec_enum ("transaction",
+                                                    "The type",
+                                                    "The transaction type",
+                                                    FINANCE_TYPE_TRANSACTION,
+                                                    FINANCE_CREDIT,
+                                                    G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
@@ -716,7 +716,7 @@ finance_summary_child_set_selected (FinanceSummaryChild *self,
 }
 
 /**
- * finance_summary_child_get_type:
+ * finance_summary_child_get_transaction:
  * @self: a #FinanceSummaryChild
  *
  * Returns the transaction type
@@ -726,29 +726,29 @@ finance_summary_child_set_selected (FinanceSummaryChild *self,
  * Since: 1.0
  */
 gint
-finance_summary_child_get_type (FinanceSummaryChild *self)
+finance_summary_child_get_transaction (FinanceSummaryChild *self)
 {
   g_return_val_if_fail (FINANCE_IS_SUMMARY_CHILD (self), -1);
 
-  return self->type;
+  return self->transaction;
 }
 
 /**
- * finance_summary_child_set_type:
+ * finance_summary_child_set_transaction:
  * @self: a #FinanceSummaryChild
- * @type: a #FinanceTransaction
+ * @transaction: a #FinanceTransaction
  *
  * Sets the transaction type
  *
  * Since: 1.0
  */
 void
-finance_summary_child_set_type (FinanceSummaryChild *self,
-                                gint                 type)
+finance_summary_child_set_transaction (FinanceSummaryChild *self,
+                                       gint                 transaction)
 {
   g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
 
-  self->type = type;
+  self->transaction = transaction;
 
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_TYPE]);
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_TRANSACTION]);
 }
