@@ -1,6 +1,6 @@
 /* finance-window.h
  *
- * Copyright 2020 galetedanilo
+ * Copyright 2020 - 2021 <galetedanilo@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

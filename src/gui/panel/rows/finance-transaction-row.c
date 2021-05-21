@@ -39,7 +39,7 @@ struct _FinanceTransactionRow
 
   gchar         *icon_text;
 
-  FinanceTransaction type;
+  FinanceTransaction transaction;
 };
 
 G_DEFINE_TYPE (FinanceTransactionRow, finance_transaction_row, GTK_TYPE_LIST_BOX_ROW)
@@ -51,7 +51,7 @@ enum {
   PROP_ICON_TEXT,
   PROP_SELECTED,
   PROP_TITLE,
-  PROP_TYPE,
+  PROP_TRANSACTION,
   N_PROPS,
 };
 
@@ -154,8 +154,8 @@ finance_transaction_row_get_property (GObject    *object,
       g_value_set_string (value, finance_transaction_row_get_title (self));
       break;
 
-    case PROP_TYPE:
-      g_value_set_enum (value, finance_transaction_row_get_type (self));
+    case PROP_TRANSACTION:
+      g_value_set_enum (value, finance_transaction_row_get_transaction (self));
       break;
 
     default:
@@ -194,8 +194,8 @@ finance_transaction_row_set_property (GObject      *object,
       finance_transaction_row_set_title (self, g_value_get_string (value));
       break;
 
-    case PROP_TYPE:
-      finance_transaction_row_set_type (self, g_value_get_enum(value));
+    case PROP_TRANSACTION:
+      finance_transaction_row_set_transaction (self, g_value_get_enum(value));
       break;
 
     default:
@@ -271,16 +271,16 @@ finance_transaction_row_class_init (FinanceTransactionRowClass *klass)
                                                 G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinanceTransactionRow::type:
+   * FinanceTransactionRow::transaction:
    *
    * The transaction type
    */
-  properties[PROP_TYPE] = g_param_spec_enum ("type",
-                                             "The type",
-                                             "The transaction type",
-                                             FINANCE_TYPE_TRANSACTION,
-                                             FINANCE_CREDIT,
-                                             G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+  properties[PROP_TRANSACTION] = g_param_spec_enum ("transaction",
+                                                    "The transaction",
+                                                    "The transaction type",
+                                                    FINANCE_TYPE_TRANSACTION,
+                                                    FINANCE_CREDIT,
+                                                    G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
@@ -520,7 +520,7 @@ finance_transaction_row_set_title (FinanceTransactionRow *self,
 }
 
 /**
- * finance_transaction_row_get_type:
+ * finance_transaction_row_get_transaction:
  * @self: a #FinanceTransactionRow
  *
  * Returns the transaction type
@@ -530,29 +530,29 @@ finance_transaction_row_set_title (FinanceTransactionRow *self,
  * Since: 1.0
  */
 gint
-finance_transaction_row_get_type (FinanceTransactionRow *self)
+finance_transaction_row_get_transaction (FinanceTransactionRow *self)
 {
   g_return_val_if_fail (FINANCE_IS_TRANSACTION_ROW (self), -1);
 
-  return self->type;
+  return self->transaction;
 }
 
 /**
- * finance_transaction_row_set_type:
+ * finance_transaction_row_set_transaction:
  * @self: a #FinanceTransactionRow
- * @type: a #FinanceTransaction
+ * @transaction: a #FinanceTransaction
  *
  * Sets the transaction type
  *
  * Since: 1.0
  */
 void
-finance_transaction_row_set_type (FinanceTransactionRow *self,
-                                  gint                   type)
+finance_transaction_row_set_transaction (FinanceTransactionRow *self,
+                                         gint                   transaction)
 {
   g_return_if_fail (FINANCE_IS_TRANSACTION_ROW (self));
 
-  self->type = type;
+  self->transaction = transaction;
 
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_TYPE]);
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_TRANSACTION]);
 }

@@ -55,7 +55,7 @@ struct _FinanceTransactionEditor
 
   GSettings   *settings;
 
-  FinanceTransaction type;
+  FinanceTransaction transaction;
 };
 
 G_DEFINE_TYPE (FinanceTransactionEditor, finance_transaction_editor, GTK_TYPE_GRID)
@@ -77,7 +77,7 @@ enum {
   PROP_PAYMENT,
   PROP_PAYMENT_INFORMATION,
   PROP_REPEAT,
-  PROP_TYPE,
+  PROP_TRANSACTION,
   N_PROPS
 };
 
@@ -280,8 +280,8 @@ finance_transaction_editor_get_property (GObject    *object,
       g_value_set_enum (value, finance_transaction_editor_get_repeat (self));
       break;
 
-    case PROP_TYPE:
-      g_value_set_enum (value, finance_transaction_editor_get_type (self));
+    case PROP_TRANSACTION:
+      g_value_set_enum (value, finance_transaction_editor_get_transaction (self));
       break;
 
     default:
@@ -360,8 +360,8 @@ finance_transaction_editor_set_property (GObject      *object,
       finance_transaction_editor_set_repeat (self, g_value_get_enum (value));
       break;
 
-    case PROP_TYPE:
-      finance_transaction_editor_set_type (self, g_value_get_enum (self));
+    case PROP_TRANSACTION:
+      finance_transaction_editor_set_transaction (self, g_value_get_enum (self));
       break;
 
     default:
@@ -545,16 +545,16 @@ finance_transaction_editor_class_init (FinanceTransactionEditorClass *klass)
                                                G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinanceTransactionEditor::type:
+   * FinanceTransactionEditor::transaction:
    *
    * The transaction type
    */
-  properties[PROP_TYPE] = g_param_spec_enum ("type",
-                                             "The type",
-                                             "The transaction type",
-                                             FINANCE_TYPE_TRANSACTION,
-                                             FINANCE_CREDIT,
-                                             G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+  properties[PROP_TRANSACTION] = g_param_spec_enum ("transaction",
+                                                    "The transaction",
+                                                    "The transaction type",
+                                                    FINANCE_TYPE_TRANSACTION,
+                                                    FINANCE_CREDIT,
+                                                    G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
@@ -661,6 +661,12 @@ finance_transaction_editor_set_amount (FinanceTransactionEditor *self,
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_AMOUNT]);
 }
+
+/**
+ * finance_transaction_editor_get_category:
+ * @self: #FinanceTransactionEditor
+ *
+ * Returns the category id
 
 /**
  * finance_transaction_editor_get_date:
@@ -1187,7 +1193,7 @@ finance_transaction_editor_set_repeat (FinanceTransactionEditor *self,
 }
 
 /**
- * finance_transaction_editor_get_type:
+ * finance_transaction_editor_get_transaction:
  * @self: a #FinanceTransactionEditor
  *
  * Returns the transaction type
@@ -1197,31 +1203,31 @@ finance_transaction_editor_set_repeat (FinanceTransactionEditor *self,
  * Since: 1.0
  */
 gint
-finance_transaction_editor_get_type (FinanceTransactionEditor *self)
+finance_transaction_editor_get_transaction (FinanceTransactionEditor *self)
 {
   g_return_val_if_fail (FINANCE_IS_TRANSACTION_EDITOR (self), -1);
 
-  return self->type;
+  return self->transaction;
 }
 
 /**
- * finance_transaction_editor_set_type:
+ * finance_transaction_editor_set_transaction:
  * @self: a #FinanceTransactionEditor
- * @type: a #FinanceTransaction
+ * @transaction: a #FinanceTransaction
  *
  * Sets the transaction type
  *
  * Since: 1.0
  */
 void
-finance_transaction_editor_set_type (FinanceTransactionEditor *self,
-                                     gint                      type)
+finance_transaction_editor_set_transaction (FinanceTransactionEditor *self,
+                                            gint                      transaction)
 {
   g_return_if_fail (FINANCE_IS_TRANSACTION_EDITOR (self));
 
-  self->type = type;
+  self->transaction = transaction;
 
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_TYPE]);
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_TRANSACTION]);
 }
 
 /**

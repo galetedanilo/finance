@@ -58,10 +58,10 @@ const gchar *   finance_transaction_row_get_title         (FinanceTransactionRow
 void            finance_transaction_row_set_title         (FinanceTransactionRow *self,
                                                            const gchar           *title);
 
-gint            finance_transaction_row_get_type          (FinanceTransactionRow *self);
+gint            finance_transaction_row_get_transaction   (FinanceTransactionRow *self);
 
-void            finance_transaction_row_set_type          (FinanceTransactionRow *self,
-                                                           gint                   type);
+void            finance_transaction_row_set_transaction   (FinanceTransactionRow *self,
+                                                           gint                   transaction);
 
 G_END_DECLS
 

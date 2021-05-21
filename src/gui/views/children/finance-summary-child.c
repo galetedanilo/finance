@@ -315,7 +315,7 @@ finance_summary_child_class_init (FinanceSummaryChildClass *klass)
    * The transaction transaction
    */
   properties[PROP_TRANSACTION] = g_param_spec_enum ("transaction",
-                                                    "The type",
+                                                    "The transaction",
                                                     "The transaction type",
                                                     FINANCE_TYPE_TRANSACTION,
                                                     FINANCE_CREDIT,

@@ -141,7 +141,7 @@ finance_transaction_view_controller_init (FinanceTransactionViewController *self
 }
 
 void
-finance_controller_transactions_startup (FinanceControllerTransactions *self)
+finance_transaction_view_controller_startup (FinanceTransactionViewController *self)
 {
       for(int x = 0; x < 50; x++)
     {
@@ -179,22 +179,17 @@ finance_controller_transactions_startup (FinanceControllerTransactions *self)
                                 "selected",
                                 G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
 
-      finance_summary_child_set_color (FINANCE_SUMMARY_CHILD (summary),
-                                       color);
-
-      finance_summary_child_set_icon (FINANCE_SUMMARY_CHILD (summary), "ID");
-
       finance_summary_child_set_name (FINANCE_SUMMARY_CHILD (summary),
                                       "Cadastro para Teste");
 
       finance_summary_child_set_amount (FINANCE_SUMMARY_CHILD (summary),
                                                "R$ 500,00");
 
-      finance_view_insert_child (FINANCE_VIEW (self->view_transactions), summary);
+      finance_view_add_child (FINANCE_VIEW (self->view), summary);
 
 
 
-      finance_left_panel_prepend_row (FINANCE_LEFT_PANEL (self->pane), row);
+      finance_left_panel_add_row (FINANCE_LEFT_PANEL (self->pane), row);
 
       g_clear_pointer (&color, gdk_rgba_free);
     }
