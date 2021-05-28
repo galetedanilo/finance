@@ -194,10 +194,10 @@ finance_window_init (FinanceWindow *self)
 
   self->settings = g_settings_new ("org.gnome.finance");
 
-  self->controller_transactions = g_object_new (FINANCE_TYPE_TRANSACTION_VIEW_CONTROLLER,
-                                                "pane", self->left_panel,
-                                                "view", self->transaction_view,
-                                                NULL);
+  //self->controller_transactions = g_object_new (FINANCE_TYPE_TRANSACTION_VIEW_CONTROLLER,
+    //                                            "pane", self->left_panel,
+      //                                          "view", self->transaction_view,
+        //                                        NULL);
 
-  finance_transaction_view_controller_startup (self->controller_transactions);
+  //finance_transaction_view_controller_startup (self->controller_transactions);
 }

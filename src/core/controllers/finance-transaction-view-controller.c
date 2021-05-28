@@ -143,7 +143,7 @@ finance_transaction_view_controller_init (FinanceTransactionViewController *self
 void
 finance_transaction_view_controller_startup (FinanceTransactionViewController *self)
 {
-      for(int x = 0; x < 50; x++)
+      for(int x = 0; x < 1; x++)
     {
         //this is a test
         GtkWidget *summary = finance_summary_child_new ();
@@ -151,9 +151,9 @@ finance_transaction_view_controller_startup (FinanceTransactionViewController *s
       GdkRGBA *color = finance_utils_random_rgba_color ();
 
       g_object_bind_property ((gpointer)summary,
-                                "icon",
+                                "icon-text",
                                 (gpointer)row,
-                                "icon",
+                                "icon-text",
                                 G_BINDING_DEFAULT);
       g_object_bind_property ((gpointer)summary,
                                 "color",

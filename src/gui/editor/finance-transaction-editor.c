@@ -398,6 +398,19 @@ finance_transaction_editor_class_init (FinanceTransactionEditorClass *klass)
                                                   G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
+   * FinanceTransactionEditor::category:
+   *
+   * The transaction category
+   */
+  properties[PROP_CATEGORY] = g_param_spec_int ("category",
+                                                "Category",
+                                                "The transaction category",
+                                                0,
+                                                G_MAXINT,
+                                                0,
+                                                G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
+  /**
    * FinanceTransactionEditor::date:
    *
    * The transaction date
@@ -428,7 +441,7 @@ finance_transaction_editor_class_init (FinanceTransactionEditorClass *klass)
   properties[PROP_FREQUENCY_DATE] = g_param_spec_boxed ("frequency-date",
                                                         "Fequency date",
                                                         "The date of the financial transaction frequency",
-                                                        NULL,
+                                                        G_TYPE_DATE_TIME,
                                                         G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
@@ -667,6 +680,38 @@ finance_transaction_editor_set_amount (FinanceTransactionEditor *self,
  * @self: #FinanceTransactionEditor
  *
  * Returns the category id
+ *
+ * Returns: a gint
+ *
+ * Since: 1.0
+ */
+gint
+finance_transaction_editor_get_category (FinanceTransactionEditor *self)
+{
+  g_return_val_if_fail (FINANCE_IS_TRANSACTION_EDITOR (self), -1);
+
+  return gtk_combo_box_get_active (GTK_COMBO_BOX (self->combo_category));
+}
+
+/**
+ * finance_transaction_editor_set_category:
+ * @self: #FinanceTransactionEditor
+ * @index_: a #gint to set it to
+ *
+ * Set the category
+ *
+ * Since: 1.0
+ */
+void
+finance_transaction_editor_set_category (FinanceTransactionEditor *self,
+                                         gint                      index_)
+{
+  g_return_if_fail (FINANCE_IS_TRANSACTION_EDITOR (self));
+
+  gtk_combo_box_set_active (GTK_COMBO_BOX (self->combo_category), index_);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_CATEGORY]);
+}
 
 /**
  * finance_transaction_editor_get_date:
@@ -877,7 +922,7 @@ finance_transaction_editor_set_icon_color (FinanceTransactionEditor *self,
  * Since: 1.0
  */
 const gchar *
-finance_transaction_editor_get_icon (FinanceTransactionEditor *self)
+finance_transaction_editor_get_icon_text (FinanceTransactionEditor *self)
 {
   g_return_val_if_fail (FINANCE_IS_TRANSACTION_EDITOR (self), NULL);
 
