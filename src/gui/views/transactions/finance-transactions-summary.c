@@ -1,4 +1,4 @@
-/* finance-summary-child.c
+/* finance-transactions-summary.c
  *
  * Copyright 2021 galetedanilo <galetedanilo@gmail.com>
  *
@@ -18,11 +18,11 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include "finance-summary-child.h"
+#include "finance-transactions-summary.h"
 
 #include "finance-enums.h"
 
-struct _FinanceSummaryChild
+struct _FinanceTransactionsSummary
 {
   GtkGrid   parent_instance;
 
@@ -42,7 +42,7 @@ struct _FinanceSummaryChild
   FinanceTransaction transaction;
 };
 
-G_DEFINE_TYPE (FinanceSummaryChild, finance_summary_child, GTK_TYPE_GRID)
+G_DEFINE_TYPE (FinanceTransactionsSummary, finance_transactions_summary, GTK_TYPE_GRID)
 
 enum {
   PROP_0,
@@ -65,7 +65,7 @@ static void
 on_check_button_toggled (GtkToggleButton *togglebutton,
                          gpointer         user_data)
 {
-  FinanceSummaryChild *self = FINANCE_SUMMARY_CHILD (user_data);
+  FinanceTransactionsSummary *self = FINANCE_TRANSACTIONS_SUMMARY (user_data);
 
   (void)togglebutton;
 
@@ -73,69 +73,69 @@ on_check_button_toggled (GtkToggleButton *togglebutton,
 }
 
 GtkWidget *
-finance_summary_child_new (void)
+finance_transactions_summary_new (void)
 {
-  return g_object_new (FINANCE_TYPE_SUMMARY_CHILD, NULL);
+  return g_object_new (FINANCE_TYPE_TRANSACTIONS_SUMMARY, NULL);
 }
 
 static void
-finance_summary_child_finalize (GObject *object)
+finance_transactions_summary_finalize (GObject *object)
 {
-  FinanceSummaryChild *self = (FinanceSummaryChild *)object;
+  FinanceTransactionsSummary *self = (FinanceTransactionsSummary *)object;
 
   g_clear_pointer (&self->icon_name, g_free);
 
-  G_OBJECT_CLASS (finance_summary_child_parent_class)->finalize (object);
+  G_OBJECT_CLASS (finance_transactions_summary_parent_class)->finalize (object);
 }
 
 static void
-finance_summary_child_get_property (GObject    *object,
-                                    guint       prop_id,
-                                    GValue     *value,
-                                    GParamSpec *pspec)
+finance_transactions_summary_get_property (GObject    *object,
+                                           guint       prop_id,
+                                           GValue     *value,
+                                           GParamSpec *pspec)
 {
-  FinanceSummaryChild *self = FINANCE_SUMMARY_CHILD (object);
+  FinanceTransactionsSummary *self = FINANCE_TRANSACTIONS_SUMMARY (object);
 
   switch (prop_id)
     {
     case PROP_AMOUNT:
-      g_value_set_string (value, finance_summary_child_get_amount (self));
+      g_value_set_string (value, finance_transactions_summary_get_amount (self));
       break;
 
     case PROP_CATEGORY:
-      g_value_set_string (value, finance_summary_child_get_category (self));
+      g_value_set_string (value, finance_transactions_summary_get_category (self));
       break;
 
     case PROP_DATE:
-      g_value_set_string (value, finance_summary_child_get_date (self));
+      g_value_set_string (value, finance_transactions_summary_get_date (self));
       break;
 
     case PROP_ICON_NAME:
-      g_value_set_string (value, finance_summary_child_get_icon_name (self));
+      g_value_set_string (value, finance_transactions_summary_get_icon_name (self));
       break;
 
     case PROP_NAME:
-      g_value_set_string (value, finance_summary_child_get_name (self));
+      g_value_set_string (value, finance_transactions_summary_get_name (self));
       break;
 
     case PROP_PAYEE_NAME:
-      g_value_set_string (value, finance_summary_child_get_payee_name (self));
+      g_value_set_string (value, finance_transactions_summary_get_payee_name (self));
       break;
 
     case PROP_PAYMENT:
-      g_value_set_string (value, finance_summary_child_get_payment (self));
+      g_value_set_string (value, finance_transactions_summary_get_payment (self));
       break;
 
     case PROP_REPEAT:
-      g_value_set_string (value, finance_summary_child_get_repeat (self));
+      g_value_set_string (value, finance_transactions_summary_get_repeat (self));
       break;
 
     case PROP_SELECTED:
-      g_value_set_boolean (value, finance_summary_child_get_selected (self));
+      g_value_set_boolean (value, finance_transactions_summary_get_selected (self));
       break;
 
     case PROP_TRANSACTION:
-      g_value_set_enum (value, finance_summary_child_get_transaction (self));
+      g_value_set_enum (value, finance_transactions_summary_get_transaction (self));
       break;
 
     default:
@@ -145,53 +145,53 @@ finance_summary_child_get_property (GObject    *object,
 }
 
 static void
-finance_summary_child_set_property (GObject      *object,
-                                    guint         prop_id,
-                                    const GValue *value,
-                                    GParamSpec   *pspec)
+finance_transactions_summary_set_property (GObject      *object,
+                                           guint         prop_id,
+                                           const GValue *value,
+                                           GParamSpec   *pspec)
 {
-  FinanceSummaryChild *self = FINANCE_SUMMARY_CHILD (object);
+  FinanceTransactionsSummary *self = FINANCE_TRANSACTIONS_SUMMARY (object);
 
   switch (prop_id)
     {
     case PROP_AMOUNT:
-      finance_summary_child_set_amount (self, g_value_get_string (value));
+      finance_transactions_summary_set_amount (self, g_value_get_string (value));
       break;
 
     case PROP_CATEGORY:
-      finance_summary_child_set_category (self, g_value_get_string (value));
+      finance_transactions_summary_set_category (self, g_value_get_string (value));
       break;
 
     case PROP_DATE:
-      finance_summary_child_set_date (self, g_value_get_string (value));
+      finance_transactions_summary_set_date (self, g_value_get_string (value));
       break;
 
     case PROP_ICON_NAME:
-      finance_summary_child_set_icon_name (self, g_value_get_string (value));
+      finance_transactions_summary_set_icon_name (self, g_value_get_string (value));
       break;
 
     case PROP_NAME:
-      finance_summary_child_set_name (self, g_value_get_string (value));
+      finance_transactions_summary_set_name (self, g_value_get_string (value));
       break;
 
     case PROP_PAYEE_NAME:
-      finance_summary_child_set_payee_name (self, g_value_get_string (value));
+      finance_transactions_summary_set_payee_name (self, g_value_get_string (value));
       break;
 
     case PROP_PAYMENT:
-      finance_summary_child_set_payment (self, g_value_get_string (value));
+      finance_transactions_summary_set_payment (self, g_value_get_string (value));
       break;
 
     case PROP_REPEAT:
-      finance_summary_child_set_repeat (self, g_value_get_string (value));
+      finance_transactions_summary_set_repeat (self, g_value_get_string (value));
       break;
 
     case PROP_SELECTED:
-      finance_summary_child_set_selected (self, g_value_get_boolean (value));
+      finance_transactions_summary_set_selected (self, g_value_get_boolean (value));
       break;
 
     case PROP_TRANSACTION:
-      finance_summary_child_set_transaction (self, g_value_get_enum (value));
+      finance_transactions_summary_set_transaction (self, g_value_get_enum (value));
       break;
 
     default:
@@ -201,17 +201,17 @@ finance_summary_child_set_property (GObject      *object,
 }
 
 static void
-finance_summary_child_class_init (FinanceSummaryChildClass *klass)
+finance_transactions_summary_class_init (FinanceTransactionsSummaryClass *klass)
 {
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->finalize      = finance_summary_child_finalize;
-  object_class->get_property  = finance_summary_child_get_property;
-  object_class->set_property  = finance_summary_child_set_property;
+  object_class->finalize      = finance_transactions_summary_finalize;
+  object_class->get_property  = finance_transactions_summary_get_property;
+  object_class->set_property  = finance_transactions_summary_set_property;
 
   /**
-   * FinanceSummaryChild::amount:
+   * FinanceTransactionsSummary::amount:
    *
    * The transaction amount as a string
    */
@@ -222,7 +222,7 @@ finance_summary_child_class_init (FinanceSummaryChildClass *klass)
                                                   G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinanceSummaryChild::category:
+   * FinanceTransactionsSummary::category:
    *
    * The transaction category
    */
@@ -233,7 +233,7 @@ finance_summary_child_class_init (FinanceSummaryChildClass *klass)
                                                    G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinanceSummaryChild::date:
+   * FinanceTransactionsSummary::date:
    *
    * The transaction date
    */
@@ -244,7 +244,7 @@ finance_summary_child_class_init (FinanceSummaryChildClass *klass)
                                                G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinanceSummaryChild::icon-name:
+   * FinanceTransactionsSummary::icon-name:
    *
    * The name of the icon in the image
    */
@@ -255,7 +255,7 @@ finance_summary_child_class_init (FinanceSummaryChildClass *klass)
                                                     G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinanceSummaryChild::name:
+   * FinanceTransactionsSummary::name:
    *
    * The transaction name
    */
@@ -266,7 +266,7 @@ finance_summary_child_class_init (FinanceSummaryChildClass *klass)
                                                G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinanceSummaryChild::payee_name:
+   * FinanceTransactionsSummary::payee_name:
    *
    * The transaction payee name
    */
@@ -277,7 +277,7 @@ finance_summary_child_class_init (FinanceSummaryChildClass *klass)
                                                      G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinanceSummaryChild::payment:
+   * FinanceTransactionsSummary::payment:
    *
    * The payment method of the transaction
    */
@@ -288,7 +288,7 @@ finance_summary_child_class_init (FinanceSummaryChildClass *klass)
                                                   G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinanceSummaryChild::repeat:
+   * FinanceTransactionsSummary::repeat:
    *
    * The transaction repeat type
    */
@@ -299,7 +299,7 @@ finance_summary_child_class_init (FinanceSummaryChildClass *klass)
                                                  G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
     /**
-   * FinanceSummaryChild::selected:
+   * FinanceTransactionsSummary::selected:
    *
    * The summary child is selected
    */
@@ -310,7 +310,7 @@ finance_summary_child_class_init (FinanceSummaryChildClass *klass)
                                                     G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinanceSummaryChild::transaction:
+   * FinanceTransactionsSummary::transaction:
    *
    * The transaction transaction
    */
@@ -323,32 +323,32 @@ finance_summary_child_class_init (FinanceSummaryChildClass *klass)
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/views/children/finance-summary-child.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/views/transactions/finance-transactions-summary.ui");
 
   /* The Widgets */
-  gtk_widget_class_bind_template_child (widget_class, FinanceSummaryChild, check_button);
-  gtk_widget_class_bind_template_child (widget_class, FinanceSummaryChild, image_icon);
-  gtk_widget_class_bind_template_child (widget_class, FinanceSummaryChild, label_amount);
-  gtk_widget_class_bind_template_child (widget_class, FinanceSummaryChild, label_category);
-  gtk_widget_class_bind_template_child (widget_class, FinanceSummaryChild, label_date);
-  gtk_widget_class_bind_template_child (widget_class, FinanceSummaryChild, label_name);
-  gtk_widget_class_bind_template_child (widget_class, FinanceSummaryChild, label_payee_name);
-  gtk_widget_class_bind_template_child (widget_class, FinanceSummaryChild, label_payment);
-  gtk_widget_class_bind_template_child (widget_class, FinanceSummaryChild, label_repeat);
+  gtk_widget_class_bind_template_child (widget_class, FinanceTransactionsSummary, check_button);
+  gtk_widget_class_bind_template_child (widget_class, FinanceTransactionsSummary, image_icon);
+  gtk_widget_class_bind_template_child (widget_class, FinanceTransactionsSummary, label_amount);
+  gtk_widget_class_bind_template_child (widget_class, FinanceTransactionsSummary, label_category);
+  gtk_widget_class_bind_template_child (widget_class, FinanceTransactionsSummary, label_date);
+  gtk_widget_class_bind_template_child (widget_class, FinanceTransactionsSummary, label_name);
+  gtk_widget_class_bind_template_child (widget_class, FinanceTransactionsSummary, label_payee_name);
+  gtk_widget_class_bind_template_child (widget_class, FinanceTransactionsSummary, label_payment);
+  gtk_widget_class_bind_template_child (widget_class, FinanceTransactionsSummary, label_repeat);
 
   /* The CallBacks */
   gtk_widget_class_bind_template_callback (widget_class, on_check_button_toggled);
 }
 
 static void
-finance_summary_child_init (FinanceSummaryChild *self)
+finance_transactions_summary_init (FinanceTransactionsSummary *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
 }
 
 /**
- * finance_summary_child_get_amount:
- * @self: a #FinanceSummaryChild
+ * finance_transactions_summary_get_amount:
+ * @self: a #FinanceTransactionsSummary
  *
  * Returns the transaction amount as a string
  *
@@ -359,16 +359,16 @@ finance_summary_child_init (FinanceSummaryChild *self)
  * Since: 1.0
  */
 const gchar *
-finance_summary_child_get_amount (FinanceSummaryChild *self)
+finance_transactions_summary_get_amount (FinanceTransactionsSummary *self)
 {
-  g_return_val_if_fail (FINANCE_IS_SUMMARY_CHILD (self), NULL);
+  g_return_val_if_fail (FINANCE_IS_TRANSACTIONS_SUMMARY (self), NULL);
 
   return gtk_label_get_text (GTK_LABEL (self->label_amount));
 }
 
 /**
- * finance_summary_child_set_amount_string:
- * @self: a #FinanceSummaryChild
+ * finance_transactions_summary_set_amount_string:
+ * @self: a #FinanceTransactionsSummary
  * @amount: a amount to set, as a string
  *
  * Sets transaction amount
@@ -376,10 +376,10 @@ finance_summary_child_get_amount (FinanceSummaryChild *self)
  * Since: 1.0
  */
 void
-finance_summary_child_set_amount (FinanceSummaryChild *self,
-                                  const gchar         *amount)
+finance_transactions_summary_set_amount (FinanceTransactionsSummary *self,
+                                         const gchar                *amount)
 {
-  g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
+  g_return_if_fail (FINANCE_IS_TRANSACTIONS_SUMMARY (self));
   g_return_if_fail (amount == NULL);
 
   gtk_label_set_text (GTK_LABEL (self->label_amount), amount);
@@ -388,8 +388,8 @@ finance_summary_child_set_amount (FinanceSummaryChild *self,
 }
 
 /**
- * finance_summary_child_get_category:
- * @self: a #FinanceSummaryChild
+ * finance_transactions_summary_get_category:
+ * @self: a #FinanceTransactionsSummary
  *
  * Returns the transaction category
  *
@@ -400,16 +400,16 @@ finance_summary_child_set_amount (FinanceSummaryChild *self,
  * Since: 1.0
  */
 const gchar *
-finance_summary_child_get_category (FinanceSummaryChild *self)
+finance_transactions_summary_get_category (FinanceTransactionsSummary *self)
 {
-  g_return_val_if_fail (FINANCE_IS_SUMMARY_CHILD (self), NULL);
+  g_return_val_if_fail (FINANCE_IS_TRANSACTIONS_SUMMARY (self), NULL);
 
   return gtk_label_get_text (GTK_LABEL (self->label_category));
 }
 
 /**
- * finance_summary_child_set_category:
- * @self: a #FinanceSummaryChild
+ * finance_transactions_summary_set_category:
+ * @self: a #FinanceTransactionsSummary
  * @category: a category to set, as a string
  *
  * Sets the category method of the transaction
@@ -417,10 +417,10 @@ finance_summary_child_get_category (FinanceSummaryChild *self)
  * Since: 1.0
  */
 void
-finance_summary_child_set_category (FinanceSummaryChild *self,
-                                    const gchar         *category)
+finance_transactions_summary_set_category (FinanceTransactionsSummary *self,
+                                           const gchar                *category)
 {
-  g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
+  g_return_if_fail (FINANCE_IS_TRANSACTIONS_SUMMARY (self));
   g_return_if_fail (category == NULL);
 
   gtk_label_set_text (GTK_LABEL (self->label_category), category);
@@ -429,8 +429,8 @@ finance_summary_child_set_category (FinanceSummaryChild *self,
 }
 
 /**
- * finance_summary_child_get_date:
- * @self: a #FinanceSummaryChild
+ * finance_transactions_summary_get_date:
+ * @self: a #FinanceTransactionsSummary
  *
  * Returns the transaction date
  *
@@ -441,16 +441,16 @@ finance_summary_child_set_category (FinanceSummaryChild *self,
  * Since: 1.0
  */
 const gchar *
-finance_summary_child_get_date (FinanceSummaryChild *self)
+finance_transactions_summary_get_date (FinanceTransactionsSummary *self)
 {
-  g_return_val_if_fail (FINANCE_IS_SUMMARY_CHILD (self), NULL);
+  g_return_val_if_fail (FINANCE_IS_TRANSACTIONS_SUMMARY (self), NULL);
 
   return gtk_label_get_text (GTK_LABEL (self->label_date));
 }
 
 /**
- * finance_summary_child_set_date:
- * @self: a #FinanceSummaryChild
+ * finance_transactions_summary_set_date:
+ * @self: a #FinanceTransactionsSummary
  * @date: a valid date, as a string
  *
  * Sets the date of the financial transaction
@@ -458,10 +458,10 @@ finance_summary_child_get_date (FinanceSummaryChild *self)
  * Since: 1.0
  */
 void
-finance_summary_child_set_date (FinanceSummaryChild *self,
-                                const gchar         *date)
+finance_transactions_summary_set_date (FinanceTransactionsSummary *self,
+                                       const gchar                *date)
 {
-  g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
+  g_return_if_fail (FINANCE_IS_TRANSACTIONS_SUMMARY (self));
   g_return_if_fail (date == NULL);
 
   gtk_label_set_text (GTK_LABEL (self->label_date), date);
@@ -470,8 +470,8 @@ finance_summary_child_set_date (FinanceSummaryChild *self,
 }
 
 /**
- * finance_summary_child_get_icon_name:
- * @self: a #FinanceSummaryChild
+ * finance_transactions_summary_get_icon_name:
+ * @self: a #FinanceTransactionsSummary
  *
  * Returns the name of the icon in the image
  *
@@ -482,16 +482,16 @@ finance_summary_child_set_date (FinanceSummaryChild *self,
  * Since: 1.0
  */
 const gchar *
-finance_summary_child_get_icon_name (FinanceSummaryChild *self)
+finance_transactions_summary_get_icon_name (FinanceTransactionsSummary *self)
 {
-  g_return_val_if_fail (FINANCE_IS_SUMMARY_CHILD (self), NULL);
+  g_return_val_if_fail (FINANCE_IS_TRANSACTIONS_SUMMARY (self), NULL);
 
   return self->icon_name;
 }
 
 /**
- * finance_summary_child_set_icon_name:
- * @self: a #FinanceSummaryChild
+ * finance_transactions_summary_set_icon_name:
+ * @self: a #FinanceTransactionsSummary
  * @icon_name: the name of the icon in the image
  *
  * Sets the name of the icon in the image,
@@ -500,10 +500,10 @@ finance_summary_child_get_icon_name (FinanceSummaryChild *self)
  * Since:1.0
  */
 void
-finance_summary_child_set_icon_name (FinanceSummaryChild *self,
-                                     const gchar         *icon_name)
+finance_transactions_summary_set_icon_name (FinanceTransactionsSummary *self,
+                                            const gchar                *icon_name)
 {
-  g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
+  g_return_if_fail (FINANCE_IS_TRANSACTIONS_SUMMARY (self));
   g_return_if_fail (icon_name == NULL);
 
   g_clear_pointer (&self->icon_name, g_free);
@@ -514,8 +514,8 @@ finance_summary_child_set_icon_name (FinanceSummaryChild *self,
 }
 
 /**
- * finance_summary_child_get_name:
- * @self: a #FinanceSummaryChild
+ * finance_transactions_summary_get_name:
+ * @self: a #FinanceTransactionsSummary
  *
  * Returns the transaction name
  *
@@ -526,16 +526,16 @@ finance_summary_child_set_icon_name (FinanceSummaryChild *self,
  * Since: 1.0
  */
 const gchar *
-finance_summary_child_get_name (FinanceSummaryChild *self)
+finance_transactions_summary_get_name (FinanceTransactionsSummary *self)
 {
-  g_return_val_if_fail (FINANCE_IS_SUMMARY_CHILD (self), NULL);
+  g_return_val_if_fail (FINANCE_IS_TRANSACTIONS_SUMMARY (self), NULL);
 
   return gtk_label_get_text (GTK_LABEL (self->label_name));
 }
 
 /**
- * finance_summary_child_set_name:
- * @self: a #FinanceSummaryChild
+ * finance_transactions_summary_set_name:
+ * @self: a #FinanceTransactionsSummary
  * @name: the name to set, as a string
  *
  * Sets the transaction name, replacing the current contents.
@@ -543,10 +543,10 @@ finance_summary_child_get_name (FinanceSummaryChild *self)
  * Since: 1.0
  */
 void
-finance_summary_child_set_name (FinanceSummaryChild *self,
-                                const gchar         *name)
+finance_transactions_summary_set_name (FinanceTransactionsSummary *self,
+                                       const gchar                *name)
 {
-  g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
+  g_return_if_fail (FINANCE_IS_TRANSACTIONS_SUMMARY (self));
   g_return_if_fail (name == NULL);
 
   gtk_label_set_text (GTK_LABEL (self->label_name), name);
@@ -555,8 +555,8 @@ finance_summary_child_set_name (FinanceSummaryChild *self,
 }
 
 /**
- * finance_summary_child_get_payee_name:
- * @self: a #FinanceSummaryChild
+ * finance_transactions_summary_get_payee_name:
+ * @self: a #FinanceTransactionsSummary
  *
  * Returns the transaction payee name
  *
@@ -567,16 +567,16 @@ finance_summary_child_set_name (FinanceSummaryChild *self,
  * Since: 1.0
  */
 const gchar *
-finance_summary_child_get_payee_name (FinanceSummaryChild *self)
+finance_transactions_summary_get_payee_name (FinanceTransactionsSummary *self)
 {
-  g_return_val_if_fail (FINANCE_IS_SUMMARY_CHILD (self), NULL);
+  g_return_val_if_fail (FINANCE_IS_TRANSACTIONS_SUMMARY (self), NULL);
 
   return gtk_label_get_text (GTK_LABEL (self->label_payee_name));
 }
 
 /**
- * finance_summary_child_set_payee_name:
- * @self: a #FinanceSummaryChild
+ * finance_transactions_summary_set_payee_name:
+ * @self: a #FinanceTransactionsSummary
  * @payee_name: a payee name to set, as a string
  *
  * Sets the transaction payee name, replacing the current contents
@@ -584,10 +584,10 @@ finance_summary_child_get_payee_name (FinanceSummaryChild *self)
  * Since: 1.0
  */
 void
-finance_summary_child_set_payee_name (FinanceSummaryChild *self,
-                                      const gchar         *payee_name)
+finance_transactions_summary_set_payee_name (FinanceTransactionsSummary *self,
+                                             const gchar                *payee_name)
 {
-  g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
+  g_return_if_fail (FINANCE_IS_TRANSACTIONS_SUMMARY (self));
   g_return_if_fail (payee_name == NULL);
 
   gtk_label_set_text (GTK_LABEL (self->label_payee_name), payee_name);
@@ -596,8 +596,8 @@ finance_summary_child_set_payee_name (FinanceSummaryChild *self,
 }
 
 /**
- * finance_summary_child_get_payment:
- * @self: a #FinanceSummaryChild
+ * finance_transactions_summary_get_payment:
+ * @self: a #FinanceTransactionsSummary
  *
  * Returns the transaction payment
  *
@@ -608,16 +608,16 @@ finance_summary_child_set_payee_name (FinanceSummaryChild *self,
  * Since: 1.0
  */
 const gchar *
-finance_summary_child_get_payment (FinanceSummaryChild *self)
+finance_transactions_summary_get_payment (FinanceTransactionsSummary *self)
 {
-  g_return_val_if_fail (FINANCE_IS_SUMMARY_CHILD (self), NULL);
+  g_return_val_if_fail (FINANCE_IS_TRANSACTIONS_SUMMARY (self), NULL);
 
   return gtk_label_get_text (GTK_LABEL (self->label_payment));
 }
 
 /**
- * finance_summary_child_set_payment:
- * @self: a #FinanceSummaryChild
+ * finance_transactions_summary_set_payment:
+ * @self: a #FinanceTransactionsSummary
  * @payment: a #FinancePayment
  *
  * Sets the payment method of the transaction
@@ -625,10 +625,10 @@ finance_summary_child_get_payment (FinanceSummaryChild *self)
  * Since: 1.0
  */
 void
-finance_summary_child_set_payment (FinanceSummaryChild *self,
+finance_transactions_summary_set_payment (FinanceTransactionsSummary *self,
                                    const gchar         *payment)
 {
-  g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
+  g_return_if_fail (FINANCE_IS_TRANSACTIONS_SUMMARY (self));
   g_return_if_fail (payment == NULL);
 
   gtk_label_set_text (GTK_LABEL (self->label_payment), payment);
@@ -637,8 +637,8 @@ finance_summary_child_set_payment (FinanceSummaryChild *self,
 }
 
 /**
- * finance_summary_child_get_repeat:
- * @self: a #FinanceSummaryChild
+ * finance_transactions_summary_get_repeat:
+ * @self: a #FinanceTransactionsSummary
  *
  * Returns the transaction repeat type
  *
@@ -649,16 +649,16 @@ finance_summary_child_set_payment (FinanceSummaryChild *self,
  * Since: 1.0
  */
 const gchar *
-finance_summary_child_get_repeat (FinanceSummaryChild *self)
+finance_transactions_summary_get_repeat (FinanceTransactionsSummary *self)
 {
-  g_return_val_if_fail (FINANCE_IS_SUMMARY_CHILD (self), NULL);
+  g_return_val_if_fail (FINANCE_IS_TRANSACTIONS_SUMMARY (self), NULL);
 
   return gtk_label_get_text (GTK_LABEL (self->label_repeat));
 }
 
 /**
- * finance_summary_child_set_repeat:
- * @self: a #FinanceSummaryChild
+ * finance_transactions_summary_set_repeat:
+ * @self: a #FinanceTransactionsSummary
  * @repeat: a repeat type to set, as a string
  *
  * Sets the transaction repeat type, replacing the current contents
@@ -666,10 +666,10 @@ finance_summary_child_get_repeat (FinanceSummaryChild *self)
  * Since: 1.0
  */
 void
-finance_summary_child_set_repeat (FinanceSummaryChild *self,
+finance_transactions_summary_set_repeat (FinanceTransactionsSummary *self,
                                   const gchar         *repeat)
 {
-  g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
+  g_return_if_fail (FINANCE_IS_TRANSACTIONS_SUMMARY (self));
   g_return_if_fail (repeat == NULL);
 
   gtk_label_set_text (GTK_LABEL (self->label_repeat), repeat);
@@ -678,8 +678,8 @@ finance_summary_child_set_repeat (FinanceSummaryChild *self,
 }
 
 /**
- * finance_summary_child_get_selected:
- * @self: a #FinanceSummaryChild
+ * finance_transactions_summary_get_selected:
+ * @self: a #FinanceTransactionsSummary
  *
  * Returns whether the child is in its “selected” or “unselected” state
  *
@@ -688,16 +688,16 @@ finance_summary_child_set_repeat (FinanceSummaryChild *self,
  * Since: 1.0
  */
 gboolean
-finance_summary_child_get_selected (FinanceSummaryChild *self)
+finance_transactions_summary_get_selected (FinanceTransactionsSummary *self)
 {
-  g_return_val_if_fail (FINANCE_IS_SUMMARY_CHILD (self), FALSE);
+  g_return_val_if_fail (FINANCE_IS_TRANSACTIONS_SUMMARY (self), FALSE);
 
   return gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (self->check_button));
 }
 
 /**
- * finance_summary_child_set_selected:
- * @self: a #FinanceSummaryChild
+ * finance_transactions_summary_set_selected:
+ * @self: a #FinanceTransactionsSummary
  * @selected: #TRUE if row is to be selected, and #FALSE otherwise
  *
  * Sets whether the child is in its “selected” or “unselected” state
@@ -705,10 +705,10 @@ finance_summary_child_get_selected (FinanceSummaryChild *self)
  * Since: 1.0
  */
 void
-finance_summary_child_set_selected (FinanceSummaryChild *self,
+finance_transactions_summary_set_selected (FinanceTransactionsSummary *self,
                                     gboolean             selected)
 {
-  g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
+  g_return_if_fail (FINANCE_IS_TRANSACTIONS_SUMMARY (self));
 
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (self->check_button), selected);
 
@@ -716,8 +716,8 @@ finance_summary_child_set_selected (FinanceSummaryChild *self,
 }
 
 /**
- * finance_summary_child_get_transaction:
- * @self: a #FinanceSummaryChild
+ * finance_transactions_summary_get_transaction:
+ * @self: a #FinanceTransactionsSummary
  *
  * Returns the transaction type
  *
@@ -726,16 +726,16 @@ finance_summary_child_set_selected (FinanceSummaryChild *self,
  * Since: 1.0
  */
 gint
-finance_summary_child_get_transaction (FinanceSummaryChild *self)
+finance_transactions_summary_get_transaction (FinanceTransactionsSummary *self)
 {
-  g_return_val_if_fail (FINANCE_IS_SUMMARY_CHILD (self), -1);
+  g_return_val_if_fail (FINANCE_IS_TRANSACTIONS_SUMMARY (self), -1);
 
   return self->transaction;
 }
 
 /**
- * finance_summary_child_set_transaction:
- * @self: a #FinanceSummaryChild
+ * finance_transactions_summary_set_transaction:
+ * @self: a #FinanceTransactionsSummary
  * @transaction: a #FinanceTransaction
  *
  * Sets the transaction type
@@ -743,10 +743,10 @@ finance_summary_child_get_transaction (FinanceSummaryChild *self)
  * Since: 1.0
  */
 void
-finance_summary_child_set_transaction (FinanceSummaryChild *self,
+finance_transactions_summary_set_transaction (FinanceTransactionsSummary *self,
                                        gint                 transaction)
 {
-  g_return_if_fail (FINANCE_IS_SUMMARY_CHILD (self));
+  g_return_if_fail (FINANCE_IS_TRANSACTIONS_SUMMARY (self));
 
   self->transaction = transaction;
 
