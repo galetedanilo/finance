@@ -22,10 +22,9 @@
 #include <gtk/gtk.h>
 #include <handy.h>
 
-#include "finance-transaction-view-controller.h"
 #include "finance-left-panel.h"
 #include "finance-transaction-editor.h"
-#include "finance-transaction-view.h"
+#include "finance-transactions-view.h"
 
 G_BEGIN_DECLS
 

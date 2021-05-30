@@ -38,11 +38,10 @@ struct _FinanceWindow
   GtkWidget   *stack;
   GtkWidget   *stack_switcher_top;
   GtkWidget   *transaction_editor;
-  GtkWidget   *transaction_view;
+  GtkWidget   *transactions_view;
   GtkWidget   *view_switcher_bottom;
 
   GSettings   *settings;
-  GObject     *controller_transactions;
 };
 
 static void     finance_window_prepare_new_transaction      (FinanceWindow *self);
@@ -143,7 +142,6 @@ finance_window_dispose (GObject *object)
   FinanceWindow *self = FINANCE_WINDOW (object);
 
   g_clear_object (&self->settings);
-  g_clear_object (&self->controller_transactions);
 
   G_OBJECT_CLASS (finance_window_parent_class)->dispose (object);
 }
@@ -155,7 +153,7 @@ finance_window_class_init (FinanceWindowClass *klass)
 
   g_type_ensure (FINANCE_TYPE_LEFT_PANEL);
   g_type_ensure (FINANCE_TYPE_TRANSACTION_EDITOR);
-  g_type_ensure (FINANCE_TYPE_TRANSACTION_VIEW);
+  g_type_ensure (FINANCE_TYPE_TRANSACTIONS_VIEW);
 
   G_OBJECT_CLASS (klass)->dispose     = finance_window_dispose;
 
@@ -173,7 +171,7 @@ finance_window_class_init (FinanceWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, stack);
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, stack_switcher_top);
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, transaction_editor);
-  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, transaction_view);
+  gtk_widget_class_bind_template_child (widget_class, FinanceWindow, transactions_view);
   gtk_widget_class_bind_template_child (widget_class, FinanceWindow, view_switcher_bottom);
 
   /* The CallBacks */
@@ -194,10 +192,4 @@ finance_window_init (FinanceWindow *self)
 
   self->settings = g_settings_new ("org.gnome.finance");
 
-  self->controller_transactions = g_object_new (FINANCE_TYPE_TRANSACTION_VIEW_CONTROLLER,
-                                                "pane", self->left_panel,
-                                                "view", self->transaction_view,
-                                                NULL);
-
-  finance_transaction_view_controller_startup (self->controller_transactions);
 }

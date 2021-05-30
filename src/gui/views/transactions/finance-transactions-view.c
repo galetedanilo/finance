@@ -57,9 +57,18 @@ finance_view_interface_init (FinanceViewInterface *iface)
 }
 
 static void
+finance_transactions_view_dispose (GObject *object)
+{
+  G_OBJECT_CLASS (finance_transactions_view_parent_class)->dispose (object);
+}
+
+static void
 finance_transactions_view_class_init (FinanceTransactionsViewClass *klass)
 {
+  GObjectClass    *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass  *widget_class = GTK_WIDGET_CLASS (klass);
+
+  object_class->dispose   = finance_transactions_view_dispose;
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/finance/views/transactions/finance-transactions-view.ui");
 
@@ -71,4 +80,10 @@ static void
 finance_transactions_view_init (FinanceTransactionsView *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  for (int x = 0; x < 10; x++) {
+  GtkWidget *child = finance_transactions_summary_new ();
+
+  gtk_flow_box_insert (GTK_FLOW_BOX (self->flow_box), child, 1);
+  }
 }

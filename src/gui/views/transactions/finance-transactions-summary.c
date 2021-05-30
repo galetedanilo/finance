@@ -32,10 +32,10 @@ struct _FinanceTransactionsSummary
   GtkWidget *label_amount;
   GtkWidget *label_category;
   GtkWidget *label_date;
-  GtkWidget *label_name;
   GtkWidget *label_payee_name;
   GtkWidget *label_payment;
   GtkWidget *label_repeat;
+  GtkWidget *label_title;
 
   gchar     *icon_name;
 
@@ -50,11 +50,11 @@ enum {
   PROP_CATEGORY,
   PROP_DATE,
   PROP_ICON_NAME,
-  PROP_NAME,
   PROP_PAYEE_NAME,
   PROP_PAYMENT,
   PROP_REPEAT,
   PROP_SELECTED,
+  PROP_TITLE,
   PROP_TRANSACTION,
   N_PROPS
 };
@@ -114,10 +114,6 @@ finance_transactions_summary_get_property (GObject    *object,
       g_value_set_string (value, finance_transactions_summary_get_icon_name (self));
       break;
 
-    case PROP_NAME:
-      g_value_set_string (value, finance_transactions_summary_get_name (self));
-      break;
-
     case PROP_PAYEE_NAME:
       g_value_set_string (value, finance_transactions_summary_get_payee_name (self));
       break;
@@ -132,6 +128,10 @@ finance_transactions_summary_get_property (GObject    *object,
 
     case PROP_SELECTED:
       g_value_set_boolean (value, finance_transactions_summary_get_selected (self));
+      break;
+
+    case PROP_TITLE:
+      g_value_set_string (value, finance_transactions_summary_get_title (self));
       break;
 
     case PROP_TRANSACTION:
@@ -170,10 +170,6 @@ finance_transactions_summary_set_property (GObject      *object,
       finance_transactions_summary_set_icon_name (self, g_value_get_string (value));
       break;
 
-    case PROP_NAME:
-      finance_transactions_summary_set_name (self, g_value_get_string (value));
-      break;
-
     case PROP_PAYEE_NAME:
       finance_transactions_summary_set_payee_name (self, g_value_get_string (value));
       break;
@@ -188,6 +184,10 @@ finance_transactions_summary_set_property (GObject      *object,
 
     case PROP_SELECTED:
       finance_transactions_summary_set_selected (self, g_value_get_boolean (value));
+      break;
+
+    case PROP_TITLE:
+      finance_transactions_summary_set_title (self, g_value_get_string (value));
       break;
 
     case PROP_TRANSACTION:
@@ -255,17 +255,6 @@ finance_transactions_summary_class_init (FinanceTransactionsSummaryClass *klass)
                                                     G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-   * FinanceTransactionsSummary::name:
-   *
-   * The transaction name
-   */
-  properties[PROP_NAME] = g_param_spec_string ("name",
-                                               "Name",
-                                               "The transaction name",
-                                               NULL,
-                                               G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
-
-  /**
    * FinanceTransactionsSummary::payee_name:
    *
    * The transaction payee name
@@ -310,6 +299,17 @@ finance_transactions_summary_class_init (FinanceTransactionsSummaryClass *klass)
                                                     G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
+   * FinanceTransactionsSummary::title:
+   *
+   * The transaction title
+   */
+  properties[PROP_TITLE] = g_param_spec_string ("title",
+                                                "title",
+                                                "The transaction title",
+                                                NULL,
+                                                G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
+  /**
    * FinanceTransactionsSummary::transaction:
    *
    * The transaction transaction
@@ -331,10 +331,10 @@ finance_transactions_summary_class_init (FinanceTransactionsSummaryClass *klass)
   gtk_widget_class_bind_template_child (widget_class, FinanceTransactionsSummary, label_amount);
   gtk_widget_class_bind_template_child (widget_class, FinanceTransactionsSummary, label_category);
   gtk_widget_class_bind_template_child (widget_class, FinanceTransactionsSummary, label_date);
-  gtk_widget_class_bind_template_child (widget_class, FinanceTransactionsSummary, label_name);
   gtk_widget_class_bind_template_child (widget_class, FinanceTransactionsSummary, label_payee_name);
   gtk_widget_class_bind_template_child (widget_class, FinanceTransactionsSummary, label_payment);
   gtk_widget_class_bind_template_child (widget_class, FinanceTransactionsSummary, label_repeat);
+  gtk_widget_class_bind_template_child (widget_class, FinanceTransactionsSummary, label_title);
 
   /* The CallBacks */
   gtk_widget_class_bind_template_callback (widget_class, on_check_button_toggled);
@@ -514,47 +514,6 @@ finance_transactions_summary_set_icon_name (FinanceTransactionsSummary *self,
 }
 
 /**
- * finance_transactions_summary_get_name:
- * @self: a #FinanceTransactionsSummary
- *
- * Returns the transaction name
- *
- * Returns: The transaction name as a string, or %NULL.
- * This string points to internally allocated storage in the object
- * and must not be freed, modified or stored.
- *
- * Since: 1.0
- */
-const gchar *
-finance_transactions_summary_get_name (FinanceTransactionsSummary *self)
-{
-  g_return_val_if_fail (FINANCE_IS_TRANSACTIONS_SUMMARY (self), NULL);
-
-  return gtk_label_get_text (GTK_LABEL (self->label_name));
-}
-
-/**
- * finance_transactions_summary_set_name:
- * @self: a #FinanceTransactionsSummary
- * @name: the name to set, as a string
- *
- * Sets the transaction name, replacing the current contents.
- *
- * Since: 1.0
- */
-void
-finance_transactions_summary_set_name (FinanceTransactionsSummary *self,
-                                       const gchar                *name)
-{
-  g_return_if_fail (FINANCE_IS_TRANSACTIONS_SUMMARY (self));
-  g_return_if_fail (name == NULL);
-
-  gtk_label_set_text (GTK_LABEL (self->label_name), name);
-
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_NAME]);
-}
-
-/**
  * finance_transactions_summary_get_payee_name:
  * @self: a #FinanceTransactionsSummary
  *
@@ -713,6 +672,47 @@ finance_transactions_summary_set_selected (FinanceTransactionsSummary *self,
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (self->check_button), selected);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SELECTED]);
+}
+
+/**
+ * finance_transactions_summary_get_title:
+ * @self: a #FinanceTransactionsSummary
+ *
+ * Returns the transaction title
+ *
+ * Returns: The transaction title as a string, or %NULL.
+ * This string points to internally allocated storage in the object
+ * and must not be freed, modified or stored.
+ *
+ * Since: 1.0
+ */
+const gchar *
+finance_transactions_summary_get_title (FinanceTransactionsSummary *self)
+{
+  g_return_val_if_fail (FINANCE_IS_TRANSACTIONS_SUMMARY (self), NULL);
+
+  return gtk_label_get_text (GTK_LABEL (self->label_title));
+}
+
+/**
+ * finance_transactions_summary_set_title:
+ * @self: a #FinanceTransactionsSummary
+ * @title: the title to set, as a string
+ *
+ * Sets the transaction title, replacing the current contents.
+ *
+ * Since: 1.0
+ */
+void
+finance_transactions_summary_set_title (FinanceTransactionsSummary *self,
+                                        const gchar                *title)
+{
+  g_return_if_fail (FINANCE_IS_TRANSACTIONS_SUMMARY (self));
+  g_return_if_fail (title == NULL);
+
+  gtk_label_set_text (GTK_LABEL (self->label_title), title);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_TITLE]);
 }
 
 /**
